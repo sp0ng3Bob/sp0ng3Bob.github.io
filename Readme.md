@@ -1,0 +1,14 @@
+# Slovar slovanskega znakovnega jezika
+
+Slike v obstoječem repozitoriju so vzete s strani [Slovar slovenskega znakovnega jezika](http://sszj.fri.uni-lj.si/).
+Aplikacija podpira 'OFFLINE' mode, kar pomeni, da v ozadju delujejo 'service workers', ki nadzirajo sranjevanje datotek pletne strani in tako omogočajo uporabo 'aplikacije' tudi, ko telefon oziroma druma naprava nima internetnega dostopa.
+
+### v.0
+
+* Dodane slike za prikaz navideznega videa za vsako sliko v (__tem__) slovarju,
+* Dodane vse potrebne datoteke za delovanje spletne strani
+* OFFLINE način še ni končan
+
+
+Aplikacija ni končana, a se jo lahko že uporablja, le ne distibuira!
+

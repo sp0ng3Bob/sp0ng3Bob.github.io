@@ -37,8 +37,6 @@ var installButton = document.getElementById("installPWA");
 window.addEventListener("beforeinstallprompt", event => {
 	event.preventDefault();
 	deferredPrompt = event;
-	installButton.hidden = false;
-	installButton.addEventListener("click", installPWA);
 });
 
 // when installation completed
@@ -46,7 +44,8 @@ window.addEventListener("beforeinstallprompt", event => {
   console.log("appinstalled", evt);
 }); */
 
-function installPWA() {
+installButton.addEventListener("onclick", (e) => {
+	installButton.hidden = false;
 	deferredPrompt.prompt();
 	installButton.disabled = true;
 
@@ -58,7 +57,7 @@ function installPWA() {
 		installButton.disabled = false;
 		deferredPrompt = null;
 	});
-}
+})
 
 // ************************************************************* -- END
 

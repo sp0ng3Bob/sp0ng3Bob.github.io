@@ -1,4 +1,4 @@
-// Make sure sw are supported
+// SW script ****************************************************************************************
 if ('serviceWorker' in navigator) {
 	window.addEventListener('load', () => {
 		navigator.serviceWorker
@@ -8,6 +8,10 @@ if ('serviceWorker' in navigator) {
 	});
 } else {alert("Vaša naprava ne podpira 'OFFLINE' načina.\nPri uporabi bo potrebna povezava z internetom!");} 
 
+// ************************************************************* -- END
+
+
+// Navigation bar toggle ****************************************************************************
 
 $(document).on('click', '.mobile-nav-toggle', function(e) {
 	$('body').toggleClass('mobile-nav-active');
@@ -21,6 +25,45 @@ $(document).click(function(e) {
 		}
 	}
 });
+
+// ************************************************************* -- END
+
+
+// Install PWA ***************************************************************************************
+
+let deferredPrompt; // Allows to show the install prompt
+var installButton = document.getElementById("installPWA");
+
+window.addEventListener("beforeinstallprompt", event => {
+	event.preventDefault();
+	deferredPrompt = event;
+	installButton.hidden = false;
+	installButton.addEventListener("click", installPWA);
+});
+
+// when installation completed
+/* window.addEventListener("appinstalled", evt => {
+  console.log("appinstalled", evt);
+}); */
+
+function installPWA() {
+	deferredPrompt.prompt();
+	installButton.disabled = true;
+
+	// Wait for the user to respond to the prompt
+	deferredPrompt.userChoice.then(choiceResult => {
+		if (choiceResult.outcome === "accepted") {
+			installButton.hidden = true;
+		}
+		installButton.disabled = false;
+		deferredPrompt = null;
+	});
+}
+
+// ************************************************************* -- END
+
+
+// JPG animation *************************************************************************************
 
 var seznam = document.getElementById("list");
 var searchDiv = document.getElementById("searchDiv").children[0];
@@ -48,6 +91,11 @@ var loadImage = function (name) {
 	}
 }
 
+// ************************************************************* -- END
+
+
+// Search function *******************************************************************************
+
 var searchDict = function (text) {
 	if (text == "") {this.resetAllDict(); return;}
 	
@@ -74,3 +122,5 @@ var resetAllDict = function () {
 		seznam.children[i].removeAttribute("hidden");
 	}
 }
+
+// ************************************************************* -- END

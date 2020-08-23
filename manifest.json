@@ -6,6 +6,7 @@
   "orientation": "any",
   "background_color": "#040b14",
   "theme_color": "#149ddd",
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "/src/images/icons/favicon.png",

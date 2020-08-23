@@ -1,12 +1,12 @@
 // Make sure sw are supported
-/* if ('serviceWorker' in navigator) {
+if ('serviceWorker' in navigator) {
 	window.addEventListener('load', () => {
 		navigator.serviceWorker
-			.register('../sw/sw.js')
-			.then(reg => console.log('Service Worker: Registered (Pages)'))
-			.catch(err => console.log('ServiceWorker registration failed: ', err));
+			.register('/pwa/src/js/sw.js')
+			.then(reg => console.log('*sw registered'))
+			.catch(err => console.log('*sw registration failed: ', err));
 	});
-} else {alert("Vaša naprava ne podpira 'OFFLINE' načina.\nPri uporabi bo potrebna povezava z internetom!");} */
+} else {alert("Vaša naprava ne podpira 'OFFLINE' načina.\nPri uporabi bo potrebna povezava z internetom!");} 
 
 
 $(document).on('click', '.mobile-nav-toggle', function(e) {
@@ -42,6 +42,9 @@ var loadImage = function (name) {
 		animationDiv.style.animationDelay = "0.5s";
 		animationDiv.style.animationTimingFunction = "steps(" + (frames-1) + ")";
 		animationDiv.style.animationName = "spritemove";
+	}
+	img.onerror = function() {
+		alert("No internet, no cache!")
 	}
 }
 

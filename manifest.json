@@ -1,9 +1,11 @@
 {
-  "name": "Slovar slovenskega znakovnega jezika (PWApp)",
-  "short_name": "SSZJ PWA",
-  "start_url": ".",
+  "name": "Slovar slovenskega znakovnega jezika (PWA)",
+  "short_name": "SSZJ offline",
+  "start_url": "/index.html",
   "display": "standalone",
   "orientation": "any",
+  "background_color": "#040b14",
+  "theme_color": "#149ddd",
   "icons": [
     {
       "src": "/src/images/icons/favicon.png",

@@ -2,7 +2,7 @@
 if ('serviceWorker' in navigator) {
 	window.addEventListener('load', () => {
 		navigator.serviceWorker
-			.register('/pwa/src/js/sw.js')
+			.register('/src/js/sw.js')
 			.then(reg => console.log('*sw registered'))
 			.catch(err => console.log('*sw registration failed: ', err));
 	});

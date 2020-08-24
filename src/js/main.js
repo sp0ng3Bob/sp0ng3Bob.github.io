@@ -50,7 +50,7 @@ $(document).click(function(e) {
 let deferredPrompt; // Allows to show the install prompt
 var installButton = document.getElementById("installPWA");
 
-if (displayMode == "browser tab") {  
+if (window.matchMedia('(display-mode: standalone)').matches || displayMode = "browser tab") {  
    installButton.hidden = true;
 } 
 

@@ -52,7 +52,7 @@ var installButton = document.getElementById("installPWA");
 
 if (window.matchMedia("(display-mode: standalone)").matches) {
    installButton.hidden = true;
-} 
+}
 
 window.addEventListener('beforeinstallprompt', (e) => {
   // Prevent Chrome 67 and earlier from automatically showing the prompt

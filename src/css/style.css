@@ -40,9 +40,17 @@ h1, h2, h3, h4, h5, h6 {
 	height: 70vh;
 }
 
+#installPWA {
+	display: none;
+}
+
 @media (max-width: 1000px) { /*screen, speach, print .... and , ,(or)*/
 	#list {
 		height: 35px;
+	}
+	
+	#installPWA {
+		display: block;
 	}
 }
 

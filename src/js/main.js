@@ -34,9 +34,11 @@ $(document).click(function(e) {
 let deferredPrompt; // Allows to show the install prompt
 var installButton = document.getElementById("installPWA");
 
+if (window.matchMedia('(display-mode: standalone)').matches) {  
+   installButton.hidden = true;
+} 
+
    window.addEventListener('beforeinstallprompt', function(event) {
-		installButton.hidden = false;
-		
 		// Prevent Chrome 67 and earlier from automatically showing the prompt
 		e.preventDefault();
 		// Stash the event so it can be triggered later.

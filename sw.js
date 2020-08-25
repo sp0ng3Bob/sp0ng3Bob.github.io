@@ -17,20 +17,10 @@ var urlsToCache = [
 	"/src/vendor/bootstrap/css/bootstrap-reboot.css.map",
 	"/src/vendor/bootstrap/css/bootstrap-reboot.min.css",
 	"/src/vendor/bootstrap/css/bootstrap-reboot.min.css.map",
-	"/src/vendor/bootstrap/js/bootstrap.bundle.js",
-	"/src/vendor/bootstrap/js/bootstrap.bundle.js.map",
-	"/src/vendor/bootstrap/js/bootstrap.bundle.min.js",
-	"/src/vendor/bootstrap/js/bootstrap.bundle.min.js.map",
 	"/src/vendor/bootstrap/js/bootstrap.js",
 	"/src/vendor/bootstrap/js/bootstrap.js.map",
 	"/src/vendor/bootstrap/js/bootstrap.min.js",
-	"/src/vendor/bootstrap/js/bootstrap.min.js.map",
-	"/src/vendor/icofont/icofont.min.css",
-	"/src/vendor/icofont/fonts/icofont.woff",
-	"/src/vendor/icofont/fonts/icofont.woff2",
-	"/src/vendor/jquery/jquery.min.js",
-	"/src/vendor/jquery/jquery.min.map",
-	"/src/vendor/jquery.easing/jquery.easing.min.js"
+	"/src/vendor/bootstrap/js/bootstrap.min.js.map"
 ];
 
 self.addEventListener("install", event => {

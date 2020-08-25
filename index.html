@@ -38,7 +38,7 @@
   ======================================================== -->
 </head>
 
-<body>
+<body onLoad="onOff()">
 
   <!-- ======= Header ======= -->
   <header id="header">
@@ -55,7 +55,7 @@
           <li id="installPWA"><a href="#"><span>Prenesi aplikacijo <i class="icofont-download"></i></a></li>
         </ul>
       </nav><!-- .nav-menu -->
-      <button type="button" class="mobile-nav-toggle d-xl-none"><i class="icofont-navigation-menu"></i></button>
+      <button type="button" class="mobile-nav-toggle d-xl-none" id="MenuButton" onClick="toggleMenu()"><i class="icofont-navigation-menu"></i></button>
 
     </div>
   </header><!-- End Header -->
@@ -1901,11 +1901,6 @@
 -->
 
   </main><!-- End #main -->
-
-  <!-- Vendor JS Files -->
-  <script src="src/vendor/jquery/jquery.min.js"></script>
-  <script src="src/vendor/jquery.easing/jquery.easing.min.js"></script>
-  <script src="src/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
   <!-- Main JS File -->
   <script src="src/js/main.js"></script>

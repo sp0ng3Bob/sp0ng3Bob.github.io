@@ -91,7 +91,9 @@ var seznam = document.getElementById("list");
 var searchDiv = document.getElementById("searchDiv").children[0];
 var animationDiv = document.getElementsByClassName("jpg-animation")[0];
 
-var loadImage = function (name) {
+var loadImage = function (event) {
+	wordDOM = event.target.options[event.target.selectedIndex];
+	name = event.target.value;
 	animationDiv.style.animationName = "";
 	animationDiv.style.backgroundImage = "url('./src/images/sprites/" + name + ".jpg')";
 	
@@ -107,9 +109,12 @@ var loadImage = function (name) {
 		animationDiv.style.animationDelay = "0.5s";
 		animationDiv.style.animationTimingFunction = "steps(" + (frames-1) + ")";
 		animationDiv.style.animationName = "spritemove";
+		
+		//icon for downloaded
+		wordDOM.classList.add("downloaded");
 	}
 	img.onerror = function() {
-		alert("No internet, no cache!")
+		alert("Ni internetne povezave, prav tako ni slike na napravi!")
 	}
 }
 
@@ -148,11 +153,30 @@ var resetAllDict = function () {
 // ************************************************************* -- END
 
 
+// Lock words in dict when OFFLINE *****************************************************************
+
 var onOff = function() {
 	if (navigator.onLine) { //on
-		
+		lockAllDict(false);
 	} else { //off
-		
+		lockAllDict(true);
 	}
-	
 }
+
+var lockAllDict = function (mode) {
+	if (mode) {
+		for (var i = 0; i < seznam.children.length; i++) {
+			if (!seznam.children[i].hasAttribute("downloaded")) {
+				seznam.children[i].addAttribute("disabled");
+			}
+		}
+	} else {
+		for (var i = 0; i < seznam.children.length; i++) {
+			if (seznam.children[i].hasAttribute("disabled")) {
+				seznam.children[i].removeAttribute("disabled");
+			}
+		}
+	}
+}
+
+// ************************************************************* -- END

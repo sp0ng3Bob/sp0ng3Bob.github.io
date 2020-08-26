@@ -128,9 +128,9 @@ var loadImage = function (event) {
 		//icon for downloaded
 		wordDOM.classList.add("downloaded");
 		
-		/* if (portable) {
-      wordDOM.text += " ○";
-		} */
+		if (portable) {
+      wordDOM.innerText += " ○";
+		}
 	}
 	img.onerror = function() {
 		alert("Ni internetne povezave, prav tako ni slike na napravi!")

@@ -194,11 +194,11 @@ var resetAllDict = function () {
 
 // Lock words in dict when OFFLINE *****************************************************************
 
-window.addEventListener("online", () => {
+window.addEventListener("online", (e) => {
 	onOff(true);
 });
 
-window.addEventListener("offline", () => {
+window.addEventListener("offline", (e) => {
 	onOff(false);
 });
 

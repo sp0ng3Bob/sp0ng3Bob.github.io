@@ -155,19 +155,27 @@ var resetAllDict = function () {
 
 // Lock words in dict when OFFLINE *****************************************************************
 
-var onOff = function() {
-	if (navigator.onLine) { //on
-		lockAllDict(false);
+window.addEventListener("online", () => {
+	onOff(true);
+});
+
+window.addEventListener("offline", () => {
+	onOff(false);
+});
+
+var onOff = function(mode) {
+	if (mode) { //on
+		lockAllDict(!mode);
 	} else { //off
-		lockAllDict(true);
+		lockAllDict(!mode);
 	}
 }
 
 var lockAllDict = function (mode) {
 	if (mode) {
 		for (var i = 0; i < seznam.children.length; i++) {
-			if (!seznam.children[i].hasAttribute("downloaded")) {
-				seznam.children[i].addAttribute("disabled");
+			if (!seznam.children[i].classList.contains("downloaded")) {
+				seznam.children[i].setAttribute("disabled", "");
 			}
 		}
 	} else {

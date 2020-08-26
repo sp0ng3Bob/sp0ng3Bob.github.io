@@ -74,3 +74,18 @@ self.addEventListener("fetch", event => {
 			.catch(err => caches.match(event.request).then(res => res))
 	);
 });
+
+self.addEventListener("message", event => {
+	var url = "/src/images/sprites/" + event.data + ".jpg";
+	console.log("*sw fetching one: " + url);
+	
+/* 	fetch("/src/images/sprites/" + seznam.children[i].value + ".jpg").then(function(response) {
+				 console.log(response.headers.get('Content-Type'));
+				 console.log(response.headers.get('Date'));
+
+				 console.log(response.status);
+				 console.log(response.statusText);
+				 console.log(response.type);
+				 console.log(response.url);
+	}); */
+});

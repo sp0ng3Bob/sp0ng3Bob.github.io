@@ -1,3 +1,13 @@
+// Ask for storage ********************************************************************************
+
+/* if (navigator.storage && navigator.storage.persist) {
+  const isPersisted = await navigator.storage.persist();
+  console.log(`Persisted storage granted: ${isPersisted}`);
+} */
+
+// ************************************************************* -- END
+
+
 // Check display mode ******************************************************************************
 
 let displayMode = 'browser tab';
@@ -90,6 +100,7 @@ window.addEventListener("beforeinstallprompt", (e) => {
 var seznam = document.getElementById("list");
 var searchDiv = document.getElementById("searchDiv").children[0];
 var animationDiv = document.getElementsByClassName("jpg-animation")[0];
+var animationParent = document.getElementById("picture");
 
 var loadImage = function (event) {
 	wordDOM = event.target.options[event.target.selectedIndex];
@@ -117,6 +128,28 @@ var loadImage = function (event) {
 		alert("Ni internetne povezave, prav tako ni slike na napravi!")
 	}
 }
+
+// ************************************************************* -- END
+
+
+// Resize function *******************************************************************************
+
+window.addEventListener("resize", function() {
+	var w = animationParent.offsetWidth;
+	var h = animationParent.offsetHeight;
+	console.log(w, h);
+/* 	var s = (w/200) < (h/256) ? (w/200) : (h/256);
+	
+	if (w <= 575) { // col-md-12
+		animationDiv.style.transform = "scale(" + s + ", " + s + ")";
+	}
+	else if (w >= 1000) {
+		animationDiv.style.transform = "scale(" + s + ", " + s + ")";
+	} */
+	
+}, true);
+
+
 
 // ************************************************************* -- END
 
@@ -175,7 +208,7 @@ var lockAllDict = function (mode) {
 	if (mode) {
 		for (var i = 0; i < seznam.children.length; i++) {
 			if (!seznam.children[i].classList.contains("downloaded")) {
-				seznam.children[i].setAttribute("disabled", "");
+				seznam.children[i].setAttribute("disabled", "disabled");
 			}
 		}
 	} else {
@@ -183,6 +216,31 @@ var lockAllDict = function (mode) {
 			if (seznam.children[i].hasAttribute("disabled")) {
 				seznam.children[i].removeAttribute("disabled");
 			}
+		}
+	}
+}
+
+// ************************************************************* -- END
+
+
+// Download all pictures to cache *****************************************************************
+
+var getList = function () {
+	var list = [];
+	for (var i = 0; i < seznam.children.length; i++) {
+		if (!seznam.children[i].classList.contains("downloaded")) {
+			if (seznam.children[i].hasAttribute("disabled")) {
+				seznam.children[i].removeAttribute("disabled");
+				seznam.children[i].classList.add("downloaded");
+			} else {
+				seznam.children[i].classList.add("downloaded");
+			}
+			
+			fetch("/src/images/sprites/" + seznam.children[i].value + ".jpg").then(function(response) {
+				if (response.status != "200") {
+					seznam.children[i].classList.remove("downloaded");
+				}
+			});
 		}
 	}
 }

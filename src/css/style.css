@@ -65,6 +65,15 @@ option[disabled] {
 	}
 }
 
+@media screen and (device-width: 320px) and (device-height: 640px)  { /*screen, speach, print .... and , ,(or)*/
+	option.downloaded:after {
+		font-family: "icofont";
+		content: "\ef09";
+		float: right;
+		padding-right: 50px;
+	}
+}
+
 /*--------------------------------------------------------------
 # Header
 --------------------------------------------------------------*/
@@ -234,7 +243,18 @@ option[disabled] {
 }
 
 #picture {
-	scroll-behavior: smooth;
+	height: 100vh;
+   overflow: auto;
+   scroll-behavior: smooth;
+}
+
+@media (min-width: 576px) { /*screen, speach, print .... and , ,(or)*/
+	#picture {
+		height: 100vh;
+		padding-top: 25vh;
+		overflow: auto;
+		scroll-behavior: smooth;
+	}
 }
 
 /*--------------------------------------------------------------

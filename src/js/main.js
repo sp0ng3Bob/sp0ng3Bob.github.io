@@ -11,6 +11,7 @@
 // Check display mode ******************************************************************************
 
 let displayMode = 'browser tab';
+var offline = false;
 
 window.addEventListener('DOMContentLoaded', () => {
   if (navigator.standalone) {
@@ -253,3 +254,13 @@ var getList = function () {
 }
 
 // ************************************************************* -- END
+
+var checkConnection = funcion() {
+  fetch("https://google.com/").then(function(response) {
+			if (response.status >= "400") {
+				offline = true;
+			} else {
+        offline = false;
+			}
+	});
+}

@@ -67,10 +67,7 @@ option[disabled] {
 
 @media screen and (device-width: 320px) and (device-height: 640px)  { /*screen, speach, print .... and , ,(or)*/
 	option.downloaded:after {
-		font-family: "icofont";
-		content: "\ef09";
-		float: right;
-		padding-right: 50px;
+		background-color:#d9fcdf;
 	}
 }
 

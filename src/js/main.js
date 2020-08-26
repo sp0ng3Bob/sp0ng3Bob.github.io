@@ -129,7 +129,7 @@ var loadImage = function (event) {
 		wordDOM.classList.add("downloaded");
 		
 		if (portable) {
-      wordDOM.innerText += " ○";
+      //wordDOM.innerText += " ○";
 		}
 	}
 	img.onerror = function() {

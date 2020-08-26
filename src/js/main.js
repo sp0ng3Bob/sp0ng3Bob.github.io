@@ -21,6 +21,8 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 });
 
+var portable = (window.inheritWidth <= 720 && window.inheritWidth <= 960 ? true : false);
+
 // ************************************************************* -- END
 
 
@@ -123,6 +125,10 @@ var loadImage = function (event) {
 		
 		//icon for downloaded
 		wordDOM.classList.add("downloaded");
+		
+		if (portable) {
+      wordDOM.text += " ○";
+		}
 	}
 	img.onerror = function() {
 		alert("Ni internetne povezave, prav tako ni slike na napravi!")

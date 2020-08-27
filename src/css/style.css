@@ -329,3 +329,17 @@ option[disabled] {
 #clear-search:hover i {
 	color: #fff;
 }
+
+i.icofont-listine-dots {
+  color: #149ddd;
+}
+
+i.icofont-arrow-left:after and i.icofont-arrow-right:after {
+  color: #149fff;
+}
+
+@keyframes color_change {
+	0% { color: black; }
+	50% { color: #149ddd; }
+	100% { color: black; }
+}

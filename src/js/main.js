@@ -78,12 +78,14 @@ var animationParent = document.getElementById("picture");
 var animationDiv = document.getElementsByClassName("jpg-animation")[0];
 
 var resizeAnimation = function () {
-	var w = animationParent.offsetWidth;
-	var h = animationParent.offsetHeight;
-	var s = (w/200) < (h/256) ? (w/200) : (h/256);
+	var h = window.screen.height;
+	var w = window.screen.width;
+	var s = (w/200) < (h/256) || w < h ? (w/200) : (h/256);
 	console.log(w, h, s);
 	
 	if (w <= 575) { // col-md-12
+		animationDiv.style.transform = "scale(" + s*0.6 + ", " + s*0.6 + ")";
+	} else {
 		animationDiv.style.transform = "scale(" + s*0.7 + ", " + s*0.7 + ")";
 	}
 }
@@ -211,7 +213,7 @@ var loadImage = function (event) {
 
 // Resize listener *******************************************************************************
 
-window.addEventListener("resize", resizeAnimation(), true);
+window.addEventListener("resize", resizeAnimation, true);
 
 // ************************************************************* -- END
 

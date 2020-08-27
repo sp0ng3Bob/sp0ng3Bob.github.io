@@ -293,8 +293,8 @@ option[disabled] {
 	}
 	
 	.controls {
-		width: calc(15% + 250px);
-		bottom: 35px;
+		width: calc(100vw/6 + 250px);
+		bottom: 25px;
 	}
 }
 
@@ -311,7 +311,7 @@ option[disabled] {
 
 @media (max-width: 575px) { /*screen, speach, print .... and , ,(or)*/
 	#picture {
-		padding-top: 15vh;
+		padding-top: 8vh;
 	}
 	
 	.controls {

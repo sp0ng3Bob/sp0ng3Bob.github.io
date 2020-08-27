@@ -18,30 +18,30 @@ var lockUnlockHeader = function (mode) {
 
 var onOffClick = function (mode) {
 	if (!mode) {
-		if (!portable) {
+/* 		if (!portable) {
 			lockUnlockHeader(true);
-		}
+		} */
 /* 		document.addEventListener("click", (e) => {
 			e.stopPropagation();
 			e.preventDefault();
 		},false); */
 		loader.hidden = false;
 	} else {
-		if (!portable) {
+/* 		if (!portable) {
 			lockUnlockHeader(false);
-		}
+		} */
 /* 		document.removeEventListener("click", (e) => {
 			e.stopPropagation();
 			e.preventDefault();
 		},false); */
-		document.addEventListener("click", (e) => {
+/* 		document.addEventListener("click", (e) => {
 			if (button !== e.target && button.children[0] !== e.target) {
 				if (document.body.classList.contains("mobile-nav-active")) {
 					document.body.classList.remove("mobile-nav-active");
 					button.disabled = false;
 				}
 			}
-		});
+		}); */
 		loader.hidden = true;
 	}
 }
@@ -73,6 +73,22 @@ window.addEventListener('DOMContentLoaded', () => {
     displayMode = 'standalone';
   }
 });
+
+var animationParent = document.getElementById("picture");
+var animationDiv = document.getElementsByClassName("jpg-animation")[0];
+
+var resizeAnimation = function () {
+	var w = animationParent.offsetWidth;
+	var h = animationParent.offsetHeight;
+	var s = (w/200) < (h/256) ? (w/200) : (h/256);
+	console.log(w, h, s);
+	
+	if (w <= 575) { // col-md-12
+		animationDiv.style.transform = "scale(" + s*0.7 + ", " + s*0.7 + ")";
+	}
+}
+
+resizeAnimation();
 
 // ************************************************************* -- END
 
@@ -156,8 +172,6 @@ window.addEventListener("beforeinstallprompt", (e) => {
 
 var seznam = document.getElementById("list");
 var searchDiv = document.getElementById("searchDiv").children[0];
-var animationDiv = document.getElementsByClassName("jpg-animation")[0];
-var animationParent = document.getElementById("picture");
 
 var loadImage = function (event) {
 	onOffClick(false);
@@ -195,25 +209,9 @@ var loadImage = function (event) {
 // ************************************************************* -- END
 
 
-// Resize function *******************************************************************************
+// Resize listener *******************************************************************************
 
-window.addEventListener("resize", function() {
-	var w = animationParent.offsetWidth;
-	var h = animationParent.offsetHeight;
-	var s = (w/200) < (h/256) ? (w/200) : (h/256);
-	var m = (w/200) < (h/256) ? 0.3 : 0.7
-	console.log(w, h, s);
-	
-/* 	if (w <= 575) { // col-md-12
-		animationDiv.style.transform = "scale(" + s + ", " + s + ")";
-	}
-	else if (w >= 1000) {
-		animationDiv.style.transform = "scale(" + s*m + ", " + s*m + ")";
-	} */
-	
-}, true);
-
-
+window.addEventListener("resize", resizeAnimation(), true);
 
 // ************************************************************* -- END
 

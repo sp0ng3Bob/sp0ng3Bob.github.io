@@ -68,7 +68,8 @@ self.addEventListener("fetch", event => {
 					.open(CACHE_NAME)
 					.then(cache => {
 						cache.put(event.request, resClone);
-					});
+					})
+					.catch(err => console.log(err));
 				return res;
 			})
 			.catch(err => caches.match(event.request).then(res => res))

@@ -41,6 +41,7 @@ body {
   font-family: "Open Sans", sans-serif;
   color: #272829;
   margin-top: 10px;
+  overflow: hidden;
 }
 
 main {
@@ -254,6 +255,7 @@ option[disabled] {
   margin: auto;
   width: 200px;
   height: 256px;
+  background-size: contain;
   background-position: left;
   background-repeat: no-repeat;
   animation-iteration-count: infinite;
@@ -269,8 +271,9 @@ option[disabled] {
 }
 
 .controls {
-	/* position: relative;
-	bottom: 15px; */
+	position: fixed;
+	bottom: 15px;
+	right: calc(100%/2 - 48vw);
 }
 
 .controls > .row {
@@ -284,9 +287,35 @@ option[disabled] {
    scroll-behavior: smooth;
 }
 
-@media (min-width: 576px) { /*screen, speach, print .... and , ,(or)*/
+@media (min-width: 1200px) { /*screen, speach, print .... and , ,(or)*/
 	#picture {
 		padding-top: 25vh;
+	}
+	
+	.controls {
+		width: calc(15% + 250px);
+		bottom: 35px;
+	}
+}
+
+@media (min-width: 576px) and (max-width: 1199px) {
+	#picture {
+		padding-top: 25vh;
+	}
+	
+	.controls {
+		width: 50vw;
+		right: calc(100%/2 - 50vw);
+	}
+}
+
+@media (max-width: 575px) { /*screen, speach, print .... and , ,(or)*/
+	#picture {
+		padding-top: 15vh;
+	}
+	
+	.controls {
+		width: 100%
 	}
 }
 

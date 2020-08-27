@@ -1,3 +1,55 @@
+// Loader screen *********************************************************************************
+
+var loader = document.getElementsByClassName("loader")[0];
+var menuButtons = document.getElementsByClassName("nav-menu")[0];
+var portable = (window.inheritWidth <= 720 && window.inheritWidth <= 960 ? true : false);
+
+var lockUnlockHeader = function (mode) {
+	if (mode) {
+		for (var i = 0; i < menuButtons.children[0].children.length; i++) {
+			menuButtons.children[0].children.disabled = true;
+		}
+	} else {
+		for (var i = 0; i < menuButtons.children[0].children.length; i++) {
+			menuButtons.children[0].children.disabled = false;
+		}
+	}
+}
+
+var onOffClick = function (mode) {
+	if (!mode) {
+		if (!portable) {
+			lockUnlockHeader(true);
+		}
+/* 		document.addEventListener("click", (e) => {
+			e.stopPropagation();
+			e.preventDefault();
+		},false); */
+		loader.hidden = false;
+	} else {
+		if (!portable) {
+			lockUnlockHeader(false);
+		}
+/* 		document.removeEventListener("click", (e) => {
+			e.stopPropagation();
+			e.preventDefault();
+		},false); */
+		document.addEventListener("click", (e) => {
+			if (button !== e.target && button.children[0] !== e.target) {
+				if (document.body.classList.contains("mobile-nav-active")) {
+					document.body.classList.remove("mobile-nav-active");
+					button.disabled = false;
+				}
+			}
+		});
+		loader.hidden = true;
+	}
+}
+
+window.onload = onOffClick(true);
+
+// ************************************************************* -- END
+
 // Ask for storage ********************************************************************************
 
 /* if (navigator.storage && navigator.storage.persist) {
@@ -21,8 +73,6 @@ window.addEventListener('DOMContentLoaded', () => {
     displayMode = 'standalone';
   }
 });
-
-var portable = (window.inheritWidth <= 720 && window.inheritWidth <= 960 ? true : false);
 
 // ************************************************************* -- END
 
@@ -71,6 +121,7 @@ if (window.matchMedia("(display-mode: standalone)").matches) {
 }
 
 window.addEventListener("beforeinstallprompt", (e) => {
+	onOffClick(false);
   // Prevent Chrome 67 and earlier from automatically showing the prompt
   e.preventDefault();
   // Stash the event so it can be triggered later.
@@ -94,6 +145,8 @@ window.addEventListener("beforeinstallprompt", (e) => {
         deferredPrompt = null;
       });
   });
+  
+  onOffClick(true);
 });
 
 // ************************************************************* -- END
@@ -107,6 +160,7 @@ var animationDiv = document.getElementsByClassName("jpg-animation")[0];
 var animationParent = document.getElementById("picture");
 
 var loadImage = function (event) {
+	onOffClick(false);
 	wordDOM = event.target.options[event.target.selectedIndex];
 	name = event.target.value;
 	animationDiv.style.animationName = "";
@@ -135,6 +189,7 @@ var loadImage = function (event) {
 	img.onerror = function() {
 		alert("Ni internetne povezave, prav tako ni slike na napravi!")
 	}
+	onOffClick(true);
 }
 
 // ************************************************************* -- END
@@ -145,14 +200,15 @@ var loadImage = function (event) {
 window.addEventListener("resize", function() {
 	var w = animationParent.offsetWidth;
 	var h = animationParent.offsetHeight;
-	console.log(w, h);
-/* 	var s = (w/200) < (h/256) ? (w/200) : (h/256);
+	var s = (w/200) < (h/256) ? (w/200) : (h/256);
+	var m = (w/200) < (h/256) ? 0.3 : 0.7
+	console.log(w, h, s);
 	
-	if (w <= 575) { // col-md-12
+/* 	if (w <= 575) { // col-md-12
 		animationDiv.style.transform = "scale(" + s + ", " + s + ")";
 	}
 	else if (w >= 1000) {
-		animationDiv.style.transform = "scale(" + s + ", " + s + ")";
+		animationDiv.style.transform = "scale(" + s*m + ", " + s*m + ")";
 	} */
 	
 }, true);
@@ -234,6 +290,8 @@ var lockAllDict = function (mode) {
 // Download all pictures to cache *****************************************************************
 
 var getList = function () {
+	onOffClick(false);
+	
 	var list = [];
 	for (var i = 0; i < seznam.children.length; i++) {
 		if (!seznam.children[i].classList.contains("downloaded")) {
@@ -251,16 +309,18 @@ var getList = function () {
 			});
 		}
 	}
+	
+	onOffClick(true);
 }
 
 // ************************************************************* -- END
 
-var checkConnection = funcion() {
-  fetch("https://google.com/").then(function(response) {
-			if (response.status >= "400") {
-				offline = true;
-			} else {
-        offline = false;
-			}
+var checkConnection = function() {
+	fetch("https://google.com/").then(function(response) {
+		if (response.status >= "400") {
+			offline = true;
+		} else {
+			offline = false;
+		}
 	});
 }

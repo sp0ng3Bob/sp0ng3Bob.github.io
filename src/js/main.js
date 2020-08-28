@@ -50,6 +50,21 @@ window.onload = onOffClick(true);
 
 // ************************************************************* -- END
 
+
+// SW script ****************************************************************************************
+
+if ('serviceWorker' in navigator) {
+	window.addEventListener('load', () => {
+		navigator.serviceWorker
+			.register('../../sw.js', { scope: '/' })
+			.then(reg => console.log('*sw registered'))
+			.catch(err => console.log('*sw registration failed: ', err));
+	});
+} else {alert("Vaša naprava ne podpira 'OFFLINE' načina.\nPri uporabi bo potrebna povezava z internetom!");} 
+
+// ************************************************************* -- END
+
+
 // Ask for storage ********************************************************************************
 
 /* if (navigator.storage && navigator.storage.persist) {
@@ -91,20 +106,6 @@ var resizeAnimation = function () {
 }
 
 resizeAnimation();
-
-// ************************************************************* -- END
-
-
-// SW script ****************************************************************************************
-
-if ('serviceWorker' in navigator) {
-	window.addEventListener('load', () => {
-		navigator.serviceWorker
-			.register('../../sw.js', { scope: '/' })
-			.then(reg => console.log('*sw registered'))
-			.catch(err => console.log('*sw registration failed: ', err));
-	});
-} else {alert("Vaša naprava ne podpira 'OFFLINE' načina.\nPri uporabi bo potrebna povezava z internetom!");} 
 
 // ************************************************************* -- END
 
@@ -326,6 +327,7 @@ var forwardButton = function () {
 		
 		if (i == -1) {
 			alert("Ni več vidnih besed v seznamu.")
+			return;
 		}
 		
 		seznam.selectedIndex = i;
@@ -339,6 +341,7 @@ var backwardButton = function () {
 		
 		if (i == -1) {
 			alert("Ni več vidnih besed v seznamu.")
+			return;
 		}
 		
 		seznam.selectedIndex = i;

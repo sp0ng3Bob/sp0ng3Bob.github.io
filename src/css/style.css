@@ -293,7 +293,7 @@ option[disabled] {
 	}
 	
 	.controls {
-		width: calc(100vw/6 + 250px);
+		width: calc(300px + 25vw);
 		bottom: 25px;
 	}
 }

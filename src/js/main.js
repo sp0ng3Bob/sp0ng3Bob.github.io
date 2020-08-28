@@ -175,10 +175,12 @@ window.addEventListener("beforeinstallprompt", (e) => {
 var seznam = document.getElementById("list");
 var searchDiv = document.getElementById("searchDiv").children[0];
 
-var loadImage = function (event) {
+var loadImage = function () {
 	onOffClick(false);
-	wordDOM = event.target.options[event.target.selectedIndex];
-	name = event.target.value;
+	
+	wordDOM = seznam.options[seznam.selectedIndex];
+	name = seznam.value;
+	
 	animationDiv.style.animationName = "";
 	animationDiv.style.backgroundImage = "url('./src/images/sprites/" + name + ".jpg')";
 	
@@ -198,9 +200,9 @@ var loadImage = function (event) {
 		//icon for downloaded
 		wordDOM.classList.add("downloaded");
 		
-		if (portable) {
+		//if (portable) {
       //wordDOM.innerText += " ○";
-		}
+		//}
 	}
 	img.onerror = function() {
 		alert("Ni internetne povezave, prav tako ni slike na napravi!")
@@ -311,6 +313,61 @@ var getList = function () {
 	}
 	
 	onOffClick(true);
+}
+
+// ************************************************************* -- END
+
+
+// Controls for animation *************************************************************************
+
+var forwardButton = function () {
+	if (seznam.selectedIndex != -1) {
+		var i = findVisibleOption("up");
+		
+		if (i == -1) {
+			alert("Ni več vidnih besed v seznamu.")
+		}
+		
+		seznam.selectedIndex = i;
+		loadImage();
+	}
+}
+
+var backwardButton = function () {
+	if (seznam.selectedIndex != -1) {
+		var i = findVisibleOption("down");
+		
+		if (i == -1) {
+			alert("Ni več vidnih besed v seznamu.")
+		}
+		
+		seznam.selectedIndex = i;
+		loadImage();
+	}
+}
+
+var findVisibleOption = function (mode) {
+	if (mode == "up") {
+		for (var i = seznam.selectedIndex + 1; i < seznam.options.length; i++) {
+			if (!seznam.options[i].hasAttribute("hidden")) {return i;}
+		}
+		for (var i = 0; i < seznam.selectedIndex; i++) {
+			if (!seznam.options[i].hasAttribute("hidden")) {return i;}
+		}
+	} else {
+		for (var i = seznam.selectedIndex - 1; i >= 0; i--) {
+			if (!seznam.options[i].hasAttribute("hidden")) {return i;}
+		}
+		for (var i = seznam.options.length - 1; i > seznam.selectedIndex; i--) {
+			if (!seznam.options[i].hasAttribute("hidden")) {return i;}
+		}
+	}
+	
+	return -1;
+}
+
+var moreButton = function () {
+	console.log("moreButton");
 }
 
 // ************************************************************* -- END

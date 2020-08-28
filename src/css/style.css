@@ -334,6 +334,37 @@ i.icofont-listine-dots {
   color: #149ddd;
 }
 
+i.icofont-book-mark {
+	color: #db252b;
+}
+
+.animationControls {
+	height: 10%;
+	background-color: gray;
+}
+
+/* .animationControls:focus {
+	background-color: gray;
+	
+	overflow-y: hidden;
+	max-height: 10%;
+
+	transition-property: all;
+	transition-duration: .5s;
+	transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+} */
+
+.animationControls > .row {
+	justify-content: space-evenly;
+}
+
+.playAnimation {
+	text-align: center;
+   padding-top: 50%;
+   vertical-align: middle;
+	z-index: 3211;
+}
+
 i.icofont-arrow-left:active, i.icofont-arrow-right:active {
 	animation-duration: 3s;
 	animation-name: color_flick;

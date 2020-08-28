@@ -1890,7 +1890,17 @@
 				</div>
 			
 				<div class="col-sm-6" id="picture">
-					<div class="jpg-animation"></div>
+					<div class="jpg-animation">
+						<div class="animationControls">
+							<div class="row">
+							  <div class="column" onClick="settingsButton()"><i class="icofont-settings"></i></div>
+							  <div class="column" onClick="bookmarkButton()"><i class="icofont-book-mark"></i></div>
+							</div>
+							<div class="playAnimation" onClick="playPauseButton()">
+								<i class="icofont-ui-play"></i><i class="icofont-ui-pause" hidden></i>
+							</div>
+						</div>
+					</div>
 					<div class="controls">
 						<div class="row">
 						  <div class="column" onClick="backwardButton()"><i class="icofont-arrow-left"></i></div>

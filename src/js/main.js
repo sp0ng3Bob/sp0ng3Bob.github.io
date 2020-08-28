@@ -373,6 +373,18 @@ var moreButton = function () {
 	console.log("moreButton");
 }
 
+var playPause = document.getElementsByClassName("playAnimation")[0];
+
+var playPauseButton = function() {
+	if (playPause.children[0].hasAttribute("hidden")) {
+		playPause.children[1].setAttribute("hidden", "hidden");
+		playPause.children[0].removeAttribute("hidden");
+	} else {
+		playPause.children[0].setAttribute("hidden", "hidden");
+		playPause.children[1].removeAttribute("hidden");
+	}
+}
+
 // ************************************************************* -- END
 
 var checkConnection = function() {

@@ -330,10 +330,6 @@ option[disabled] {
 	color: #b34242;
 }
 
-#clear-search:hover i {
-	color: #fff;
-}
-
 i.icofont-listine-dots {
 	cursor: pointer;
 	color: #149ddd;
@@ -345,35 +341,9 @@ i.icofont-book-mark {
 }
 
 .animationControls {
+	width: 100%;
 	height: 0px;
-	background-color: rgba(128,128,128,0.4);
-	opacity: 0.0;
 }
-
-.jpg-animation:hover .animationControls {
-	height: 10%;
-	background-color: rgba(128,128,128,0.7);
-	opacity: 1;
-	transition: all 0.4s ease-in-out;
-}
-
-.jpg-animation:not(:hover) .animationControls {
-	height: 0;
-	background-color: rgba(128,128,128,0.4);
-	opacity: 0.0;
-	transition: all 0.4s ease-in-out;
-}
-
-/* .animationControls:focus {
-	background-color: gray;
-	
-	overflow-y: hidden;
-	max-height: 10%;
-
-	transition-property: all;
-	transition-duration: .5s;
-	transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
-} */
 
 .animationControls > .row {
 	justify-content: space-evenly;
@@ -381,46 +351,132 @@ i.icofont-book-mark {
 
 .playAnimation {
 	position: absolute;
-	opacity: 0.0;
+	opacity: 0;
 	width: 100%;
-   height: 100%;
+   height: 90%;
    text-align: center;
 	top: 10%;
 	padding-top: 50%;
 }
 
-.jpg-animation:hover .playAnimation {
-	opacity: 1;
-	transition: opacity 0.4s ease-in-out;
-}
-
-.jpg-animation:not(:hover) .playAnimation {
-	opacity: 0.0;
-	transition: opacity 0.4s ease-in-out;
-}
-
-.playAnimation:hover, 
-i.icofont-arrow-left:hover, 
-i.icofont-arrow-right:hover,
-i.icofont-settings:hover,
-i.icofont-book-mark:hover {
-	cursor: pointer;
-}
-
-i.icofont-arrow-left:hover, 
-i.icofont-arrow-right:hover {
-	color: ivory;
-	background: #040b14;
-	transition: all 0.3s ease-in-out;
-}
-
-i.icofont-arrow-left:not(:hover), 
-i.icofont-arrow-right:not(:hover) {
-	color: black;
-	transition: all 0.3s ease-in-out;
-}
-
 i.icofont-ui-play,
 i.icofont-ui-pause {
 	color: ivory;
+}
+
+@media (hover: hover) and (pointer: fine) { /*PC*/
+	#clear-search:hover i {
+		color: #fff;
+	}
+	.jpg-animation:hover .animationControls {
+		height: 10%;
+		background-color: rgba(128,128,128,0.7);
+		opacity: 1;
+		transition: all 0.4s ease-in-out;
+	}
+
+	.jpg-animation:not(:hover) .animationControls {
+		height: 0;
+		background-color: rgba(128,128,128,0.4);
+		opacity: 0;
+		transition: all 0.4s ease-in-out;
+	}
+
+	.jpg-animation:hover .playAnimation {
+		opacity: 1;
+		transition: opacity 0.4s ease-in-out;
+	}
+	
+	.jpg-animation:active .playAnimation {
+		transform: scale(0.65);
+		transition: transform 0.3s ease-in-out;
+	}
+
+	.jpg-animation:not(:hover) .playAnimation {
+		opacity: 0;
+		transition: opacity 0.4s ease-in-out;
+	}
+
+	.playAnimation:hover, 
+	i.icofont-arrow-left:hover, 
+	i.icofont-arrow-right:hover,
+	i.icofont-settings:hover,
+	i.icofont-book-mark:hover {
+		cursor: pointer;
+	}
+	
+	i.icofont-settings:hover {
+		color: white;
+		background-color: #8c8c8c;
+	}
+	
+	i.icofont-book-mark:hover {
+		color: white;
+		background-color: #ec5f5f;
+	}
+
+	i.icofont-arrow-left:hover, 
+	i.icofont-arrow-right:hover {
+		color: ivory;
+		background: #040b14;
+		transition: all 0.3s ease-in-out;
+	}
+	
+	i.icofont-arrow-left:active, 
+	i.icofont-arrow-right:active {
+		color: #149ddd;
+		transition: all 0.3s ease-in-out;
+	}
+
+	i.icofont-arrow-left:not(:hover), 
+	i.icofont-arrow-right:not(:hover) {
+		color: black;
+		transition: all 0.3s ease-in-out;
+	}
+}
+
+@media (hover: none) and (pointer: coarse) { /*phone*/
+	#clear-search:active i {
+		color: #fff;
+	}
+	
+	.btn.btn-outline-danger:hover {
+		background-color: white;
+	}
+	
+	.jpg-animation:active .animationControls {
+		height: 10%;
+		background-color: rgba(128,128,128,0.7);
+		opacity: 1;
+		transition: all 0.1s ease-in-out;
+	}
+	
+	.jpg-animation:not(:active) .animationControls {
+		height: 0;
+		background-color: rgba(128,128,128,0.4);
+		opacity: 0;
+		transition: all 3.4s ease-in-out;
+	}
+
+	.jpg-animation:active .playAnimation {
+		opacity: 1;
+		transition: opacity 0.1s ease-in-out;
+	}
+	
+	.jpg-animation:not(:active) .playAnimation {
+		opacity: 0;
+		transition: opacity 2.3s ease-in-out;
+	}
+	
+	i.icofont-arrow-left:active, 
+	i.icofont-arrow-right:active {
+		color: #149ddd;
+		transition: color 0.1s ease-in-out;
+	}
+	
+	i.icofont-arrow-left:not(:active), 
+	i.icofont-arrow-right:not(:active) {
+		color: black;
+		transition: color 1s ease-in-out;
+	}
 }

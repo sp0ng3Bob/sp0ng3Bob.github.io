@@ -2,7 +2,7 @@
 
 var loader = document.getElementsByClassName("loader")[0];
 var menuButtons = document.getElementsByClassName("nav-menu")[0];
-var portable = (window.inheritWidth <= 720 && window.inheritWidth <= 960 ? true : false);
+var portable = window.matchMedia("(hover: none) and (pointer: coarse)").matches;
 
 var lockUnlockHeader = function (mode) {
 	if (mode) {
@@ -99,7 +99,7 @@ var resizeAnimation = function () {
 	console.log(w, h, s);
 	
 	if (w <= 575) { // col-md-12
-		animationDiv.style.transform = "scale(" + s*0.6 + ", " + s*0.6 + ")";
+		animationDiv.style.transform = "scale(" + s*0.85 + ", " + s*0.85 + ")";
 	} else {
 		animationDiv.style.transform = "scale(" + s*0.7 + ", " + s*0.7 + ")";
 	}
@@ -244,12 +244,15 @@ var searchDict = function (text) {
 	}
 }
 
+var clearButton = document.getElementsByClassName("btn-outline-danger")[0];
+
 var clearSearch = function (el) {
 	if (searchDiv.value != "") {
 		searchDiv.value = "";
 		el.blur();
 		this.resetAllDict();
 	}
+	clearButton.blur(); //document.activeElement
 }
 
 var resetAllDict = function () {
@@ -344,10 +347,10 @@ var forwardButton = function () {
 		seznam.selectedIndex = i;
 		loadImage();
 		
-/* 		right.style.color = "#149ddd";
-		right.style.transition = "color 0.2s cubic-bezier(0, 0.99, 1, 1)";
-		right.style.color = "ivory";
-		right.style.transition = "color 0.2s cubic-bezier(0, 0.99, 1, 1)"; */
+/* 		if (portable) {
+			right.focus();
+			right.blur();
+		} */
 	}
 }
 
@@ -363,10 +366,10 @@ var backwardButton = function () {
 		seznam.selectedIndex = i;
 		loadImage();
 		
-/* 		left.style.color = "#149ddd";
-		left.style.transition = "color 0.2s cubic-bezier(0, 0.99, 1, 1)";
-		left.style.color = "ivory";
-		left.style.transition = "color 0.2s cubic-bezier(0, 0.99, 1, 1)"; */
+/* 		if (portable) {
+			left.focus();
+			left.blur();
+		} */
 	}
 }
 
@@ -397,16 +400,34 @@ var moreButton = function () {
 var playPause = document.getElementsByClassName("playAnimation")[0];
 var animationCtrl = document.getElementsByClassName("animationControls")[0];
 
-var playPauseButton = function() {
-	if (playPause.children[0].hasAttribute("hidden")) {
-		startStopAnimation(true);
-		playPause.children[1].setAttribute("hidden", "hidden");
-		playPause.children[0].removeAttribute("hidden");
-	} else {
-		startStopAnimation(false);
-		playPause.children[0].setAttribute("hidden", "hidden");
-		playPause.children[1].removeAttribute("hidden");
+var playPauseButton = function () {
+	if (seznam.selectedIndex > -1) {
+		if (playPause.children[0].hasAttribute("hidden")) {
+			startStopAnimation(true);
+			playPause.children[1].setAttribute("hidden", "hidden");
+			playPause.children[0].removeAttribute("hidden");
+		} else {
+			startStopAnimation(false);
+			playPause.children[0].setAttribute("hidden", "hidden");
+			playPause.children[1].removeAttribute("hidden");
+		}
 	}
+}
+
+var checkPlayer = function () {
+	if (seznam.selectedIndex == -1) {
+		animationCtrl.style.display = "none";
+	} else {
+		animationCtrl.style.display = "block";
+	}
+}
+
+var settingsButton = function () {
+	console.log("settings");
+}
+
+var bookmarkButton = function () {
+	console.log("bookmark");
 }
 
 /* if (portable) {

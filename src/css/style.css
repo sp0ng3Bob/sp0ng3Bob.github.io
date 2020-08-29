@@ -346,14 +346,22 @@ i.icofont-book-mark {
 
 .animationControls {
 	height: 0px;
-	background-color: gray;
+	background-color: rgba(128,128,128,0.4);
 	opacity: 0.0;
 }
 
-.jpg-animation:focus .animationControls {
+.jpg-animation:hover .animationControls {
 	height: 10%;
-	display: block;
-	/* transition: all 0.3s ease-in-out; */
+	background-color: rgba(128,128,128,0.7);
+	opacity: 1;
+	transition: all 0.4s ease-in-out;
+}
+
+.jpg-animation:not(:hover) .animationControls {
+	height: 0;
+	background-color: rgba(128,128,128,0.4);
+	opacity: 0.0;
+	transition: all 0.4s ease-in-out;
 }
 
 /* .animationControls:focus {
@@ -372,27 +380,47 @@ i.icofont-book-mark {
 }
 
 .playAnimation {
+	position: absolute;
+	opacity: 0.0;
 	width: 100%;
    height: 100%;
    text-align: center;
-   padding-top: 65%;
-   top: -10%;
+	top: 10%;
+	padding-top: 50%;
+}
+
+.jpg-animation:hover .playAnimation {
+	opacity: 1;
+	transition: opacity 0.4s ease-in-out;
+}
+
+.jpg-animation:not(:hover) .playAnimation {
+	opacity: 0.0;
+	transition: opacity 0.4s ease-in-out;
 }
 
 .playAnimation:hover, 
 i.icofont-arrow-left:hover, 
-i.icofont-arrow-right:hover {
+i.icofont-arrow-right:hover,
+i.icofont-settings:hover,
+i.icofont-book-mark:hover {
 	cursor: pointer;
 }
 
-i.icofont-arrow-left:focus, 
-i.icofont-arrow-right:focus {
-	animation-duration: 3s;
-	animation-name: color_flick;
+i.icofont-arrow-left:hover, 
+i.icofont-arrow-right:hover {
+	color: ivory;
+	background: #040b14;
+	transition: all 0.3s ease-in-out;
 }
 
-@keyframes color_flick {
-	0% { color: black; }
-	50% { color: #149ddd; }
-	100% { color: black; }
+i.icofont-arrow-left:not(:hover), 
+i.icofont-arrow-right:not(:hover) {
+	color: black;
+	transition: all 0.3s ease-in-out;
+}
+
+i.icofont-ui-play,
+i.icofont-ui-pause {
+	color: ivory;
 }

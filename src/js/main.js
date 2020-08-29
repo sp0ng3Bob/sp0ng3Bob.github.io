@@ -329,6 +329,9 @@ var getList = function () {
 
 // Controls for animation *************************************************************************
 
+var left = document.getElementsByClassName("icofont-arrow-left")[0];
+var right = document.getElementsByClassName("icofont-arrow-right")[0];
+
 var forwardButton = function () {
 	if (seznam.selectedIndex != -1) {
 		var i = findVisibleOption("up");
@@ -340,6 +343,11 @@ var forwardButton = function () {
 		
 		seznam.selectedIndex = i;
 		loadImage();
+		
+/* 		right.style.color = "#149ddd";
+		right.style.transition = "color 0.2s cubic-bezier(0, 0.99, 1, 1)";
+		right.style.color = "ivory";
+		right.style.transition = "color 0.2s cubic-bezier(0, 0.99, 1, 1)"; */
 	}
 }
 
@@ -354,6 +362,11 @@ var backwardButton = function () {
 		
 		seznam.selectedIndex = i;
 		loadImage();
+		
+/* 		left.style.color = "#149ddd";
+		left.style.transition = "color 0.2s cubic-bezier(0, 0.99, 1, 1)";
+		left.style.color = "ivory";
+		left.style.transition = "color 0.2s cubic-bezier(0, 0.99, 1, 1)"; */
 	}
 }
 
@@ -396,15 +409,22 @@ var playPauseButton = function() {
 	}
 }
 
-/* animationDiv.addEventListener("focus", (e) => {
-	playPause.removeAttribute("hidden");
-	animationCtrl.removeAttribute("hidden");
-}, true);
+/* if (portable) {
+	animationDiv.addEventListener("click", (e) => {
+		playPause.removeAttribute("hidden");
+		animationCtrl.removeAttribute("hidden");
+	}, true);
+} else {
+	animationDiv.addEventListener("focus", (e) => {
+		playPause.removeAttribute("hidden");
+		animationCtrl.removeAttribute("hidden");
+	}, true);
 
-animationDiv.addEventListener("blur", (e) => {
-	playPause.setAttribute("hidden");
-	animationCtrl.setAttribute("hidden");
-}, true); */
+	animationDiv.addEventListener("blur", (e) => {
+		playPause.setAttribute("hidden", "hidden");
+		animationCtrl.setAttribute("hidden", "hidden");
+	}, true);
+} */
 
 // ************************************************************* -- END
 

@@ -211,6 +211,14 @@ var loadImage = function () {
 	onOffClick(true);
 }
 
+var startStopAnimation = function (mode) {
+	if (mode) {
+		animationDiv.style.animationPlayState = "running";
+	} else {
+		animationDiv.style.animationPlayState = "paused";
+	}
+}
+
 // ************************************************************* -- END
 
 
@@ -228,7 +236,7 @@ var searchDict = function (text) {
 	
 	for (var i = 0; i < seznam.children.length; i++) {
 		if (seznam.children[i].text.toLowerCase().indexOf(text.toLowerCase()) < 0) {
-			seznam.children[i].setAttribute("hidden", "");
+			seznam.children[i].setAttribute("hidden", "hidden");
 		}
 		else {
 			seznam.children[i].removeAttribute("hidden");
@@ -374,16 +382,29 @@ var moreButton = function () {
 }
 
 var playPause = document.getElementsByClassName("playAnimation")[0];
+var animationCtrl = document.getElementsByClassName("animationControls")[0];
 
 var playPauseButton = function() {
 	if (playPause.children[0].hasAttribute("hidden")) {
+		startStopAnimation(true);
 		playPause.children[1].setAttribute("hidden", "hidden");
 		playPause.children[0].removeAttribute("hidden");
 	} else {
+		startStopAnimation(false);
 		playPause.children[0].setAttribute("hidden", "hidden");
 		playPause.children[1].removeAttribute("hidden");
 	}
 }
+
+/* animationDiv.addEventListener("focus", (e) => {
+	playPause.removeAttribute("hidden");
+	animationCtrl.removeAttribute("hidden");
+}, true);
+
+animationDiv.addEventListener("blur", (e) => {
+	playPause.setAttribute("hidden");
+	animationCtrl.setAttribute("hidden");
+}, true); */
 
 // ************************************************************* -- END
 

@@ -3,6 +3,7 @@
 var loader = document.getElementsByClassName("loader")[0];
 var menuButtons = document.getElementsByClassName("nav-menu")[0];
 var portable = window.matchMedia("(hover: none) and (pointer: coarse)").matches;
+var landscape = window.matchMedia("screen and (orientation:landscape)").matches;
 
 var lockUnlockHeader = function (mode) {
 	if (mode) {
@@ -96,10 +97,22 @@ var resizeAnimation = function () {
 	var h = window.screen.height;
 	var w = window.screen.width;
 	var s = (w/200) < (h/256) || w < h ? (w/200) : (h/256);
-	console.log(w, h, s);
+	landscape = window.matchMedia("screen and (orientation:landscape)").matches;
+	console.log(w, h, w/h, landscape);
+	var ratio = w/h;
 	
-	if (w <= 575) { // col-md-12
-		animationDiv.style.transform = "scale(" + s*0.85 + ", " + s*0.85 + ")";
+	if (ratio < 1.2 && ratio >= 0.9) {
+		animationDiv.style.transform = "scale(" + s*0.55 + ", " + s*0.55 + ")";
+		console.log("posebno, kvadrat");
+	} else if (ratio < 0.9 && ratio >= 0.7) {
+		console.log("phone, skoraj kvadrat");
+		animationDiv.style.transform = "scale(" + s*0.52 + ", " + s*0.52 + ")";
+	} else if (w <= 575 && !landscape) { // col-md-12
+		console.log("phone, portret");
+		animationDiv.style.transform = "scale(" + s*0.65 + ", " + s*0.65 + ")";
+	} else if (w <= 575 && landscape) {
+		console.log("phone, landscape");
+		animationDiv.style.transform = "scale(" + s*0.7 + ", " + s*0.7 + ")";
 	} else {
 		animationDiv.style.transform = "scale(" + s*0.7 + ", " + s*0.7 + ")";
 	}

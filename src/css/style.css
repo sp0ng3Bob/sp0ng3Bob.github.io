@@ -297,7 +297,7 @@ option[disabled] {
 	}
 	
 	.controls {
-		width: calc(300px + 25vw);
+		width: calc(50vw - 150px);
 		bottom: 25px;
 	}
 }
@@ -419,19 +419,25 @@ i.icofont-ui-pause {
 	i.icofont-arrow-right:hover {
 		color: ivory;
 		background: #040b14;
-		transition: all 0.3s ease-in-out;
+		transition: all 0.25s ease-in-out;
 	}
 	
 	i.icofont-arrow-left:active, 
 	i.icofont-arrow-right:active {
 		color: #149ddd;
-		transition: all 0.3s ease-in-out;
+		transition: color 0.1s ease-in-out;
+	}
+	
+	i.icofont-arrow-left:not(:active), 
+	i.icofont-arrow-right:not(:active) {
+		color: white;
+		transition: color 0.25s ease-in-out;
 	}
 
 	i.icofont-arrow-left:not(:hover), 
 	i.icofont-arrow-right:not(:hover) {
 		color: black;
-		transition: all 0.3s ease-in-out;
+		transition: color 0.25s ease-in-out;
 	}
 }
 

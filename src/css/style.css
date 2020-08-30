@@ -297,6 +297,13 @@ option[disabled] {
    scroll-behavior: smooth;
 }
 
+.toggleDefinition {
+	font-size: 2.6em;
+   position: absolute;
+   color: #a7e1fc;
+   top: 3%;
+}
+
 @media (min-width: 1200px) and (min-height: 500px) { /*screen, speach, print .... and , ,(or)*/
 	#picture {
 		padding-top: 25vh;
@@ -310,6 +317,10 @@ option[disabled] {
 		width: calc(50vw - 150px);
 		bottom: 25px;
 	}
+	
+	.toggleDefinition {
+		left: 265px;
+	}
 }
 
 @media (max-height: 499px) and (min-width: 1200px) {
@@ -319,6 +330,10 @@ option[disabled] {
 	
 	.controls {
 		width: calc(50vw - 150px);
+	}
+	
+	.toggleDefinition {
+		left: 265px;
 	}
 }
 
@@ -335,6 +350,11 @@ option[disabled] {
 	.controls {
 		width: 50vw;
 		right: calc(100%/2 - 50vw);
+	}
+	
+	.toggleDefinition {
+		top: 2%;
+		left: 6%;
 	}
 }
 
@@ -357,6 +377,12 @@ option[disabled] {
 	
 	.controls {
 		width: 100%
+	}
+	
+	.toggleDefinition {
+		font-size: 1.8em;
+		top: 1%;
+		left: 15px;
 	}
 }
 
@@ -407,6 +433,13 @@ i.icofont-book-mark {
 	position: absolute;
 	top: 2%;
 	transform: translate(-50%, -2%);
+}
+
+i.icofont-info,
+i.icofont-stylish-up {
+	color: white;
+	background-color: #a7e1fc;
+	border-radius: 5px;
 }
 
 @media (hover: hover) and (pointer: fine) { /*PC*/
@@ -518,7 +551,6 @@ i.icofont-book-mark {
 		color: #149ddd;
 		transition: color 0.2s ease-in-out;
 	}
-	
 }
 
 @media (hover: none) and (pointer: coarse) { /*phone*/

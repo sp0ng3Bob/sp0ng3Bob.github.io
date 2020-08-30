@@ -464,6 +464,35 @@ var bookmarkButton = function () {
 
 // ************************************************************* -- END
 
+
+// ToggleDefinition function ***********************************************************************
+
+var toggleDefButton = document.getElementsByClassName("toggleDefinition")[0];
+
+var toggleDef = function () {
+	if (toggleDefButton.children[0].hasAttribute("hidden")) {
+		toggleDefButton.children[0].removeAttribute("hidden");
+		toggleDefButton.children[1].setAttribute("hidden", "hidden");
+	} else {
+		toggleDefButton.children[0].setAttribute("hidden", "hidden");
+		toggleDefButton.children[1].removeAttribute("hidden");
+		
+		//SSKJapi(seznam.options[seznam.selectedIndex].text);
+	}
+}
+
+var SSKJapi = function (text) {
+	fetch("https://fran.si/iskanje?View=1&Query="+text.replace(/s/g, "+")+"&hs=2", {mode: 'cors'}).then(function(response) {
+		if (response.status == "200") {
+			console.log(response);
+		} else {
+			console.log("problem");
+		}
+	});
+}
+		
+// ************************************************************* -- END
+
 var checkConnection = function() {
 	fetch("https://google.com/").then(function(response) {
 		if (response.status >= "400") {

@@ -402,6 +402,13 @@ i.icofont-ui-pause {
 	color: ivory;
 }
 
+i.icofont-settings,
+i.icofont-book-mark {
+	position: absolute;
+	top: 2%;
+	transform: translate(-50%, -2%);
+}
+
 @media (hover: hover) and (pointer: fine) { /*PC*/
 	#clear-search:hover i {
 		color: #fff;
@@ -446,13 +453,6 @@ i.icofont-ui-pause {
 	i.icofont-settings:hover,
 	i.icofont-book-mark:hover {
 		cursor: pointer;
-	}
-	
-	i.icofont-settings,
-	i.icofont-book-mark {
-		position: absolute;
-		top: 2%;
-		transform: translate(-50%, -2%);
 	}
 	
 	i.icofont-settings:hover,
@@ -588,6 +588,18 @@ i.icofont-ui-pause {
 	
 	i.icofont-listine-dots:not(:active){
 		color: #149ddd;
-		transition: color 0.4s ease-in-out;
+		transition: color 0.3s ease-in-out;
+	}
+	
+	i.icofont-settings:active,
+	i.icofont-book-mark:active	{
+		transform: scale(1.2) translate(-40%, -2%);
+		transition: transform 0.1s ease-in-out;
+	}
+	
+	i.icofont-settings:not(:active),
+	i.icofont-book-mark:not(:active)	{
+		transform: scale(1) translate(-50%, -2%);
+		transition: transform 0.2s ease-in-out;
 	}
 }

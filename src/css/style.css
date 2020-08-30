@@ -252,13 +252,15 @@ option[disabled] {
 # Animate sprites
 --------------------------------------------------------------*/
 .jpg-animation {
-	margin: auto;
-	width: 200px;
-	height: 256px;
-	background-size: contain;
-	background-position: left;
-	background-repeat: no-repeat;
-	animation-iteration-count: infinite;
+	position: absolute;
+	left: calc(50% - 100px);
+   width: 200px;
+   height: 255px;
+   border: 2px #040b14 ridge;
+   border-radius: 2px;
+   background-position: left;
+   background-repeat: no-repeat;
+   animation-iteration-count: infinite;
 }
 
 .jpg-animation:hover {
@@ -291,9 +293,13 @@ option[disabled] {
    scroll-behavior: smooth;
 }
 
-@media (min-width: 1200px) { /*screen, speach, print .... and , ,(or)*/
+@media (min-width: 1200px) and (min-height: 500px) { /*screen, speach, print .... and , ,(or)*/
 	#picture {
 		padding-top: 25vh;
+	}
+	
+	.jpg-animation {
+		top: 25vh;
 	}
 	
 	.controls {
@@ -302,9 +308,24 @@ option[disabled] {
 	}
 }
 
+@media (max-height: 499px) and (min-width: 1200px) {
+	.jpg-animation {
+		top: calc(50% - 145px);
+	}
+	
+	.controls {
+		width: calc(50vw - 150px);
+	}
+}
+
 @media (min-width: 576px) and (max-width: 1199px) {
-	#picture {
-		padding-top: 25vh;
+	.jpg-animation {
+		top: calc(50% - 145px);
+	}
+	
+	#seznam {
+		padding-left: 15%;
+		margin-top: 2%;
 	}
 	
 	.controls {
@@ -313,9 +334,21 @@ option[disabled] {
 	}
 }
 
+@media (max-width: 999px) and (min-width: 576px) {
+	#seznam {
+		padding-left: 15%;
+		margin-top: 2%;
+		top: -30vh;
+	}
+}
+
 @media (max-width: 575px) { /*screen, speach, print .... and , ,(or)*/
 	#picture {
 		padding-top: 8vh;
+	}
+	
+	.jpg-animation {
+		top: 8vh;
 	}
 	
 	.controls {
@@ -330,7 +363,7 @@ option[disabled] {
 	color: #b34242;
 }
 
-i.icofont-listine-dots {
+.icofont-listine-dots {
 	cursor: pointer;
 	color: #149ddd;
 }
@@ -343,6 +376,7 @@ i.icofont-book-mark {
 .animationControls {
 	width: 100%;
 	height: 0px;
+	opacity: 0;
 }
 
 .animationControls > .row {
@@ -387,9 +421,14 @@ i.icofont-ui-pause {
 		transition: opacity 0.4s ease-in-out;
 	}
 	
-	.jpg-animation:active .playAnimation {
-		transform: scale(0.65);
-		transition: transform 0.3s ease-in-out;
+	.playAnimation:active {
+		transform: scale(0.75);
+		transition: transform 0.1s ease-in-out;
+	}
+	
+	.playAnimation:not(:active) {
+		transform: scale(1);
+		transition: transform 0.2s ease-in-out;
 	}
 
 	.jpg-animation:not(:hover) .playAnimation {
@@ -405,20 +444,35 @@ i.icofont-ui-pause {
 		cursor: pointer;
 	}
 	
-	i.icofont-settings:hover {
-		color: white;
-		background-color: #8c8c8c;
+	i.icofont-settings,
+	i.icofont-book-mark {
+		position: absolute;
+		top: 2%;
+		transform: translate(-50%, -2%);
 	}
 	
-	i.icofont-book-mark:hover {
-		color: white;
-		background-color: #ec5f5f;
+	i.icofont-settings:hover,
+	i.icofont-book-mark:hover	{
+		animation: autoFocusOptions 0.3s ease-in-out;
+	}
+	
+	@keyframes autoFocusOptions {
+		0% { transform: scale(1) translate(-50%, -2%); }
+		35% { transform: scale(1.2) translate(-40%, -2%); }
+		100% { transform: scale(1) translate(-50%, -2%); }
+	}
+	
+	i.icofont-settings:active,
+	i.icofont-book-mark:active {
+		transform: scale(0.9) translate(-50%, -2%);
+		transition: transform 0.1s ease-in-out;
 	}
 
 	i.icofont-arrow-left:hover, 
 	i.icofont-arrow-right:hover {
 		color: ivory;
 		background: #040b14;
+		border-radius: 2px;
 		transition: all 0.25s ease-in-out;
 	}
 	
@@ -439,6 +493,28 @@ i.icofont-ui-pause {
 		color: black;
 		transition: color 0.25s ease-in-out;
 	}
+	
+/* 	i.icofont-listine-dots:hover {
+		color: #1983b5;
+		transition: color 0.2s ease-in-out;
+	} */
+	
+	i.icofont-listine-dots:active {
+		color: #51b8e8;
+		transition: color 0.1s ease-in-out;
+	}
+	
+/* 	i.icofont-listine-dots:not(:hover) {
+		color: #149ddd;
+		transition: color 0.2s ease-in-out;
+	} */
+	
+	i.icofont-listine-dots:not(:hover),
+	i.icofont-listine-dots:not(:active){
+		color: #149ddd;
+		transition: color 0.2s ease-in-out;
+	}
+	
 }
 
 @media (hover: none) and (pointer: coarse) { /*phone*/
@@ -458,10 +534,25 @@ i.icofont-ui-pause {
 	}
 	
 	.jpg-animation:not(:active) .animationControls {
-		height: 0;
-		background-color: rgba(128,128,128,0.4);
-		opacity: 0;
-		transition: all 3.4s ease-in-out;
+		animation: animateControlsAutoBlur 2.1s ease-in-out;
+	}
+	
+	@keyframes animateControlsAutoBlur {
+		0% {  
+			height: 10%;
+			background-color: rgba(128,128,128,0.7);
+			opacity: 1;
+		}
+		80% {  
+			height: 10%;
+			background-color: rgba(128,128,128,0.7);
+			opacity: 1;
+		}
+		100% {  
+			height: 0;
+			background-color: rgba(128,128,128,0.4);
+			opacity: 0;
+		}
 	}
 
 	.jpg-animation:active .playAnimation {
@@ -471,7 +562,7 @@ i.icofont-ui-pause {
 	
 	.jpg-animation:not(:active) .playAnimation {
 		opacity: 0;
-		transition: opacity 2.3s ease-in-out;
+		transition: opacity 2s ease-in-out;
 	}
 	
 	i.icofont-arrow-left:active, 
@@ -484,5 +575,15 @@ i.icofont-ui-pause {
 	i.icofont-arrow-right:not(:active) {
 		color: black;
 		transition: color 1s ease-in-out;
+	}
+	
+	i.icofont-listine-dots:active {
+		color: #51b8e8;
+		transition: color 0.1s ease-in-out;
+	}
+	
+	i.icofont-listine-dots:not(:active){
+		color: #149ddd;
+		transition: color 0.4s ease-in-out;
 	}
 }

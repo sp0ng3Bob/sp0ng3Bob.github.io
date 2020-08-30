@@ -406,6 +406,8 @@ var findVisibleOption = function (mode) {
 	return -1;
 }
 
+var more = document.getElementsByClassName("icofont-listine-dots")[0];
+
 var moreButton = function () {
 	console.log("moreButton");
 }

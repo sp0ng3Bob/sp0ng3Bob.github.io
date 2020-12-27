@@ -5,6 +5,11 @@ Slike v obstoječem repozitoriju so vzete s strani [Slovar slovenskega znakovneg
 Aplikacija podpira 'OFFLINE' mode, kar pomeni, da v ozadju delujejo 'service workers', ki nadzirajo sranjevanje datotek pletne strani in tako omogočajo uporabo 'aplikacije' tudi, ko telefon oziroma druga naprava nima internetnega dostopa.
 
 
+### v.06
+
+* Izgled seznama besed polepšan
+* Seznam besed pravilno urejen po abecedi
+
 ### v.05
 
 * Dodana skripta za service worker-ja, ki omogoča shranjevanje slik in njihov prikaz v načinu brez interneta,

@@ -1,5 +1,0 @@
-[1010/163339.177:ERROR:filesystem_win.cc(129)] GetFileAttributes C:\Users\Matej\AppData\Local\Google\Chrome\User Data\Crashpad\attachments\099bcdb1-d7f9-4f4f-b576-e19be96c4475: Navedene poti ni mogoèe najti. (0x3)
-[1010/163339.645:ERROR:filesystem_win.cc(129)] GetFileAttributes C:\Users\Matej\AppData\Local\Google\Chrome\User Data\Crashpad\attachments\5188c532-8032-467a-9c5b-d28df4262b44: Navedene poti ni mogoèe najti. (0x3)
-[1010/163340.441:ERROR:filesystem_win.cc(129)] GetFileAttributes C:\Users\Matej\AppData\Local\Google\Chrome\User Data\Crashpad\attachments\a5634199-6355-4eed-ba9b-df5bfa509015: Navedene poti ni mogoèe najti. (0x3)
-[1010/163340.768:ERROR:directory_reader_win.cc(43)] FindFirstFile: Navedene poti ni mogoèe najti. (0x3)
-[1011/201752.055:ERROR:directory_reader_win.cc(43)] FindFirstFile: Navedene poti ni mogoèe najti. (0x3)

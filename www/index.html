@@ -1,38 +1,166 @@
 <!DOCTYPE html>
-<html>
-    <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
-    <!-- we import arjs version without NFT but with marker + location based support -->
-    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
-    <body style="margin : 0px; overflow: hidden;">
-        <a-scene embedded arjs>
-				<a-assets>
-					<a-asset-item id="obj" src="./test/0/Box-emb.gltf"></a-asset-item>
-				</a-assets>
-        <a-marker preset="hiro">
-            <!-- we use cors proxy to avoid cross-origin problems ATTENTION! you need to set up your server -->
-            <a-entity
-            position="0 0 0"
-            scale="0.05 0.05 0.05"
-            gltf-model="#obj"
-            ></a-entity>
-        </a-marker>
-        <a-entity camera></a-entity>
-				<!-- <a-entity gltf-model="#obj"></a-entity> -->
-        </a-scene>
-    </body>
-</html>
+<html lang="si">
+	<head>
+		<title>1. seminarska - OO - AR.js & A-Frame barcodes projekt, 8.2023</title>
+		
+		<meta charset="UTF-8">
+		<meta name="description" content="AR.js projekt za prikaz dodatnih informacij v razširjeni resničnosti z uporabo črtnih kod.">
 
-<!-- <!DOCTYPE html>
-<html>
-<head>
-  <title>AR Barcode Reader</title>
-</head>
-<body>
-  <video id="cameraFeed" autoplay></video>
-  <div id="arContainer"></div>
-  
-  <script src="path/to/ar.js"></script>
-  <script src="path/to/barcode-reader-library.js"></script>
-  <script src="script.js"></script>
-</body>
-</html>  -->
+		<script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
+		<script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+
+		<script src="js/info-message.js"></script>
+		
+		<noscript>JavaScript mora biti omogočena, da lahko spletna stran deluje pravilno!</noscript>
+	</head>
+	
+	<style>
+		.controls {
+			
+		}
+		#freeze {
+			z-index: 420;
+			position: absolute;
+			height: 100px;
+			width: 100px;
+			bottom: -40px;
+			left: calc(50% - 50px);
+			background-color: red;
+			border-radius: 50%;
+			cursor: pointer;
+			transition: transform 0.7s ease-in-out;
+		}
+		.show#freeze {
+			display: block;
+			transform: scale(1);
+		}
+		.hide#freeze {
+			display: none;
+			transform: scale(0);
+		}
+	</style>
+	
+  <body style="margin : 0px; overflow: hidden;">
+		<div class="controls">
+			<button type="button" id="freeze" class="hide">scena</button>
+		</div>
+
+    <a-scene 
+			vr-mode-ui="enabled: false;"
+			renderer="logarithmicDepthBuffer: true;"
+			embedded
+			info-message="htmlSrc: #infoMsg"
+			arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: true; detectionMode: mono_and_matrix; matrixCodeType: 3x3;">
+
+			<a-assets>
+				<a-asset-item id="infoMsg" src="assets/info.html"></a-asset-item>
+			
+				<a-asset-item id="box0" src="./test/Box.gltf"></a-asset-item>
+				<a-asset-item id="box1" src="./test/BoxInterleaved.gltf"></a-asset-item>
+				<a-asset-item id="box2" src="./test/BoxTextured.gltf"></a-asset-item>
+				<a-asset-item id="box3" src="./test/BoxVertexColors.gltf"></a-asset-item>
+				
+				<a-mixin id="initial" position="0 0 0" scale="1 1 1" gltf-model="#box2"></a-mixin>
+				<!-- <a-mixin id="background" material="color: #ECECEC; opacity: 0.2;" geometry="primitive: sky; radius: 0;"></a-mixin> -->
+			</a-assets>
+			
+			<!-- <a-marker-camera markerhandler preset="hiro">
+        <a-entity
+          position="0 0 0"
+          scale="1 1 1"
+          gltf-model="#box0"
+        ></a-entity>
+      </a-marker-camera> -->
+			
+      <a-marker clickable id="zero" markerhandler type="barcode" value="0" smooth="true">
+				<a-entity
+					mixin="initial"
+					class="initial zero"
+				></a-entity>
+				<a-entity
+					class="details zero"
+					position="-0.5 -0.5 -0.5"
+					scale="1 1 1"
+					gltf-model="#box3"
+					visible="false"
+				></a-entity>
+				<a-text class="details zero" position="-4 -4 0" visible="false" value="barcode: 0"></a-text>
+				<!-- <a-plane position="0 0 0" rotation="0 0 90" width="4" height="4" color="#7BC8A4"></a-plane> -->
+				<a-sky id="bg" color="#ECECEC" opacity="0.2"></a-sky> <!-- animation="property: radius; to: 10; dur: 2000;" -->
+      </a-marker>
+      
+			<a-entity camera></a-entity>
+    </a-scene>
+	
+	<script>
+		function toggleVisibility(el) {
+			//console.log(el.classList)
+			if (el.classList[0] == "hide") {
+				el.classList = 'show';
+			} else {
+				el.classList = 'hide';
+			}
+		}
+	
+		document.addEventListener("DOMContentLoaded", () => {
+			let camera = document.querySelector('a-entity[camera]').components["camera"];
+			//let scene = document.querySelector('a-scene').components;
+			let currentEntity = {}
+			currentEntity.isPlaying = false
+			let freeze = document.querySelector("#freeze")
+		
+			AFRAME.registerComponent('markerhandler', {
+				init: function () {
+					this.el.sceneEl.addEventListener('markerFound', (e) => {
+						if (!currentEntity.isPlaying) {
+							toggleVisibility(freeze)
+							currentEntity = document.querySelector(`#${e.target.id}`).components["arjs-anchor"];						
+						}
+					})
+					this.el.sceneEl.addEventListener('markerLost', (e) => {
+						if (currentEntity.isPlaying) {
+							toggleVisibility(freeze)
+							currentEntity = {}
+							currentEntity.isPlaying = false	
+						}
+					})
+				}
+			});
+			
+			AFRAME.registerComponent("clickable", {
+				init: function() {
+					this.el.sceneEl.addEventListener("click", (e) => {
+						if (currentEntity.el && this.el.id == currentEntity.el.id) {
+							console.log(this.el.id)
+							let id = currentEntity.el.id
+							let initial = document.querySelector(`.initial.${id}`)
+							initial.setAttribute("visible", !initial.getAttribute("visible"))
+							
+							/* let bg = document.querySelector("#bg")
+							for (let i = 0; i <= 0.7; i += 0.0001) {
+								bg.setAttribute("opacity", i)
+							} */
+							
+							document.querySelectorAll(`.details.${id}`).forEach((d) => {
+								d.setAttribute("visible", !d.getAttribute("visible"))
+							})
+						}
+					})
+				}
+			})
+			
+			//console.log("https://github.com/gs1/interpretGS1scan")
+			
+			freeze.addEventListener("click", () => {
+				//console.log(currentEntity)
+				if (!currentEntity.isPlaying) {
+					currentEntity.play()
+				} else {
+					currentEntity.pause()
+				}
+			})
+		});
+	</script>
+
+  </body>
+</html>

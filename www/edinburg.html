@@ -1,0 +1,68 @@
+<!-- https://www.nationsonline.org/oneworld/scotland.htm -->
+<html lang="en">
+  <head>
+    <title>Edinburgh, Scotland (United Kingdom)</title>
+    <meta charset="UTF-8">
+    <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
+    <script src="js/aframe-tooltip-component.js"></script>
+    <script src="js/camera-position.js"></script>
+    <script src="js/link-controls.js"></script>
+    <noscript>JavaScript mora biti omogočena, da lahko spletna stran deluje pravilno!</noscript>
+  </head>
+  <style>
+		.a-loader-title {
+			color: white;
+		}
+		iframe {
+			position: absolute;
+			bottom: 10px;
+			left: 10px;
+			border: black solid 5px;
+		}
+  </style>
+  <body style="margin : 0px; overflow: hidden;">
+    <a-scene embeded raycaster="far: 100; objects: [link];" cursor="rayOrigin: mouse" camera="position: 0 0 0"
+			loading-screen="dotsColor: white; backgroundColor: black"
+			wasd-controls="acceleration:1000; fly: true"
+			vr-mode-ui="enabled: false;">
+      <a-assets>
+        <img id="flagSi" src="assets/images/flagSi.webp">
+        <img id="flagSp" src="assets/images/flagSp.webp">
+        <img id="flagSc" src="assets/images/flagSc.svg">
+        <img id="flagGr" src="assets/images/flagGr.webp">
+				
+				<img id="panoramaSc" src="assets/images/panoramaSc1.jpg">
+      </a-assets>
+			
+			<a-sky src="#panoramaSc"></a-sky>
+			
+			<a-entity id="flag" position="0 -0.2 -4">
+				<a-plane color="black" material="color: #f0dbdb" geometry="height: 1.8; width: 7" position="1.65 0 0"></a-plane>
+				<a-image src="#flagSc" position="-0.86 0 0.01" scale="1.4 1 1.4"></a-image>
+				<a-text value="known as the Saltire, the flag of Scotland consists of a white diagonal cross on a blue field. The white cross symbolizes Saint Andrew, the country's patron saint, while the blue represents the sky and sea. This iconic flag reflects Scotland's history, faith, and maritime heritage."
+				align="center" anchor="left" color="#000000"></a-text>
+			</a-entity>
+				
+			<a-entity id="description" rotation="0 90 0" position="-5 3.5 0">
+				<a-plane color="grey" position="2.5 0 0" height="1.5" width="5.2"></a-plane>
+				<a-text value="Edinburgh, the capital of Scotland, is a city of contrasts, blending medieval and modern elements. Its dramatic landscapes, historic castles, and rich cultural heritage create a captivating atmosphere." align="center" anchor="left"></a-text>
+			</a-entity>			
+
+      <a-entity position="0 4 -5">
+				<a-link href="places.html" title="HOME" position="0 1.5 12" rotate="0 0 180"></a-link>
+				<a-link id="si" href="slo.html" title="Slovenia" position="-3 1.5 -3.0" image="#flagSi"></a-link>
+				<a-link id="sp" href="barcelona.html"  title="Barcelona, Spain" position="0 1.5 -3.0" image="#flagSp"></a-link>
+				<a-link id="gr" href="santorini.html"  title="Santorini, Greece" position="3 1.5 -3.0" image="#flagGr"></a-link>
+				
+				<a-entity id="leftHand" link-controls="hand: left"></a-entity>
+				<a-entity id="rightHand" link-controls="hand: right"></a-entity>
+			</a-entity>
+    </a-scene>
+		<iframe width="180" height="200" src="https://schools.360cities.net/image/embed/Tw1jKKc0kmOm8SWTlDvvew" frameborder="0" allow="accelerometer; gyroscope" allowfullscreen></iframe>
+    <script>
+			//document.addEventListener("DOMContentLoaded", () => {
+
+			//})
+		</script>
+  </body>
+</html>

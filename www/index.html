@@ -59,7 +59,6 @@
 			info-message="htmlSrc: #infoMsg"
 			vr-mode-ui="enabled: false;"
 			loading-screen="dotsColor: white; backgroundColor: black"
-			raycaster="far: 100; objects: a-marker;" cursor="rayOrigin: mouse"
 			arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3;">
 
 			<a-assets>
@@ -153,14 +152,14 @@
 					this.el.sceneEl.addEventListener('click', this.handleClick.bind(this));
 				},
 				handleClick: function () {
-					if (currentEntity.el && this.el.id == currentEntity.el.id && currentEntity.isPlaying == true && document.querySelector(`.initial.${currentEntity.el.id}`).getAttribute("visible") == true) {
+					if (currentEntity.el && this.el.id == currentEntity.el.id && currentEntity.isPlaying == true) {
 						let id = currentEntity.el.id
 						let initial = document.querySelector(`.initial.${id}`)
 						
-						console.log(initial.getAttribute("visible"))
+						//console.log(initial.getAttribute("visible"))
 						initial.setAttribute("visible", false)
 
-						let real = document.querySelector("#theExperience")
+						//let real = document.querySelector("#theExperience")
 						//window.location = "./places.html"
 						window.location.href = "./places.html"
 						

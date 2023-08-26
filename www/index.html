@@ -60,6 +60,7 @@
 			vr-mode-ui="enabled: false;"
 			loading-screen="dotsColor: white; backgroundColor: black"
 			arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3;">
+			<!-- raycaster="far: 1000; objects: a-entity[clickable]" cursor="rayOrigin: mouse" -->
 
 			<a-assets>
 				<a-asset-item id="infoMsg" src="assets/info.html"></a-asset-item>
@@ -79,7 +80,7 @@
 			
 			<a-marker id="zero"
 				type="barcode" value="0" smooth="true"
-				clickable="id:zero" markerhandler> 
+				clickable="id: zero" markerhandler> 
 				<a-entity
 					mixin="initial"
 					class="initial zero"
@@ -101,14 +102,23 @@
 			let currentEntity = {}
 			currentEntity.isPlaying = false
 			//let freeze = document.querySelector("#freeze")
+			
+			//lol
+			/*let markers = document.querySelectorAll("[clickable]")
+			markers.forEach(m => {
+				m.addEventListener("click", e => {
+					console.log(e)
+					//window.location.href = "./places.html"
+				})
+			})*/
+			//lol
 		
 			AFRAME.registerComponent('markerhandler', {
 				init: function () {
 					this.el.sceneEl.addEventListener('markerFound', (e) => {
 						if (!currentEntity.isPlaying) {
 							//toggleVisibility(freeze)
-							currentEntity = document.querySelector(`#${e.target.id}`).components["arjs-anchor"];		
-							console.log(currentEntity)							
+							currentEntity = document.querySelector(`#${e.target.id}`).components["arjs-anchor"];							
 						}
 					})
 					this.el.sceneEl.addEventListener('markerLost', (e) => {
@@ -151,13 +161,16 @@
 				init: function () {
 					this.el.sceneEl.addEventListener('click', this.handleClick.bind(this));
 				},
-				handleClick: function () {
-					if (currentEntity.el && this.el.id == currentEntity.el.id && currentEntity.isPlaying == true) {
-						let id = currentEntity.el.id
-						let initial = document.querySelector(`.initial.${id}`)
+				handleClick: function (e) {
+					//, e.clientX, e.clientY)
+					//console.log(document.querySelector(`.initial.${currentEntity.el.id}`).getBoundingClientRect())//, e.clientX, e.clientY)
+					if (currentEntity.el && this.el.id == currentEntity.el.id && currentEntity.isPlaying == true && document.querySelector(`.initial.${currentEntity.el.id}`).getAttribute("visible") == true) {
+						//let id = currentEntity.el.id
+						//let initial = document.querySelector(`.initial.${id}`)
+						//console.log(initial.getAttribute("position"))
 						
 						//console.log(initial.getAttribute("visible"))
-						initial.setAttribute("visible", false)
+						//initial.setAttribute("visible", false)
 
 						//let real = document.querySelector("#theExperience")
 						//window.location = "./places.html"

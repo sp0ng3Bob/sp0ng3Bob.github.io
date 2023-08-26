@@ -62,7 +62,7 @@ AFRAME.registerComponent('info-message', {
       '.a-close-button-info:hover{background-color: #b32146; color: white}' +
       '.a-info-message-container {position: absolute; left: 100px; top: 20px;}' +
       '.a-info-message-button {background: rgba(0, 0, 0, 0.35) ' + this.infoMessageButtonDataURI + ' 50% 50% no-repeat;}' +
-      '.a-info-message-button {background-size: 92% 90%; border: 0; top: 0; cursor: pointer; min-width: 78px; min-height: 34px; padding-right: 0; padding-top: 0; position: fixed; left: 0; transition: background-color .1s ease; -webkit-transition: background-color .05s ease; z-index: 400; border-radius: 8px; touch-action: manipulation;}' +
+      '.a-info-message-button {background-size: 92% 90%; border: 0; top: 10px; cursor: pointer; min-width: 78px; min-height: 34px; padding-right: 0; padding-top: 0; position: fixed; left: 10px; transition: background-color .1s ease; -webkit-transition: background-color .05s ease; z-index: 400; border-radius: 8px; touch-action: manipulation;}' +
       '.a-info-message-button:active, .a-info-message-button:hover {background-color: #ef2d5e;}';
     var style = document.createElement('style');
 

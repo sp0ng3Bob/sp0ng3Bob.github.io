@@ -102,7 +102,7 @@
 			for (let z of zemljevidi) {
 				const option = document.createElement("OPTION")
 				option.setAttribute("value", z)
-				option.innerHTML = z.split("_").slice(3).join(" ")
+				option.innerHTML = z.split("_").slice(3).join(" ").slice(0, -4)
 				select.add(option)
 			}
 			mapsButtons.appendChild(select)

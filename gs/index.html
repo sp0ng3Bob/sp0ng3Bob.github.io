@@ -34,12 +34,24 @@
 				#overlay {
 					mix-blend-mode: multiply;
 				}
+				#minMax {
+					position: fixed;
+					bottom: 8px;
+					right: 8px;
+					display: none;
+				}
+				#minMax > button {
+					width: 45px;
+					height: 30px;
+					font-size: 1.3em;
+					margin: 0px !important;
+					padding: 0px !important;
+				}
 				@media screen and (orientation: portrait) {
 				
 				}
 				@media (pointer: none), (pointer: coarse) { /* PHONEs */
 					body {
-						background-color: red;
 						margin: 0px;
 						padding: 0px;
 					}
@@ -64,6 +76,9 @@
 		<div id="main">
 			<img id="overlay" src="assets/Zemljevid_Slovenije_0_Veliki_jesen.png" />
 		</div>
+		<div id="minMax">
+			<button type="button">🖵</button>
+		</div>
 		<!-- #nav hide ??
 		#settings (nav left, right,...)
 		#left | right buttons -->
@@ -72,6 +87,7 @@
 			
 			const overlay = document.querySelector("#overlay")
 			const mapsButtons = document.querySelector("#maps")
+			const minMaxButton = document.querySelector("button")
 			
 			const zemljevidi = ["Zemljevid_Slovenije_0_Veliki_jesen.png",
 													"Zemljevid_Slovenije_1_Trepetlika.png",
@@ -107,10 +123,12 @@
 			}
 			mapsButtons.appendChild(select)
 			
+			minMaxButton.addEventListener("click", (e) => {
+				
+			})
 			
 			maps.addEventListener("change", (e) => {
 				overlay.setAttribute("src", "assets/"+e.target.value)
-				
 			})
 			
 			/*try {

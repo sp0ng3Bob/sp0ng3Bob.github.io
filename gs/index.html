@@ -4,11 +4,18 @@
 			<meta charset="UTF-8">
 			<title>Zemljevidi gozdov slovenije</title>
 			
+			<!-- <link rel="manifest" href="manifest.json" /> -->
+			
 			<style>
 				nav {
 					position: fixed;
-					left: calc(50vw - 100px);
+					left: calc(50vw - 150px);
 					z-index: 420;
+				}
+				select {
+					width: 300px;
+					font-size: 1.1em;
+					font-family: monospace;
 				}
 				#main {
 					position: absolute;
@@ -16,6 +23,9 @@
 				}
 				#overlay {
 					mix-blend-mode: multiply;
+				}
+				@media screen and (orientation: portrait) {
+				
 				}
 			</style>
 	</head>
@@ -31,7 +41,8 @@
 		#settings (nav left, right,...)
 		#left | right buttons -->
 		<script>
-		
+			//const screenOrientation = window.screen.orientation
+			
 			const overlay = document.querySelector("#overlay")
 			const mapsButtons = document.querySelector("#maps")
 			
@@ -59,6 +70,7 @@
 													"Zemljevid_Slovenije_21_Bukev.png",
 													"Zemljevid_Slovenije_22_Breza.png",
 													"Zemljevid_Slovenije_23_Beli_gaber.png"]
+													
 			const select = document.createElement("SELECT")
 			for (let z of zemljevidi) {
 				const option = document.createElement("OPTION")
@@ -66,7 +78,6 @@
 				option.innerHTML = z.split("_").slice(3).join(" ")
 				select.add(option)
 			}
-			select.style.width = "200px"
 			mapsButtons.appendChild(select)
 			
 			
@@ -75,6 +86,9 @@
 				
 			})
 			
+			/*try {
+				screenOrientation.lock('landscape') //needs to be in fullscreen --> PWA/webapp manifest
+			} catch(err) { console.info(err) }*/
 		</script>
 	</body>
 </html>
@@ -82,67 +96,6 @@
 
 
 <!-- 
-<!DOCTYPE html>
-<html lang="si">
-	<head>
-			<meta charset="UTF-8">
-			<title>Zemljevidi slovenije</title>
-			
-			<style>
-				nav {
-					position: absolute;
-					z-index: 420;
-					height: 100%;
-					width: 200px;
-					color: white;
-					background-color: black;
-				}
-				#main {
-					position: absolute;
-					background-image: url("assets/Zemljevid_Slovenije_Layer-0.png");
-				}
-				#overlay {
-					mix-blend-mode: multiply;
-				}
-			</style>
-	</head>
-	<body>
-		<nav>
-			<fieldset id="maps">
-			</fieldset>
-		</nav>
-		<div id="main">
-			<img id="overlay" src="assets/Zemljevid_Slovenije_0_Veliki_jesen.png" />
-		</div>
-		<script>
-		
-			const overlay = document.querySelector("#overlay")
-			const mapsButtons = document.querySelector("#maps")
-			
-			const zemljevidi = ["Zemljevid_Slovenije_0_Veliki_jesen.png",
-													"Zemljevid_Slovenije_1_Trepetlika.png",
-													"Zemljevid_Slovenije_2_Smreka.png",
-													"Zemljevid_Slovenije_3_Robinija.png",
-													"Zemljevid_Slovenije_4_Rdeci_bor.png",
-													"Zemljevid_Slovenije_5_Ostrolistni_in_topokrpi_javor.png",
-													"Zemljevid_Slovenije_6_Mokovec.png",
-													"Zemljevid_Slovenije_7_Mali_jesen.png",
-													"Zemljevid_Slovenije_8_Macesen.png",
-													"Zemljevid_Slovenije_9_Lipa_in_lipovec.png",
-													"Zemljevid_Slovenije_10_Kostanj.png",
-													"Zemljevid_Slovenije_11_Jerebika.png",
-													"Zemljevid_Slovenije_12_Jelka.png",
-													"Zemljevid_Slovenije_13_Graden.png",
-													"Zemljevid_Slovenije_14_Gorski_javor.png",
-													"Zemljevid_Slovenije_15_Gorski_brest.png",
-													"Zemljevid_Slovenije_16_Dob.png",
-													"Zemljevid_Slovenije_17_Crni_gaber.png",
-													"Zemljevid_Slovenije_18_Crna_jelsa.png",
-													"Zemljevid_Slovenije_19_Cesnja.png",
-													"Zemljevid_Slovenije_20_Cer.png",
-													"Zemljevid_Slovenije_21_Bukev.png",
-													"Zemljevid_Slovenije_22_Breza.png",
-													"Zemljevid_Slovenije_23_Beli_gaber.png"]
 			for (let z of zemljevidi) {
 				const label = document.createElement("LABEL")
 				label.innerHTML = z.split("_").slice(3).join(" ")
@@ -154,14 +107,4 @@
 				radio.setAttribute("value", z)
 				mapsButtons.appendChild(radio)
 			}
-			
-			
-			maps.addEventListener("change", (e) => {
-				overlay.setAttribute("src", "assets/"+e.target.value)
-				
-			})
-			
-		</script>
-	</body>
-</html>
 -->

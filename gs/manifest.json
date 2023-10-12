@@ -1,0 +1,9 @@
+{
+  "name": "Zemljevidi gozdov Slovenije",
+  "short_name": "gs",
+  "start_url": ".",
+  "display": "fullscreen",
+	"orientation": "landscape",
+  "background_color": "#fff",
+  "description": "Description... bla bla bla"
+}

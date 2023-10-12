@@ -4,11 +4,18 @@
 			<meta charset="UTF-8">
 			<title>Zemljevidi gozdov slovenije</title>
 			
+			<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+			
 			<!-- <link rel="manifest" href="manifest.json" /> -->
 			
 			<style>
+				body {
+					/* margin: 0px;
+					padding: 0px; */
+				}
 				nav {
 					position: fixed;
+					top: 8px;
 					left: calc(50vw - 150px);
 					z-index: 420;
 				}
@@ -16,6 +23,9 @@
 					width: 300px;
 					font-size: 1.1em;
 					font-family: monospace;
+				}
+				#maps {
+					border: none;
 				}
 				#main {
 					position: absolute;
@@ -26,6 +36,23 @@
 				}
 				@media screen and (orientation: portrait) {
 				
+				}
+				@media (pointer: none), (pointer: coarse) { /* PHONEs */
+					body {
+						background-color: red;
+						margin: 0px;
+						padding: 0px;
+					}
+					nav {
+						left: calc(50vw - 200px);
+					}
+					select {
+						width: 400px;
+						font-size: 1.3em;
+					}
+				}
+				@media (pointer: fine) { /* PCs */
+
 				}
 			</style>
 	</head>

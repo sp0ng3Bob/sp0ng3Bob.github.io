@@ -6,8 +6,6 @@
 			
 			<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 			
-			<!-- <link rel="manifest" href="manifest.json" /> -->
-			
 			<style>
 				body {
 					/* margin: 0px;
@@ -44,11 +42,7 @@
 					width: 45px;
 					height: 30px;
 					font-size: 1.3em;
-					margin: 0px !important;
-					padding: 0px !important;
-				}
-				@media screen and (orientation: portrait) {
-				
+					padding-bottom: 29px;
 				}
 				@media (pointer: none), (pointer: coarse) { /* PHONEs */
 					body {
@@ -63,9 +57,6 @@
 						font-size: 1.3em;
 					}
 				}
-				@media (pointer: fine) { /* PCs */
-
-				}
 			</style>
 	</head>
 	<body>
@@ -79,11 +70,7 @@
 		<div id="minMax">
 			<button type="button">🖵</button>
 		</div>
-		<!-- #nav hide ??
-		#settings (nav left, right,...)
-		#left | right buttons -->
 		<script>
-			//const screenOrientation = window.screen.orientation
 			
 			const overlay = document.querySelector("#overlay")
 			const mapsButtons = document.querySelector("#maps")
@@ -131,25 +118,6 @@
 				overlay.setAttribute("src", "assets/"+e.target.value)
 			})
 			
-			/*try {
-				screenOrientation.lock('landscape') //needs to be in fullscreen --> PWA/webapp manifest
-			} catch(err) { console.info(err) }*/
 		</script>
 	</body>
 </html>
-
-
-
-<!-- 
-			for (let z of zemljevidi) {
-				const label = document.createElement("LABEL")
-				label.innerHTML = z.split("_").slice(3).join(" ")
-				mapsButtons.appendChild(label)
-				
-				const radio = document.createElement("INPUT")
-				radio.setAttribute("type", "radio")
-				radio.setAttribute("name", "maps")
-				radio.setAttribute("value", z)
-				mapsButtons.appendChild(radio)
-			}
--->

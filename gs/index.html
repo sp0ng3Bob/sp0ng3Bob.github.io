@@ -37,13 +37,18 @@
 					position: fixed;
 					bottom: 8px;
 					right: 8px;
-					display: none;
 				}
 				#minMax > button {
 					width: 45px;
 					height: 30px;
 					font-size: 1.3em;
 					padding-bottom: 29px;
+				}
+				div.fullMap {
+					background-size: contain;
+				}
+				img.fullMap {
+					width: 100%; /* portret ok ?? but landscape should have height: 100vh instead */
 				}
 				@media (pointer: none), (pointer: coarse) { /* PHONEs */
 					body {
@@ -74,41 +79,19 @@
 			</fieldset>
 		</nav>
 		<div id="main">
-			<img id="overlay" src="assets/Zemljevid_Slovenije_0_Veliki_jesen.png" />
+			<img id="overlay" src="assets/Zemljevid_Slovenije_23_Beli_gaber.png" />
 		</div>
 		<div id="minMax">
 			<button type="button">🖵</button>
 		</div>
 		<script>
 			
+			const mainFrame = document.querySelector("#main")
 			const overlay = document.querySelector("#overlay")
 			const mapsButtons = document.querySelector("#maps")
 			const minMaxButton = document.querySelector("button")
 			
-			const zemljevidi = ["Zemljevid_Slovenije_0_Veliki_jesen.png",
-													"Zemljevid_Slovenije_1_Trepetlika.png",
-													"Zemljevid_Slovenije_2_Smreka.png",
-													"Zemljevid_Slovenije_3_Robinija.png",
-													"Zemljevid_Slovenije_4_Rdeci_bor.png",
-													"Zemljevid_Slovenije_5_Ostrolistni_in_topokrpi_javor.png",
-													"Zemljevid_Slovenije_6_Mokovec.png",
-													"Zemljevid_Slovenije_7_Mali_jesen.png",
-													"Zemljevid_Slovenije_8_Macesen.png",
-													"Zemljevid_Slovenije_9_Lipa_in_lipovec.png",
-													"Zemljevid_Slovenije_10_Kostanj.png",
-													"Zemljevid_Slovenije_11_Jerebika.png",
-													"Zemljevid_Slovenije_12_Jelka.png",
-													"Zemljevid_Slovenije_13_Graden.png",
-													"Zemljevid_Slovenije_14_Gorski_javor.png",
-													"Zemljevid_Slovenije_15_Gorski_brest.png",
-													"Zemljevid_Slovenije_16_Dob.png",
-													"Zemljevid_Slovenije_17_Crni_gaber.png",
-													"Zemljevid_Slovenije_18_Crna_jelsa.png",
-													"Zemljevid_Slovenije_19_Cesnja.png",
-													"Zemljevid_Slovenije_20_Cer.png",
-													"Zemljevid_Slovenije_21_Bukev.png",
-													"Zemljevid_Slovenije_22_Breza.png",
-													"Zemljevid_Slovenije_23_Beli_gaber.png"]
+			const zemljevidi = ['Zemljevid_Slovenije_23_Beli_gaber.png', 'Zemljevid_Slovenije_22_Breza.png', 'Zemljevid_Slovenije_21_Bukev.png', 'Zemljevid_Slovenije_20_Cer.png', 'Zemljevid_Slovenije_19_Cesnja.png', 'Zemljevid_Slovenije_18_Crna_jelsa.png', 'Zemljevid_Slovenije_17_Crni_gaber.png', 'Zemljevid_Slovenije_16_Dob.png', 'Zemljevid_Slovenije_15_Gorski_brest.png', 'Zemljevid_Slovenije_14_Gorski_javor.png', 'Zemljevid_Slovenije_13_Graden.png', 'Zemljevid_Slovenije_12_Jelka.png', 'Zemljevid_Slovenije_11_Jerebika.png', 'Zemljevid_Slovenije_10_Kostanj.png', 'Zemljevid_Slovenije_9_Lipa_in_lipovec.png', 'Zemljevid_Slovenije_8_Macesen.png', 'Zemljevid_Slovenije_7_Mali_jesen.png', 'Zemljevid_Slovenije_6_Mokovec.png', 'Zemljevid_Slovenije_5_Ostrolistni_in_topokrpi_javor.png', 'Zemljevid_Slovenije_4_Rdeci_bor.png', 'Zemljevid_Slovenije_3_Robinija.png', 'Zemljevid_Slovenije_2_Smreka.png', 'Zemljevid_Slovenije_1_Trepetlika.png', 'Zemljevid_Slovenije_0_Veliki_jesen.png']
 													
 			const select = document.createElement("SELECT")
 			for (let z of zemljevidi) {
@@ -117,10 +100,15 @@
 				option.innerHTML = z.split("_").slice(3).join(" ").slice(0, -4)
 				select.add(option)
 			}
+			//select.options[0].setAttribute("selected", "selected")
 			mapsButtons.appendChild(select)
 			
 			minMaxButton.addEventListener("click", (e) => {
 				
+				mainFrame.classList.toggle("fullMap")
+				overlay.classList.toggle("fullMap")
+				//mainFrame.style.backgroundSize = "contain"
+				//overlay.style.width = "100%"
 			})
 			
 			maps.addEventListener("change", (e) => {

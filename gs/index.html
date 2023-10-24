@@ -47,13 +47,23 @@
 					font-size: 1.3em;
 					padding-bottom: 30px;
 				}
-    
 				img.fullMap {
 					position: fixed;
 					margin: auto;
 				}
+				#sciName {
+					position: fixed;
+					bottom: 8px;
+					left: 8px;
+					background-color: white;
+					padding: 5.5px 10px;
+					font-size: 1.3em;
+					font-family: monospace;
+					border: solid black 1px;
+					font-weight: bold;
+					border-radius: 3px;
+				}
 
-				
 				@media (orientation: landscape) {
 					div.fullMap {
 						background-size: contain;
@@ -75,7 +85,7 @@
 					}
 				}
 				
-				@media (pointer: none), (pointer: coarse) { /* PHONEs */
+				@media (pointer: none), (pointer: coarse) { /* PHONEs - touch device */
 					body {
 						margin: 0px;
 						padding: 0px;
@@ -88,7 +98,7 @@
 						font-size: 1.3em;
 					}
 				}
-				@media screen and (max-width: 450px) { /* PHONEs */
+				@media screen and (max-width: 450px) { /* PHONEs - small screen sizes*/
 					nav {
 						left: 15%;
 					}
@@ -100,24 +110,28 @@
 	</head>
 	<body>
 		<nav>
-			<fieldset id="maps">
-			</fieldset>
+			<fieldset id="maps"></fieldset>
 		</nav>
 		<div id="main">
 			<img id="overlay" src="assets/Zemljevid_Slovenije_23_Beli_gaber.png" />
 		</div>
 		<div id="minMax">
-			<button type="button">🗺️</button> <!-- &#x1F5B5;🔍🗺️🖵🗆 -->
+			<button type="button">🗺️</button>
+		</div>
+		<div id="sciName">
+			<span>Carpinus betulus</span>
 		</div>
 		<script>
-			
 			const mainFrame = document.querySelector("#main")
 			const overlay = document.querySelector("#overlay")
 			const mapsButtons = document.querySelector("#maps")
 			const minMaxButton = document.querySelector("button")
+			const latName = document.querySelector("#sciName").children[0]
 			
-			const zemljevidi = ['Zemljevid_Slovenije_23_Beli_gaber.png', 'Zemljevid_Slovenije_22_Breza.png', 'Zemljevid_Slovenije_21_Bukev.png', 'Zemljevid_Slovenije_20_Cer.png', 'Zemljevid_Slovenije_19_Cesnja.png', 'Zemljevid_Slovenije_18_Crna_jelsa.png', 'Zemljevid_Slovenije_17_Crni_gaber.png', 'Zemljevid_Slovenije_16_Dob.png', 'Zemljevid_Slovenije_15_Gorski_brest.png', 'Zemljevid_Slovenije_14_Gorski_javor.png', 'Zemljevid_Slovenije_13_Graden.png', 'Zemljevid_Slovenije_12_Jelka.png', 'Zemljevid_Slovenije_11_Jerebika.png', 'Zemljevid_Slovenije_10_Kostanj.png', 'Zemljevid_Slovenije_9_Lipa_in_lipovec.png', 'Zemljevid_Slovenije_8_Macesen.png', 'Zemljevid_Slovenije_7_Mali_jesen.png', 'Zemljevid_Slovenije_6_Mokovec.png', 'Zemljevid_Slovenije_5_Ostrolistni_in_topokrpi_javor.png', 'Zemljevid_Slovenije_4_Rdeci_bor.png', 'Zemljevid_Slovenije_3_Robinija.png', 'Zemljevid_Slovenije_2_Smreka.png', 'Zemljevid_Slovenije_1_Trepetlika.png', 'Zemljevid_Slovenije_0_Veliki_jesen.png']
-													
+			const zemljevidi = ['Zemljevid_Slovenije_23_Beli_gaber.png', 'Zemljevid_Slovenije_22_Breza.png', 'Zemljevid_Slovenije_21_Bukev.png', 'Zemljevid_Slovenije_20_Cer.png', 'Zemljevid_Slovenije_19_Cesnja.png', 'Zemljevid_Slovenije_18_Crna_jelsa.png', 'Zemljevid_Slovenije_17_Crni_gaber.png', 'Zemljevid_Slovenije_16_Dob.png', 'Zemljevid_Slovenije_15_Gorski_brest.png', 'Zemljevid_Slovenije_14_Gorski_javor.png', 'Zemljevid_Slovenije_13_Graden.png', 'Zemljevid_Slovenije_12_Jelka.png', 'Zemljevid_Slovenije_11_Jerebika.png', 'Zemljevid_Slovenije_10_Kostanj.png', 'Zemljevid_Slovenije_9_Lipa_in_lipovec.png', 'Zemljevid_Slovenije_8_Macesen.png', 'Zemljevid_Slovenije_7_Mali_jesen.png', 'Zemljevid_Slovenije_6_Mokovec.png', 'Zemljevid_Slovenije_5_Ostrolistni_in_topokrpi_javor.png', 'Zemljevid_Slovenije_4_Rdeci_bor.png','Zemljevid_Slovenije_3_Robinija.png', 'Zemljevid_Slovenije_2_Smreka.png', 'Zemljevid_Slovenije_1_Trepetlika.png', 'Zemljevid_Slovenije_0_Veliki_jesen.png']
+			
+			const latinskaImena = {"Beli gaber": "Carpinus betulus", "Breza": "Betula", "Bukev": "Fagus sylvatica", "Cer": "Quercus cerris", "Cesnja": "Prunus avium", "Crna jelsa": "Alnus glutinosa", "Crni gaber": "Ostrya carpinifolia", "Dob": "Quercus robur", "Gorski brest": "Ulmus glabra", "Gorski javor": "Acer pseudoplatanus", "Graden": "Quercus petraea", "Jelka": "Abies", "Jerebika": "Sorbus aucuparia", "Kostanj": "Castanea", "Lipa in lipovec": "Tilia platyphyllos & Tilia cordata", "Macesen": "Larix", "Mali jesen": "Fraxinus ornus (= Črni jesen)", "Mokovec": "Sorbus aria", "Ostrolistni in topokrpi javor": "Acer platanoides & Acer obtusatum", "Rdeci bor": "Pinus sylvestris", "Robinija": "Robinia pseudoacacia", "Smreka": "Picea abies", "Trepetlika": "Populus tremula", "Veliki jesen": "Fraxinus excelsior"}
+			
 			const select = document.createElement("SELECT")
 			for (let z of zemljevidi) {
 				const option = document.createElement("OPTION")
@@ -134,12 +148,8 @@
 			
 			maps.addEventListener("change", (e) => {
 				overlay.setAttribute("src", "assets/"+e.target.value)
+				latName.innerHTML = latinskaImena[e.target.value.split("_").slice(3).join(" ").slice(0, -4)]
 			})
-			
-			//window.addEventListener("orientationchange", (e) => {
-				
-			//})
-			
 		</script>
 	</body>
 </html>

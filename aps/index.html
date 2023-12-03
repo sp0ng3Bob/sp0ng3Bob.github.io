@@ -212,7 +212,7 @@
 		}
 		
 		function loadPDF(pdfPath) {
-			pdfViewer.src = `https://docs.google.com/viewer?url=${window.location.origin}/${pdfPath.substring(2)}&embedded=true`
+			pdfViewer.src = `${pdfPath.substring(2)}` //`https://docs.google.com/viewer?url=${window.location.origin}/${pdfPath.substring(2)}&embedded=true`
 			//console.error(pdfPath, pdfViewer.src.slice(0, -3))
 		}
 		

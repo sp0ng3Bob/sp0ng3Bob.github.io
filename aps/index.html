@@ -19,6 +19,11 @@
 		font-family: monospace;
 	}
 	
+	button,
+	input {
+    font-size: 1.1em;
+	}
+	
 	#searchBar {
 		display: flex;
 		align-items: center;
@@ -35,27 +40,30 @@
 		text-transform: uppercase;
 		/*font-weight: bold;*/
 		padding: 5px 10px;
+		cursor: pointer;
 	}
 	
-	.OFF#toggle::before {
-		content: "vVv  SHOW FILTERS  vVv";
+	#toggle {
+		line-height: 25px;
+    font-size: 1.1em;
+		cursor: pointer;
 	}
+	.OFF#toggle::before { content: "vVv  SHOW FILTERS  vVv"; }
+	.ON#toggle::before { content: "--- HIDE FILTERS ---"; }
 	
-	.ON#toggle::before {
-		content: "--- HIDE FILTERS ---";
+	#filters {
+		display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 50px;
+		margin: 15px;
 	}
-	
-	.Hide#filters {
-		display: none;
-	}
-	
-	.Show#filters {
-		
-	}
+	.Hide#filters { display: none; }
+	/*.Show#filters { }*/
 	
 	#content {
 		display: flex;
-		height: 93vh;
+		height: 90vh;
 		overflow: hidden;
 	}
 	
@@ -112,6 +120,13 @@
 		font-weight: bold;
 	}
 	.PlantCardName span:last-child { color: darkslategrey; }
+	/*.PlantCardName span:last-child:after { 
+		content: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg width='800px' height='800px' version='1.1' viewBox='-.5 0 48 48' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg transform='translate(-401 -860)'%3E%3Cg transform='translate(401 860)'%3E%3Cpath d='m9.8273 24c0-1.5243 0.25316-2.9856 0.705-4.3563l-7.9088-6.0395c-1.5414 3.1296-2.4098 6.656-2.4098 10.396 0 3.7365 0.86736 7.2608 2.4066 10.388l7.9045-6.0512c-0.44757-1.3643-0.69752-2.8203-0.69752-4.3371' fill='%23FBBC05'%3E%3C/path%3E%3Cpath d='m23.714 10.133c3.3114 0 6.3023 1.1733 8.6523 3.0933l6.8364-6.8267c-4.1659-3.6267-9.5068-5.8667-15.489-5.8667-9.2868 0-17.268 5.3109-21.09 13.071l7.9088 6.0395c1.8223-5.5317 7.0169-9.5104 13.181-9.5104' fill='%23EB4335'%3E%3C/path%3E%3Cpath d='m23.714 37.867c-6.1645 0-11.359-3.9787-13.181-9.5104l-7.9088 6.0384c3.822 7.7611 11.803 13.072 21.09 13.072 5.7319 0 11.204-2.0352 15.311-5.8485l-7.5072-5.8037c-2.1182 1.3344-4.7855 2.0523-7.8041 2.0523' fill='%2334A853'%3E%3C/path%3E%3Cpath d='m46.145 24c0-1.3867-0.21364-2.88-0.53409-4.2667h-21.898v9.0667h12.605c-0.63023 3.0912-2.3457 5.4677-4.8004 7.0144l7.5072 5.8037c4.3144-4.0043 7.1205-9.9691 7.1205-17.618' fill='%234285F4'%3E%3C/path%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/svg%3E%0A");
+		width: 15px;
+    height: 15px;
+    display: inline-block;
+		cursor: pointer;
+	}*/
 	
 	.PlantCardFamily { 
 		width: 35%;
@@ -122,6 +137,7 @@
 	}
 	
 	.PlantCardType { 
+		height: 70%;
     width: 25%;
 		text-align: center;
     border-radius: 2.5%;
@@ -130,16 +146,37 @@
 		letter-spacing: 1px;
 	}
 	.PlantCardType:before {
-		content: attr(data-type);
-		display: none; /* Hide the actual content, keeping it in the generated content */
+		display: inline-block;
+    content: attr(data-type);
+    padding-bottom: 5px;
 	}
-	.PlantCardType[data-type="aquatic"] { background-color: #8ab4d2; }
-	.PlantCardType[data-type="cactus"] { background-color: #b9442e; }
-	.PlantCardType[data-type="climber"] { background-color: #98925c; }
-	.PlantCardType[data-type="herb"] { background-color: #bea61d; }
-	.PlantCardType[data-type="palm"] { background-color: #50655b; }
-	.PlantCardType[data-type="shrub"] { background-color: #a16f46; }
-	.PlantCardType[data-type="tree"] { background-color: #704524; }
+	.PlantCardType[data-type="aquatic"] { border: 2px solid #8ab4d2; background-color: #8ab4d2a0; }
+	.PlantCardType[data-type="cactus"] { border: 2px solid #b9442e; background-color: #b9442ea0; }
+	.PlantCardType[data-type="climber"] { border: 2px solid #98925c; background-color: #98925ca0; }
+	.PlantCardType[data-type="herb"] { border: 2px solid #bea61d; background-color: #bea61da0; }
+	.PlantCardType[data-type="palm"] { border: 2px solid #50655b; background-color: #50655ba0; }
+	.PlantCardType[data-type="shrub"] { border: 2px solid #a16f46; background-color: #a16f46a0; }
+	.PlantCardType[data-type="tree"] { border: 2px solid #704524; background-color: #704524a0; }
+	.PlantCardType span {
+		width: 50%;
+    display: inline-block;
+	}
+	.PlantCardType span[data-type]:after {
+		display: inline-block;
+		content: "";
+		background-size: contain;
+		width: 25px;
+    height: 25px;
+    padding: 10px;
+		cursor: pointer;
+	}
+	.PlantCardType span[data-type="pdf"]:after {
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800px' height='800px' viewBox='0 0 15 15' fill='none'%3E%3Cpath d='M2.5 6.5V6H2V6.5H2.5ZM6.5 6.5V6H6V6.5H6.5ZM6.5 10.5H6V11H6.5V10.5ZM13.5 3.5H14V3.29289L13.8536 3.14645L13.5 3.5ZM10.5 0.5L10.8536 0.146447L10.7071 0H10.5V0.5ZM2.5 7H3.5V6H2.5V7ZM3 11V8.5H2V11H3ZM3 8.5V6.5H2V8.5H3ZM3.5 8H2.5V9H3.5V8ZM4 7.5C4 7.77614 3.77614 8 3.5 8V9C4.32843 9 5 8.32843 5 7.5H4ZM3.5 7C3.77614 7 4 7.22386 4 7.5H5C5 6.67157 4.32843 6 3.5 6V7ZM6 6.5V10.5H7V6.5H6ZM6.5 11H7.5V10H6.5V11ZM9 9.5V7.5H8V9.5H9ZM7.5 6H6.5V7H7.5V6ZM9 7.5C9 6.67157 8.32843 6 7.5 6V7C7.77614 7 8 7.22386 8 7.5H9ZM7.5 11C8.32843 11 9 10.3284 9 9.5H8C8 9.77614 7.77614 10 7.5 10V11ZM10 6V11H11V6H10ZM10.5 7H13V6H10.5V7ZM10.5 9H12V8H10.5V9ZM2 5V1.5H1V5H2ZM13 3.5V5H14V3.5H13ZM2.5 1H10.5V0H2.5V1ZM10.1464 0.853553L13.1464 3.85355L13.8536 3.14645L10.8536 0.146447L10.1464 0.853553ZM2 1.5C2 1.22386 2.22386 1 2.5 1V0C1.67157 0 1 0.671573 1 1.5H2ZM1 12V13.5H2V12H1ZM2.5 15H12.5V14H2.5V15ZM14 13.5V12H13V13.5H14ZM12.5 15C13.3284 15 14 14.3284 14 13.5H13C13 13.7761 12.7761 14 12.5 14V15ZM1 13.5C1 14.3284 1.67157 15 2.5 15V14C2.22386 14 2 13.7761 2 13.5H1Z' fill='%23000000'/%3E%3C/svg%3E");
+	}
+	.PlantCardType span[data-type="png"]:after {
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800px' height='800px' viewBox='0 0 15 15' fill='none'%3E%3Cpath d='M2.5 6.5V6H2V6.5H2.5ZM10.5 10.5H10V11H10.5V10.5ZM12.5 10.5V11H13V10.5H12.5ZM13.5 3.5H14V3.29289L13.8536 3.14645L13.5 3.5ZM10.5 0.5L10.8536 0.146447L10.7071 0H10.5V0.5ZM6.5 6.5L6.94721 6.27639L6 6.5H6.5ZM6 10.5V11H7V10.5H6ZM8.5 10.5L8.05279 10.7236C8.15649 10.931 8.38919 11.0399 8.61488 10.9866C8.84056 10.9333 9 10.7319 9 10.5H8.5ZM9 6.5V6H8V6.5H9ZM2.5 7H3.5V6H2.5V7ZM3 11V8.5H2V11H3ZM3 8.5V6.5H2V8.5H3ZM3.5 8H2.5V9H3.5V8ZM4 7.5C4 7.77614 3.77614 8 3.5 8V9C4.32843 9 5 8.32843 5 7.5H4ZM3.5 7C3.77614 7 4 7.22386 4 7.5H5C5 6.67157 4.32843 6 3.5 6V7ZM10 6V10.5H11V6H10ZM10.5 11H12.5V10H10.5V11ZM13 10.5V8.5H12V10.5H13ZM10.5 7H13V6H10.5V7ZM2 5V1.5H1V5H2ZM13 3.5V5H14V3.5H13ZM2.5 1H10.5V0H2.5V1ZM10.1464 0.853553L13.1464 3.85355L13.8536 3.14645L10.8536 0.146447L10.1464 0.853553ZM2 1.5C2 1.22386 2.22386 1 2.5 1V0C1.67157 0 1 0.671573 1 1.5H2ZM1 12V13.5H2V12H1ZM2.5 15H12.5V14H2.5V15ZM14 13.5V12H13V13.5H14ZM12.5 15C13.3284 15 14 14.3284 14 13.5H13C13 13.7761 12.7761 14 12.5 14V15ZM1 13.5C1 14.3284 1.67157 15 2.5 15V14C2.22386 14 2 13.7761 2 13.5H1ZM6 6.5V10.5H7V6.5H6ZM6.05279 6.72361L8.05279 10.7236L8.94721 10.2764L6.94721 6.27639L6.05279 6.72361ZM8 6.5V10.5H9V6.5H8Z' fill='%23000000'/%3E%3C/svg%3E");
+	}
+	
 	
 	@media only screen and (max-width: 900px) and (orientation: portrait) {
 		#content {
@@ -165,12 +202,26 @@
 <body>
 	<section id="searchBar">
 		<div id="search">
-			<input type="search" style="flex: 1;" placeholder="Search plants by science name, common names, family and type.">
+			<input type="search" style="flex: 1; line-height: 25px; padding-inline-start: 5px;" placeholder="Search plants by science name, common names, family and type.">
 			<button type="button">Search [ENTER]</button>
 		</div>
 		<span id="toggle" class="OFF"></span>
 		<div id="filters" class="Hide">
-			To-Do. lol
+			<!--<section>
+				<label for="ff">Filter by plant family:</label>
+				<br>
+				<select id="filterFamily" name="ff">
+					<option value="volvo">Volvo</option>
+				</select>
+			</section>-->
+			<section>
+				<!-- <label for="tf">Filter by plant types:</label> <!-- https://www.w3schools.com/howto/howto_css_custom_checkbox.asp ->
+				<br>
+				<label class="container">One
+					<input type="checkbox" checked="checked">
+					<span class="checkmark"></span>
+				</label>-->
+			</section>
 		</div>
 	</section>
 	
@@ -195,13 +246,14 @@
 		
 		const dbPath 					 = "./assets/book parts/Plants by family/PlantsData.json"
 		const baseFolderPlants = "./assets/book parts/Plants by family/"
-		const pdfPart1 				 = "./assets/book parts/Authors preface-fwv.pdf"
-		const pdfPart2 				 = "./assets/book parts/Introduction-fwv.pdf"
-		const pdfPart3 				 = "./assets/book parts/Planning checklists for quick reference-fwv.pdf"
+		//const pdfPart1 				 = "./assets/book parts/Authors preface-fwv.pdf"
+		//const pdfPart2 				 = "./assets/book parts/Introduction-fwv.pdf"
+		//const pdfPart3 				 = "./assets/book parts/Planning checklists for quick reference-fwv.pdf"
+		const book 						 = "./assets/book parts/Rest of the book.pdf"
 		
 		let plantsDataBase = {}
     let isResizing = false
-		let previewMode = "pdf" //"png"
+		//let previewMode = "pdf" //"png"
 		
 		function loadJSON(jsonPath) {
 			fetch(jsonPath)
@@ -214,8 +266,12 @@
 		}
 		
 		function loadPDF(pdfPath) {
-			pdfViewer.src = `${pdfPath.substring(2)}` //`https://docs.google.com/viewer?url=${window.location.origin}/${pdfPath.substring(2)}&embedded=true`
+			pdfViewer.src = pdfPath //`${pdfPath.substring(2)}` //`https://docs.google.com/viewer?url=${window.location.origin}/${pdfPath.substring(2)}&embedded=true`
 			//console.error(pdfPath, pdfViewer.src.slice(0, -3))
+		}
+		
+		function loadPNG(pngPath) {
+			pdf.Viewer.src = pngPath
 		}
 		
 		function downloadPNG(plantName) {
@@ -261,7 +317,7 @@
 				const listItem = document.createElement('li')
 				const liCard = document.createElement("div")
 				liCard.setAttribute("class", "PlantCard")
-				liCard.setAttribute("onclick", `checkDetails(\"${plant.plantFamily}/${plant.plantName}-fwv.${previewMode}\")`)
+				//liCard.setAttribute("onclick", `checkDetails(\"${plant.plantFamily}/${plant.plantName}-fwv.${previewMode}\")`)
 				
 				const spanName = document.createElement('span')
 				spanName.setAttribute("class", "PlantCardName")
@@ -274,7 +330,14 @@
 				const spanType = document.createElement('span')
 				spanType.setAttribute("class", "PlantCardType")
 				spanType.setAttribute("data-type", plant.plantType)
-				spanType.textContent = plant.plantType
+				//spanType.textContent = plant.plantType
+				
+				name = plant.plantName.replace(/ /g, "%20")
+				pdfClick = `checkDetails('${plant.plantFamily}/${name}-fwv.pdf')`
+				pdfFile = `<span onclick=${pdfClick} data-type=pdf></span>`
+				pngClick = `checkDetails('${plant.plantFamily}/${name}.png')`
+				pngFile = `<span onclick=${pngClick} data-type=png></span>`
+				spanType.innerHTML = `<br>${pdfFile}${pngFile}`
 				
 				liCard.appendChild(spanName)
 				liCard.appendChild(spanFamily)
@@ -285,8 +348,8 @@
 			});
 		}
 		
-		function checkDetails(pdfName) {
-			loadPDF(baseFolderPlants + pdfName)
+		function checkDetails(plantFileName) {
+			loadPDF(baseFolderPlants + plantFileName)
 		}
 		
     function handleMouseMove(e) {
@@ -313,7 +376,7 @@
 			filterToggle.classList.toggle("ON")
 			filterToggle.classList.toggle("OFF")
 			filtersDiv.classList.toggle("Hide")
-			filtersDiv.classList.toggle("Show")
+			//filtersDiv.classList.toggle("Show")
 		})
 		
 		resizeHandle.addEventListener('mousedown', (e) => {
@@ -328,7 +391,7 @@
 		
 		//main
 		loadJSON(dbPath)
-		loadPDF(pdfPart2)
+		loadPDF(book)
 	</script>
 </body>
 </html>

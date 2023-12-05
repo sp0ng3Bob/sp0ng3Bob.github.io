@@ -38,8 +38,8 @@
 	
 	button {
 		text-transform: uppercase;
-		/*font-weight: bold;*/
-		padding: 5px 10px;
+		font-weight: bold;
+		/*padding: 5px 10px;*/
 		cursor: pointer;
 	}
 	
@@ -68,8 +68,9 @@
 	}
 	
 	#listOfPlants {
-		/*width: 40%;*/
-		flex: 1;
+		/*flex-basis: 50%;*/
+		width: 50%;
+		flex: auto;
 		overflow-y: auto;
 		border-right: 1px solid #ccc;
 		padding: 5px;
@@ -84,10 +85,41 @@
   }
 	
 	#viewerRegion {
-		/*width: 60%;*/
-		flex: 2;
+		/*flex-basis: 50%;*/
+		width: 50%;
+		flex: auto;
     overflow: hidden;
     padding: 5px;
+		position: relative;
+	}
+	
+	.Fullscreen#viewerRegion,
+	.Fullscreen#pdfViewer {
+		position: absolute;
+		top: 0px;
+		left: 0px;
+		width: 100%;
+    height: 100%;
+	}
+	
+	#f11 {
+		position: absolute;
+		bottom: 5px;
+		left: calc(50% - 50px);
+    width: 100px;
+    height: 40px;
+	}
+	
+	#f11:after {
+		content: "Fullscreen"
+	}
+	
+	.Fullscreen#f11 {
+		top: 65px;
+	}
+	
+	.Fullscreen#f11:after {
+		content: "Exit view";
 	}
 	
 	li {
@@ -109,6 +141,7 @@
 		width: 100%;
 		height: 100%;
 		place-items: center;
+    justify-content: space-between;
 	}
 	
 	.PlantCard > span {
@@ -118,14 +151,22 @@
 	.PlantCardName { 
 		width: 40%;
 		font-weight: bold;
+		position: relative;
 	}
 	.PlantCardName span:last-child { color: darkslategrey; }
-	/*.PlantCardName span:last-child:after { 
-		content: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg width='800px' height='800px' version='1.1' viewBox='-.5 0 48 48' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg transform='translate(-401 -860)'%3E%3Cg transform='translate(401 860)'%3E%3Cpath d='m9.8273 24c0-1.5243 0.25316-2.9856 0.705-4.3563l-7.9088-6.0395c-1.5414 3.1296-2.4098 6.656-2.4098 10.396 0 3.7365 0.86736 7.2608 2.4066 10.388l7.9045-6.0512c-0.44757-1.3643-0.69752-2.8203-0.69752-4.3371' fill='%23FBBC05'%3E%3C/path%3E%3Cpath d='m23.714 10.133c3.3114 0 6.3023 1.1733 8.6523 3.0933l6.8364-6.8267c-4.1659-3.6267-9.5068-5.8667-15.489-5.8667-9.2868 0-17.268 5.3109-21.09 13.071l7.9088 6.0395c1.8223-5.5317 7.0169-9.5104 13.181-9.5104' fill='%23EB4335'%3E%3C/path%3E%3Cpath d='m23.714 37.867c-6.1645 0-11.359-3.9787-13.181-9.5104l-7.9088 6.0384c3.822 7.7611 11.803 13.072 21.09 13.072 5.7319 0 11.204-2.0352 15.311-5.8485l-7.5072-5.8037c-2.1182 1.3344-4.7855 2.0523-7.8041 2.0523' fill='%2334A853'%3E%3C/path%3E%3Cpath d='m46.145 24c0-1.3867-0.21364-2.88-0.53409-4.2667h-21.898v9.0667h12.605c-0.63023 3.0912-2.3457 5.4677-4.8004 7.0144l7.5072 5.8037c4.3144-4.0043 7.1205-9.9691 7.1205-17.618' fill='%234285F4'%3E%3C/path%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/svg%3E%0A");
+	/*.PlantCardName span:last-child:after { */
+	/*.PlantCardName:after { 
+		position: absolute;
+		left: 98%;
+    top: calc(50% - 15px/2);
+		display: inline-block;
+		content: "";
+		background-size: contain;
 		width: 15px;
     height: 15px;
-    display: inline-block;
+    /*padding: 10px;*/
 		cursor: pointer;
+		background-image: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg width='800px' height='800px' version='1.1' viewBox='-.5 0 48 48' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg transform='translate(-401 -860)'%3E%3Cg transform='translate(401 860)'%3E%3Cpath d='m9.8273 24c0-1.5243 0.25316-2.9856 0.705-4.3563l-7.9088-6.0395c-1.5414 3.1296-2.4098 6.656-2.4098 10.396 0 3.7365 0.86736 7.2608 2.4066 10.388l7.9045-6.0512c-0.44757-1.3643-0.69752-2.8203-0.69752-4.3371' fill='%23FBBC05'%3E%3C/path%3E%3Cpath d='m23.714 10.133c3.3114 0 6.3023 1.1733 8.6523 3.0933l6.8364-6.8267c-4.1659-3.6267-9.5068-5.8667-15.489-5.8667-9.2868 0-17.268 5.3109-21.09 13.071l7.9088 6.0395c1.8223-5.5317 7.0169-9.5104 13.181-9.5104' fill='%23EB4335'%3E%3C/path%3E%3Cpath d='m23.714 37.867c-6.1645 0-11.359-3.9787-13.181-9.5104l-7.9088 6.0384c3.822 7.7611 11.803 13.072 21.09 13.072 5.7319 0 11.204-2.0352 15.311-5.8485l-7.5072-5.8037c-2.1182 1.3344-4.7855 2.0523-7.8041 2.0523' fill='%2334A853'%3E%3C/path%3E%3Cpath d='m46.145 24c0-1.3867-0.21364-2.88-0.53409-4.2667h-21.898v9.0667h12.605c-0.63023 3.0912-2.3457 5.4677-4.8004 7.0144l7.5072 5.8037c4.3144-4.0043 7.1205-9.9691 7.1205-17.618' fill='%234285F4'%3E%3C/path%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/svg%3E%0A");
 	}*/
 	
 	.PlantCardFamily { 
@@ -178,15 +219,18 @@
 	}
 	
 	
-	@media only screen and (max-width: 900px) and (orientation: portrait) {
+	@media only screen and (max-width: 920px) and (orientation: portrait) {
 		#content {
 			height: 100vh;
+			width: 100vw;
 			overflow: auto;
+			display: flex;
 			flex-direction: column;
 		}
 		
 		#listOfPlants {
-			flex: none;
+			width: 100%;
+			height: 50%;
 		}
 		
 		#resizeHandle {
@@ -194,7 +238,9 @@
 		}
 		
 		#viewerRegion {
-			flex: auto;
+			width: 100%;
+			height: 50%;
+			display: contents;
 		}
 	}
 	</style>
@@ -230,18 +276,20 @@
 		<div id="resizeHandle"></div>
 		<div id="viewerRegion">
 			<iframe id="pdfViewer" style="width: 100%; height: 100%;" frameborder="0"></iframe> <!-- Shwo content over entire height. Internal scroll. Fullscreen mode needed. -->
+			<button id="f11" type="fullscreen"></button>
 		</div>
 	</section>
 	
 	<script>
 		const search 			 = document.querySelector('input[type="search"]')
-		const searchButton = document.querySelector("button")
+		const searchButton = document.querySelector('button[type="button"]')
 		const filterToggle = document.querySelector("#toggle")
 		const filtersDiv 	 = document.querySelector("#filters")
+		const content 		 = document.querySelector('#content')
 		const listOfPlants = document.querySelector("#listOfPlants")
 		const viewerRegion = document.querySelector("#viewerRegion")
 		const pdfViewer 	 = document.querySelector("#pdfViewer")
-		const content 		 = document.querySelector('#content')
+		const f11 = document.querySelector("#f11")
     const resizeHandle = document.querySelector('#resizeHandle')
 		
 		const dbPath 					 = "./assets/book parts/Plants by family/PlantsData.json"
@@ -253,7 +301,6 @@
 		
 		let plantsDataBase = {}
     let isResizing = false
-		//let previewMode = "pdf" //"png"
 		
 		function loadJSON(jsonPath) {
 			fetch(jsonPath)
@@ -265,16 +312,11 @@
 				.catch(error => console.error('Error loading JSON:', error))
 		}
 		
-		function loadPDF(pdfPath) {
-			pdfViewer.src = pdfPath //`${pdfPath.substring(2)}` //`https://docs.google.com/viewer?url=${window.location.origin}/${pdfPath.substring(2)}&embedded=true`
-			//console.error(pdfPath, pdfViewer.src.slice(0, -3))
+		function loadToView(filePath) {
+			pdfViewer.src = filePath
 		}
 		
-		function loadPNG(pngPath) {
-			pdf.Viewer.src = pngPath
-		}
-		
-		function downloadPNG(plantName) {
+		/*function downloadPNG(plantName) {
 			if (pdfViewer.src.length > 0 && 
 				 (!pdfPart1.includes(pdfViewer.src) && 
 					!pdfPart2.includes(pdfViewer.src) && 
@@ -284,7 +326,7 @@
 				link.setAttribute("download", pdfViewer.src)
 				link.click()
 			}
-		}
+		}*/
 		
 		function searchTheDB(searchQuery) {
 			const query = searchQuery.toLowerCase()
@@ -305,23 +347,15 @@
 			listOfPlants.appendChild(header)
 
 			results.forEach(plant => {
-				/*
-				<li>
-					<div class="PlantCard">
-						<span class="PlantCardName">Crazy shrub, little bush<br>Dypsis ludus</span>
-						<span class="PlantCardFamily">Araccièinje</span>
-						<span class="PlantCardType">shrub</span>
-					</div>
-				</li>
-				*/
 				const listItem = document.createElement('li')
 				const liCard = document.createElement("div")
 				liCard.setAttribute("class", "PlantCard")
-				//liCard.setAttribute("onclick", `checkDetails(\"${plant.plantFamily}/${plant.plantName}-fwv.${previewMode}\")`)
 				
 				const spanName = document.createElement('span')
 				spanName.setAttribute("class", "PlantCardName")
-				spanName.innerHTML = `<span>${plant.knownByTheNames.join(",<br>")}</span><br><br><span>${plant.plantName}</span>`
+				const commonNames = plant.knownByTheNames.map(plant => plant.replace(/ /g, "&nbsp;"))
+				spanName.innerHTML = `<span>${commonNames.join(", ")}</span><br><br><span>${plant.plantName.replace(/ /g, "&nbsp;")}</span>`
+				//spanName.innerHTML = `<span>${plant.knownByTheNames.join(",<wbr>")}</span><br><br><span>${plant.plantName}</span>`
 				
 				const spanFamily = document.createElement('span')
 				spanFamily.setAttribute("class", "PlantCardFamily")
@@ -345,20 +379,29 @@
 				
 				listItem.appendChild(liCard)
 				listOfPlants.appendChild(listItem)
-			});
+			})
 		}
 		
 		function checkDetails(plantFileName) {
-			loadPDF(baseFolderPlants + plantFileName)
+			loadToView(baseFolderPlants + plantFileName)
 		}
 		
-    function handleMouseMove(e) {
+    /*function handleMouseMove(e) {
       if (isResizing) {
         const containerRect = content.getBoundingClientRect()
-        const newWidth = e.clientX - containerRect.left
-        listOfPlants.style.flexBasis = `${newWidth}px;`
+        const newWidth = e.pageX/containerRect.width //e.clientX/containerRect.width //(e.clientX - containerRect.left) / containerRect.width
+        listOfPlants.style.width = `${newWidth*100}%` //flexBasis
+        viewerRegion.style.width = `${100 - newWidth*100}%` //`${(1-newWidth)*100}%`
       }
-    }
+    }*/
+		
+		/*function dragF11(e) {
+			if (f11.classList.contains("Fullscreen")) {
+				f11.style.top = `${e.pageY - 5}px`
+				f11.style.left = `${e.pageX - 5}px`
+			}
+		}*/
+
 		
 		//listeners
 		search.addEventListener("keypress", (e) => {
@@ -379,7 +422,25 @@
 			//filtersDiv.classList.toggle("Show")
 		})
 		
-		resizeHandle.addEventListener('mousedown', (e) => {
+		f11.addEventListener("click", (e) => {
+			viewerRegion.classList.toggle("Fullscreen")
+			pdfViewer.classList.toggle("Fullscreen")
+			f11.classList.toggle("Fullscreen")
+		})
+		
+		/*f11.addEventListener("mousedown", () =>
+			document.addEventListener("mousemove", dragF11)
+		);
+		f11.addEventListener("mouseup", () => {
+			document.removeEventListener("mousemove", dragF11)
+			if (f11.classList.contains("Fullscreen")) {
+				f11.style.bottom = "5px"
+				f11.style.left = "calc(50% - 50px)"
+			}
+		});*/
+		
+		
+		/*resizeHandle.addEventListener('mousedown', (e) => {
 			isResizing = true
 			
 			document.addEventListener('mousemove', handleMouseMove)
@@ -387,11 +448,11 @@
 				isResizing = false
 				document.removeEventListener('mousemove', handleMouseMove)
       })
-    })
+    })*/
 		
 		//main
+		loadToView(book)
 		loadJSON(dbPath)
-		loadPDF(book)
 	</script>
 </body>
 </html>

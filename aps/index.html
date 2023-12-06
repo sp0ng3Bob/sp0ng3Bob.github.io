@@ -59,7 +59,82 @@
 		margin: 15px;
 	}
 	.Hide#filters { display: none; }
-	/*.Show#filters { }*/
+	
+	#filterType {
+		display: flex;
+    flex-direction: row;
+    column-gap: 20px;
+    flex-wrap: wrap;
+	}
+	
+	/* Customize the label (the container) */
+	.Checkbox {
+		display: block;
+		position: relative;
+		padding-left: 35px;
+		margin-bottom: 12px;
+		cursor: pointer;
+		font-size: 22px;
+		text-transform: uppercase;
+		-webkit-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
+	}
+
+	/* Hide the browser's default checkbox */
+	.Checkbox input {
+		position: absolute;
+		opacity: 0;
+		cursor: pointer;
+		height: 0;
+		width: 0;
+	}
+
+	/* Create a custom checkbox */
+	.Checkmark {
+		position: absolute;
+		top: 0;
+		left: 0;
+		height: 25px;
+		width: 25px;
+		background-color: #eee;
+	}
+
+	/* On mouse-over, add a grey background color */
+	.Checkbox:hover input ~ .Checkmark {
+		background-color: #ccc;
+	}
+
+	/* When the checkbox is checked, add a blue background */
+	.Checkbox input:checked ~ .Checkmark {
+		background-color: #2196F3;
+	}
+
+	/* Create the checkmark/indicator (hidden when not checked) */
+	.Checkmark:after {
+		content: "";
+		position: absolute;
+		display: none;
+	}
+
+	/* Show the checkmark when checked */
+	.Checkbox input:checked ~ .Checkmark:after {
+		display: block;
+	}
+
+	/* Style the checkmark/indicator */
+	.Checkbox .Checkmark:after {
+		left: 9px;
+		top: 5px;
+		width: 5px;
+		height: 10px;
+		border: solid white;
+		border-width: 0 3px 3px 0;
+		-webkit-transform: rotate(45deg);
+		-ms-transform: rotate(45deg);
+		transform: rotate(45deg);
+	}
 	
 	#content {
 		display: flex;
@@ -100,6 +175,8 @@
 		left: 0px;
 		width: 100%;
     height: 100%;
+		background-color: #525659;
+    display: block;
 	}
 	
 	#f11 {
@@ -220,9 +297,11 @@
 	
 	
 	@media only screen and (max-width: 920px) and (orientation: portrait) {
+		body { width: 97vw; }
+		
 		#content {
 			height: 100vh;
-			width: 100vw;
+			width: 100%;
 			overflow: auto;
 			display: flex;
 			flex-direction: column;
@@ -253,20 +332,15 @@
 		</div>
 		<span id="toggle" class="OFF"></span>
 		<div id="filters" class="Hide">
-			<!--<section>
+			<section>
 				<label for="ff">Filter by plant family:</label>
 				<br>
-				<select id="filterFamily" name="ff">
-					<option value="volvo">Volvo</option>
-				</select>
-			</section>-->
+				<select id="filterFamily" name="ff"></select>
+			</section>
 			<section>
-				<!-- <label for="tf">Filter by plant types:</label> <!-- https://www.w3schools.com/howto/howto_css_custom_checkbox.asp ->
+				<label for="tf">Filter by plant types:</label> <!-- https://www.w3schools.com/howto/howto_css_custom_checkbox.asp -->
 				<br>
-				<label class="container">One
-					<input type="checkbox" checked="checked">
-					<span class="checkmark"></span>
-				</label>-->
+				<div id="filterType" name="tf"></div>
 			</section>
 		</div>
 	</section>
@@ -285,6 +359,8 @@
 		const searchButton = document.querySelector('button[type="button"]')
 		const filterToggle = document.querySelector("#toggle")
 		const filtersDiv 	 = document.querySelector("#filters")
+		const filterFamily = document.querySelector("#filterFamily")
+		const filterType 	 = document.querySelector("#filterType")
 		const content 		 = document.querySelector('#content')
 		const listOfPlants = document.querySelector("#listOfPlants")
 		const viewerRegion = document.querySelector("#viewerRegion")
@@ -299,8 +375,12 @@
 		//const pdfPart3 				 = "./assets/book parts/Planning checklists for quick reference-fwv.pdf"
 		const book 						 = "./assets/book parts/Rest of the book.pdf"
 		
+		let matchingPlants = {}
 		let plantsDataBase = {}
+		let filterFamilyOptions = []
+		let filterTypeOptions = []
     let isResizing = false
+		let activeFilters = {}
 		
 		function loadJSON(jsonPath) {
 			fetch(jsonPath)
@@ -308,6 +388,8 @@
 				.then(data => {
 					plantsDataBase = data
 					displayResults(Object.values(plantsDataBase))
+					populateFilters()
+
 				})
 				.catch(error => console.error('Error loading JSON:', error))
 		}
@@ -328,25 +410,29 @@
 			}
 		}*/
 		
-		function searchTheDB(searchQuery) {
-			const query = searchQuery.toLowerCase()
-			const results = Object.values(plantsDataBase).filter(item =>
+		function searchTheDB() {
+			const query = search.value.toLowerCase()
+			const res = Object.values(plantsDataBase).filter(item =>
 				item.plantName.toLowerCase().includes(query) ||
 				item.plantFamily.toLowerCase().includes(query) ||
 				item.knownByTheNames.some(name => name.toLowerCase().includes(query)) ||
 				item.plantType.toLowerCase().includes(query)
 			)
-			displayResults(results)
+			matchingPlants = res
+			displayResults(applyFilters())
 		}
 
 		function displayResults(results) {
 			listOfPlants.innerHTML = ''
+			filterFamilyOptions = []
+			filterTypeOptions = []
 			
 			const header = document.createElement('li')
 			header.textContent = `${results.length} plants found`
 			listOfPlants.appendChild(header)
 
 			results.forEach(plant => {
+			// create li PlantCard
 				const listItem = document.createElement('li')
 				const liCard = document.createElement("div")
 				liCard.setAttribute("class", "PlantCard")
@@ -379,7 +465,55 @@
 				
 				listItem.appendChild(liCard)
 				listOfPlants.appendChild(listItem)
+			//get options for filters
+				!filterFamilyOptions.includes(plant.plantFamily) ? filterFamilyOptions.push(plant.plantFamily) : null
+				!filterTypeOptions.includes(plant.plantType) ? filterTypeOptions.push(plant.plantType) : null
 			})
+		}
+		
+		function populateFilters() {
+		//Family -- <option value="plant">Plant</option>
+			filterFamily.innerHTML = ""
+			const opt = document.createElement('option')
+			opt.setAttribute("value", "")
+			opt.textContent = "ALL"
+			filterFamily.appendChild(opt)
+			filterFamilyOptions.forEach(ff => {
+				const opt = document.createElement('option')
+				opt.setAttribute("value", ff)
+				opt.textContent = ff
+				
+				filterFamily.appendChild(opt)
+			})
+		//Type -- <label class="Checkbox">One
+		//					<input type="checkbox" checked="checked">
+		//					<span class="Checkmark"></span>
+		//				</label>
+			filterType.innerHTML = ""
+			filterTypeOptions.forEach(ft => {
+				const opt = document.createElement('label')
+				opt.setAttribute("class", "Checkbox")
+				opt.textContent = ft
+				
+				const tfin = document.createElement('input')
+				tfin.setAttribute("type", "checkbox")
+				//tfin.setAttribute("checked", "checked")
+				
+				const tfmarker = document.createElement('span')
+				tfmarker.setAttribute("class", "Checkmark")
+				
+				opt.appendChild(tfin)
+				opt.appendChild(tfmarker)
+				
+				filterType.appendChild(opt)
+			})
+		}
+		
+		function applyFilters() {
+			return matches = Object.values(matchingPlants.length > 0 ? matchingPlants : plantsDataBase).filter(item =>
+				item.plantFamily.includes(activeFilters["Family"] ? activeFilters["Family"] : "") &&
+				(activeFilters["Type"] ? activeFilters["Type"] : "").every(type => item.plantType.includes(type))
+			)
 		}
 		
 		function checkDetails(plantFileName) {
@@ -407,12 +541,16 @@
 		search.addEventListener("keypress", (e) => {
 			if (e.key === "Enter") {
 				e.preventDefault()
-				searchTheDB(search.value)
+				searchTheDB()
 			}
 		})
 		
 		searchButton.addEventListener("click", (e) => {
-			searchTheDB(search.value)
+			searchTheDB()
+		})
+		
+		search.addEventListener("search", (e) => {
+			searchTheDB()
 		})
 		
 		filterToggle.addEventListener("click", (e) => {
@@ -449,6 +587,22 @@
 				document.removeEventListener('mousemove', handleMouseMove)
       })
     })*/
+		
+		filterFamily.addEventListener("change", (e) => {
+			activeFilters["Family"] = e.target.value
+			searchTheDB()
+		})
+		
+		filterType.addEventListener("change", (e) => {
+			const inputs = filterType.querySelectorAll('label')
+			activeFilters["Type"] = []
+			inputs.forEach(ch => {
+				if (ch.children[0].checked) {
+					activeFilters["Type"].push(ch.textContent)
+				}
+			})
+			searchTheDB()
+		})
 		
 		//main
 		loadToView(book)

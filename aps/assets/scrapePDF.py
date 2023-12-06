@@ -28,7 +28,7 @@ def visitor_get_common_name(text, cm, tm, fontDict, fontSize):
 
 
 writer = PdfWriter()
-reader = PdfReader(os.path.join("book", "Arriyahd plants.pdf"))
+reader = PdfReader(os.path.join("book", "Arriyadh plants.pdf"))
 
 
 outFolder = "book parts"

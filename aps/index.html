@@ -510,9 +510,10 @@
 		}
 		
 		function applyFilters() {
-			return matches = Object.values(matchingPlants.length > 0 ? matchingPlants : plantsDataBase).filter(item =>
-				item.plantFamily.includes(activeFilters["Family"] ? activeFilters["Family"] : "") &&
-				(activeFilters["Type"] ? activeFilters["Type"] : "").every(type => item.plantType.includes(type))
+			//return matches = Object.values(matchingPlants.length > 0 ? matchingPlants : plantsDataBase).filter(item =>
+			return matches = Object.values(matchingPlants).filter(item =>
+				item.plantFamily.includes(activeFilters["Family"] ? activeFilters["Family"] : "") && 
+				(activeFilters["Type"] ? activeFilters["Type"] : [""]).every(type => item.plantType.includes(type))
 			)
 		}
 		

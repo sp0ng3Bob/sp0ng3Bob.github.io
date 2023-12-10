@@ -1,0 +1,23 @@
+{
+  "name": "Slovar slovenskega znakovnega jezika (PWA)",
+  "short_name": "SSZJ offline",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#149ddd",
+  "theme_color": "#149ddd",
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "/src/images/icons/favicon.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+	{
+      "src": "/src/images/icons/maskable.svg",
+      "sizes": "256x256",
+      "type": "image/svg",
+      "purpose": "maskable any"
+    }
+  ]
+}

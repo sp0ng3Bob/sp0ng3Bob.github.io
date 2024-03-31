@@ -69,17 +69,11 @@
 					font-weight: bold;
 					border-radius: 3px;
 				}
-
-        div.fullMap {
-          background-size: contain;
-        }
-        img.fullMap {
-          height: 100%;
-          left: 0;
-          right: 0;
-        }
-        body.fullMap {
-          overflow: hidden;
+        
+        #info.Hidden,
+        #sciName.Hidden,
+        #minMax.Hidden {
+          display: none;
         }
         
         dialog {
@@ -87,17 +81,30 @@
         }
         
         ::backdrop {
-          background-image: linear-gradient(
-            45deg,
-            magenta,
-            rebeccapurple,
-            dodgerblue,
-            green
+          background-image: -webkit-linear-gradient(0deg,
+            #8AA74B,
+            #829B4A,
+            #8DA655,
+            #8DA655,
+            #5A8337,
+            #547936,
+            #578034,
+            #5E863F,
+            #5D7C36,
+            #44653A,
+            #516F4D,
+            #4B6E44,
+            #465744,
+            #2C392F,
+            #223023
           );
           opacity: 0.75;
         }
           
-				/*@media (orientation: landscape) {
+				@media (orientation: landscape) {
+          body.fullMap {
+            overflow: hidden;
+          }
 					div.fullMap {
 						background-size: contain;
 					}
@@ -108,6 +115,9 @@
 					}
 				}
 				@media (orientation: portrait) {
+          body.fullMap {
+            overflow: hidden;
+          }
 					div.fullMap {
 						background-size: contain;
 					}
@@ -116,7 +126,7 @@
 						top: 0;
 						bottom: 0;
 					}
-				}*/
+				}
 				
 				@media (pointer: none), (pointer: coarse) { /* PHONEs - touch device */
 					body {
@@ -131,7 +141,7 @@
 						font-size: 1.3em;
 					}
 				}
-				@media screen and (max-width: 549px) { /* PHONEs - small screen sizes*/
+				@media screen and (max-width: 549px) { /* small screen sizes*/
 					nav {
 						left: 8px;
 					}
@@ -159,30 +169,31 @@
 			<button type="button">ℹ️</button>
 		</div>
     <dialog>
-      <!-- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dialog -->
-      <!-- https://blog.greenroots.info/exploring-html-lessdialoggreater-element-with-examples -->
       <button autofocus>❌</button>
       <p>Spletna stran uporablja <a href="http://www.zgs.si/gozdovi_slovenije/o_gozdovih_slovenije/karte/index.html" target=”_blank”>zemljevide</a> gozdov iz spletne strani <a href="http://www.zgs.si/" target=”_blank”>ZGS.si</a></p>
       <p>Izvorna koda je na voljo na <a href="https://github.com/sp0ng3Bob/sp0ng3Bob.github.io/tree/master/apps/gs" target=”_blank”>githubu</a>.</p>
+      <p>Dvojni klik na zemljevidu skrije ali pokaže obrobne gumbe in latinsko ime drevesa.</p>
     </dialog>
 		<script>
+      function toggleSideButtons() {
+        info.classList.toggle("Hidden")
+        latName.classList.toggle("Hidden")
+        minMax.classList.toggle("Hidden")
+      }
+      
       const body = document.querySelector("body")
 			const mainFrame = document.querySelector("#main")
 			const overlay = document.querySelector("#overlay")
 			const mapsButtons = document.querySelector("#maps")
+			const minMax = document.querySelector("#minMax")
 			const minMaxButton = document.querySelector("button")
-			const latName = document.querySelector("#sciName").children[0]
+			const latName = document.querySelector("#sciName")
       const dialog = document.querySelector("dialog")
-      const infoButton = document.querySelector("#info")
+      const info = document.querySelector("#info")
       const closeDialog = dialog.querySelector("button")
-
-      infoButton.addEventListener("click", () => {
-        dialog.showModal() //.show() -- doesn't trigger the backdrop
-      });
-
-      closeDialog.addEventListener("click", () => {
-        dialog.close();
-      });
+      
+      let tapCount = 0
+      let lastTapTime = 0
 			
 			const zemljevidi = ['Zemljevid_Slovenije_23_Beli_gaber.png', 'Zemljevid_Slovenije_22_Breza.png', 'Zemljevid_Slovenije_21_Bukev.png', 'Zemljevid_Slovenije_20_Cer.png', 'Zemljevid_Slovenije_19_Cesnja.png', 'Zemljevid_Slovenije_18_Crna_jelsa.png', 'Zemljevid_Slovenije_17_Crni_gaber.png', 'Zemljevid_Slovenije_16_Dob.png', 'Zemljevid_Slovenije_15_Gorski_brest.png', 'Zemljevid_Slovenije_14_Gorski_javor.png', 'Zemljevid_Slovenije_13_Graden.png', 'Zemljevid_Slovenije_12_Jelka.png', 'Zemljevid_Slovenije_11_Jerebika.png', 'Zemljevid_Slovenije_10_Kostanj.png', 'Zemljevid_Slovenije_9_Lipa_in_lipovec.png', 'Zemljevid_Slovenije_8_Macesen.png', 'Zemljevid_Slovenije_7_Mali_jesen.png', 'Zemljevid_Slovenije_6_Mokovec.png', 'Zemljevid_Slovenije_5_Ostrolistni_in_topokrpi_javor.png', 'Zemljevid_Slovenije_4_Rdeci_bor.png','Zemljevid_Slovenije_3_Robinija.png', 'Zemljevid_Slovenije_2_Smreka.png', 'Zemljevid_Slovenije_1_Trepetlika.png', 'Zemljevid_Slovenije_0_Veliki_jesen.png']
       const slovenskaImena = ['Beli gaber', 'Breza', 'Bukev', 'Cer', 'Češnja', 'Črna jelša', 'Črni gaber', 'Dob', 'Gorski brest', 'Gorski javor', 'Graden', 'Jelka', 'Jerebika', 'Kostanj', 'Lipa in lipovec', 'Macesen', 'Mali jesen', 'Mokovec', 'Ostrolistni in topokrpi javor', 'Rdeči bor', 'Robinija', 'Smreka', 'Trepetlika', 'Veliki jesen']
@@ -196,6 +207,33 @@
 				select.add(option)
 			}
 			mapsButtons.appendChild(select)
+
+      info.addEventListener("click", () => {
+        dialog.showModal() //.show() -- doesn't trigger the backdrop
+      });
+
+      closeDialog.addEventListener("click", () => {
+        dialog.close();
+      });
+      
+      mainFrame.addEventListener("dblclick", () => {
+        toggleSideButtons()
+      })
+      
+      // dbclick for mobile devices
+      mainFrame.addEventListener('touchstart', function(event) {
+        const currentTime = new Date().getTime();
+        //const tapTimeThreshold = 320; // Threshold for double tap in milliseconds
+
+        // Check if it's a double tap
+        if (tapCount == 1 && (currentTime - lastTapTime) < 320) {
+          tapCount = 0
+          toggleSideButtons()
+        } else {
+          tapCount = 1
+          lastTapTime = currentTime
+        }
+      })
 			
 			minMaxButton.addEventListener("click", (e) => {
 				mainFrame.classList.toggle("fullMap")
@@ -205,7 +243,7 @@
 			
 			maps.addEventListener("change", (e) => {
 				overlay.setAttribute("src", "assets/" + e.target.value)
-				latName.innerHTML = latinskaImena[e.target.value.split("_").slice(3).join(" ").slice(0, -4)]
+				latName.children[0].innerHTML = latinskaImena[e.target.value.split("_").slice(3).join(" ").slice(0, -4)]
 			})
 			
 			//Service worker

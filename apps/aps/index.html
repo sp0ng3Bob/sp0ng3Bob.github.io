@@ -28,7 +28,8 @@
 		display: flex;
 		align-items: center;
 		flex-direction: column;
-		background: red;
+		background: brown;
+    color: white;
 	}
 	
 	#search {
@@ -53,10 +54,9 @@
 	
 	#filters {
 		display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 50px;
-		margin: 15px;
+    gap: 100px;
+    margin: 15px;
+    line-height: 1;
 	}
 	.Hide#filters { display: none; }
 	
@@ -66,6 +66,11 @@
     column-gap: 20px;
     flex-wrap: wrap;
 	}
+  
+  section > label {
+    margin-top: -10px;
+    position: absolute;
+  }
 	
 	/* Customize the label (the container) */
 	.Checkbox {

@@ -48,10 +48,11 @@
 					right: 8px;
         }
 				button {
-          width: 45px;
+          width: 40px;
           height: 35px;
           font-size: 1.2em;
-          line-height: 1.2em;
+          line-height: 1;
+          box-sizing: content-box;
 				}
 				img.fullMap {
 					position: fixed;
@@ -70,6 +71,7 @@
 					border-radius: 3px;
 				}
         
+        #maps.Hidden,
         #info.Hidden,
         #sciName.Hidden,
         #minMax.Hidden {
@@ -172,7 +174,7 @@
 			<button type="button">ℹ️</button>
 		</div>
     <dialog>
-      <button autofocus>❌</button>
+      <button type="button">❌</button>
       <p>Spletna stran uporablja <a href="http://www.zgs.si/gozdovi_slovenije/o_gozdovih_slovenije/karte/index.html" target=”_blank”>zemljevide</a> gozdov iz spletne strani <a href="http://www.zgs.si/" target=”_blank”>ZGS.si</a></p>
       <p>Izvorna koda je na voljo na <a href="https://github.com/sp0ng3Bob/sp0ng3Bob.github.io/tree/master/apps/gs" target=”_blank”>githubu</a>.</p>
       <p>Dvojni klik na zemljevidu skrije ali pokaže obrobne gumbe in latinsko ime drevesa.</p>
@@ -182,6 +184,7 @@
         info.classList.toggle("Hidden")
         latName.classList.toggle("Hidden")
         minMax.classList.toggle("Hidden")
+        mapsButtons.classList.toggle("Hidden")
       }
       
       const body = document.querySelector("body")

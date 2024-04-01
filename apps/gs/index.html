@@ -183,8 +183,8 @@
     <dialog>
       <button type="button">❌</button>
       <p>Spletna stran uporablja <a href="http://www.zgs.si/gozdovi_slovenije/o_gozdovih_slovenije/karte/index.html" target=”_blank”>zemljevide</a> gozdov iz spletne strani <a href="http://www.zgs.si/" target=”_blank”>ZGS.si</a></p>
-      <p>Izvorna koda je na voljo na <a href="https://github.com/sp0ng3Bob/sp0ng3Bob.github.io/tree/master/apps/gs" target=”_blank”>githubu</a>.</p>
-      <p>Dvojni klik na zemljevidu skrije ali pokaže obrobne gumbe in latinsko ime drevesa.</p>
+      <p><b>Izvorna koda</b> je na voljo na <a href="https://github.com/sp0ng3Bob/sp0ng3Bob.github.io/tree/master/apps/gs" target=”_blank”>githubu</a>.</p>
+      <p><b>Dvojni klik</b> na zemljevidu ali <b>ALT + H</b> skrije ali pokaže izbirnik dreves, obrobne gumbe in latinsko ime drevesa.</p>
     </dialog>
 		<script>
       function toggleSideButtons() {
@@ -228,6 +228,12 @@
       
       mainFrame.addEventListener("dblclick", () => {
         toggleSideButtons()
+      })
+      
+      document.addEventListener("keydown", (event) => {
+        if (event.altKey && event.key == "h") {
+          toggleSideButtons()
+        }
       })
       
       // dbclick for mobile devices

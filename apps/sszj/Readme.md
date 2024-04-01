@@ -1,4 +1,4 @@
-# Slovar slovanskega znakovnega jezika <img src="https://github.com/sp0ng3Bob/sp0ng3Bob.github.io/raw/master/src/images/icons/favicon.png" />
+# Slovar slovanskega znakovnega jezika <img src="https://github.com/sp0ng3Bob/sp0ng3Bob.github.io/blob/master/apps/sszj/src/images/icons/favicon.png?raw=true" />
 
 
 Slike v obstoječem repozitoriju so vzete s strani [Slovar slovenskega znakovnega jezika](http://sszj.fri.uni-lj.si/).

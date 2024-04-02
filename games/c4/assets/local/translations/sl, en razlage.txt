@@ -1,0 +1,7 @@
+4 V VRSTO NA 7X7 POLJU
+Igra 4 v vrsto je igra za dva igralca, ki poteka na 7x7 mreži, vsak izmed igralcev pa ima svoj simbol x ali o. Med igro lahko nasprotniku omogoèiš manj možnosti za postavitev simbola x ali o s tem, da prazna polja lahko pobarvaš ter jih tako blokiraš, vendar pa je to možno narediti šele po èetrti potezi ter samo dvakrat med igro. Ko enemu izmed igralcev uspe vodoravno, navpièno ali diagonalno postaviti štiri simbole, lahko poraženec nadaljuje igranje igre tako, da lahko kamorkoli na mrežo postavi 2 (èe je igro zaèel prvi) ali pa 3 (èe je igro zaèel drugi) svoje simbole. Zmaga tisti, ki ima na mreži veè povezanih štirih simbolov v vrsto.
+
+
+4 IN A ROW ON A 7X7 FIELD
+Game 4 in a row is a game for two players which takes place on a 7x7 grid and each of the players has its own symbol x or o. During the game, you can give your opponent less chance to place the x or o symbol by coloring the blank fields to block them, but this can only be done after the fourth move and only twice during the game. When one of the players manages to place four symbols horizontally, vertically or diagonally, the loser can continue playing the game so that he can place 2 (if first on the move) or 3 (if second on the move) his symbols anywhere on the grid. The winner is the one who has more connected four symbols in a row on the grid.
+

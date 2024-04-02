@@ -1,0 +1,15 @@
+{
+  "@metadata": {
+    "authors": [
+      "Petra Rožiè"
+    ],
+    "last-updated": "10.11.2021",
+    "locale": "en"
+  },
+	"instructions": "blablabla bla blab lablablabal blabal balb lab lab",
+  "bgColor": "Background color",
+  "gridColor": "Grid color",
+  "player": "Player",
+	"close": "Close",
+	"save": "Save"
+}

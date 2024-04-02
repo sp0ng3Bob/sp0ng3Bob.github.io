@@ -1,0 +1,65 @@
+/*
+	Grid initial animation
+*/
+#Grid {
+	fill: white;
+  animation: dash 10s linear both;
+}
+
+@keyframes dash {
+	from {
+		stroke-dasharray: 1px;
+		stroke-dashoffset: 1000;
+	}
+  to {
+    stroke-dashoffset: 0;
+		stroke-dasharray: 99999px;
+  }
+}
+
+/*
+	Drawing and erasing O to grid
+*/
+
+
+/*
+	Drawing and erasing X to grid
+*/
+
+
+/*
+	Active player animation
+*/
+text {
+
+}
+
+text[active-player="false"] {
+
+}
+
+text[active-player="true"] {
+
+}
+
+@keyframes underlineShow {
+	from {
+		opacity: 0;
+		transform: scaleX(0);
+	} 
+	to {
+		opacity: 1;
+		transform: scaleX(1);
+	}
+}
+
+@keyframes underlineHide {
+	from {
+		opacity: 1;
+		transform: scaleX(1);
+	} 
+	to {
+		opacity: 0;
+		transform: scaleX(0);
+	}
+}

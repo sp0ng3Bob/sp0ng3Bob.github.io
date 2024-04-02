@@ -1,0 +1,220 @@
+<html lang="en">
+  <head>
+      <meta name="format-detection" content="telephone=no">
+      <meta name="msapplication-tap-highlight" content="no">
+      <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, viewport-fit=cover">
+			<link rel="icon" type="image/svg" href="./assets/Icon.svg"/>
+			
+      <script type="module" src="scripts/game.js"></script>
+			
+      <title>Connect four</title>
+      
+      <style>
+        html, body {
+          margin: 0;
+          overflow: hidden;
+          width: 100vw;
+          height: 100vh;
+        }
+
+        #gameUI {
+          width: 100%;
+          height: 100%;
+          background-color: white;
+          display: flex;
+          justify-content: center;
+        }
+
+        #gameCanvas, #undo, text {
+          cursor: default;
+          user-select: none;
+        }
+        
+        #undo {
+          margin-top: 1vh;
+          z-index: 420;
+        }
+        
+        .tile {
+          /* click animation*/
+        }
+
+        #Tile, #Grid {
+          pointer-events: none;
+        }
+
+        .tileText { }
+        
+        #X { } 
+
+        #O { }
+
+        #blockXText,
+        #blockOText {
+          pointer-events: none;
+        }
+
+        #blockX,
+        #blockO { }
+        
+        /* Pop-Up Information & Settings*/
+        #prefs {
+          position: fixed;
+          height: 5vh;
+          top: 2.5vh;
+          right: 2.5vh;
+          z-index: 422;
+        }
+
+        #popoUpPrefs {
+          display: none;
+          position: absolute;
+          top: 5%;
+          left: 5%;
+          width: 90%;
+          height: 90%;
+          background-color: lightgrey;
+          border: 2px solid black;
+          box-shadow: 0px 0px 0px 999px blue; /* lollllllllllllllllllllllllllllllllllllllllllllllllllllllllll */
+          z-index: 421;
+        }
+
+        #prefsActions {
+          position: absolute;
+          bottom: 1rem;
+        }
+      </style>
+      <link rel="stylesheet" type="text/css" media="screen and (orientation: landscape)" href="css/app_landscape.css">
+      <link rel="stylesheet" type="text/css" media="screen and (orientation: portrait)" href="css/app_portrait.css">
+      <link rel="stylesheet" type="text/css" href="css/app_animations.css">
+  </head>
+  <body>
+    <div id="gameUI"> 
+      <svg version="1.1" id="prefs" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 1000 1000" enable-background="new 0 0 1000 1000" xml:space="preserve">
+        <g><g transform="translate(0.000000,512.000000) scale(0.100000,-0.100000)"><path d="M394.1,4992.4c-134-36.4-247-157-275.7-298.7C103.1,4619,97.3,3566,101.1,876l5.7-3714.3l42.1-76.6c51.7-95.7,111-153.2,201-191.5c63.2-24.9,296.8-28.7,1949-28.7h1876.3v402.1v402.1h-813.7H2548V943V4217h2048.6h2048.6V2580V943h402.1h402.1v1828.4c0,1280.9-5.7,1857.1-21.1,1928c-30.6,143.6-157,270-300.6,300.6C6966.9,5032.6,522.4,5026.8,394.1,4992.4z M1743.9,943v-3273.9h-421.2H901.4V943V4217h421.2h421.2V943z"/><path d="M7047.3-106.2v-225.9l-157-45.9c-88.1-24.9-252.7-91.9-367.6-149.3l-206.8-103.4l-157,155.1l-155.1,155.1L5720.5-604L5439-885.4l155.1-155.1l155.1-155.1l-103.4-208.7c-57.4-114.9-124.4-279.5-149.3-365.7l-46-158.9h-225.9h-225.9v-402.1V-2733h225.9h225.9l46-157c24.9-88.1,91.9-252.7,149.3-365.7l105.3-208.7L5596-3619.4l-157-157l283.3-283.3l281.4-281.4l157,157l155.1,155.1l208.7-105.3c112.9-57.4,277.6-124.4,365.7-149.3l157-46v-225.9v-225.9h402.1h402.1v227.8v227.8l63.2,13.4c128.3,28.7,296.8,93.8,478.6,187.6l187.6,97.7l157-157l157-157l283.4,283.3l281.4,281.4l-157,157l-157,157l97.7,187.6c93.8,181.9,158.9,350.4,187.6,478.6l13.4,63.2h227.8H9900v402.1v402.1h-227.8h-227.8l-13.4,63.2c-28.7,128.3-93.8,296.8-187.6,478.7l-97.7,187.6l157,157l157,157L9178.2-604l-283.4,283.4l-155.1-155.1l-157-155.1l-235.5,114.9c-130.2,63.2-294.9,130.2-365.7,149.3L7851.4-334v225.9v227.8h-402.1h-402.1V-106.2z M7652.3-1534.5c360-95.7,620.3-428.9,620.3-796.5c0-530.3-518.8-932.4-1026.2-796.5c-492.1,130.2-758.2,681.6-545.7,1133.4c101.5,218.3,333.1,413.6,549.5,465.2C7363.2-1501.9,7543.2-1505.7,7652.3-1534.5z"/></g></g>
+      </svg>
+      <div class="playerUI" id="X">
+        <svg width="400" height="110">
+          <rect id="playerX" x="50" y="5" width="300" height="100" style="fill:rgb(125,125,125);" />
+          <text active-player="true" id="playerXText" x="158" y="95" fill="black" font-size="110" font-family="cursive" text-decoration="underline">X</text>
+        </svg>
+        <svg width="400" height="180">
+          <rect id="blockX" x="125" y="15" width="150" height="150" style="fill:black;" />
+					<text id="blockXText" x="155" y="145" fill="black" font-size="150" font-family="cursive"></text>
+        </svg>
+      </div>
+      <div class="middlePlayerUI">
+        <svg version="1.1" id="gameCanvas" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 350 350" style="enable-background:new 0 0 350 350;" xml:space="preserve">
+          <g id="Tiles">
+            <g><rect class="tile" id="0,0" x="2" y="2" style="fill:transparent;" width="47.29" height="47.29"/></g>
+            <g><rect class="tile" id="0,1" x="51.78" y="2" style="fill:transparent;" width="47.3" height="47.29"/></g>
+            <g><rect class="tile" id="0,2" x="101.57" y="2" style="fill:transparent;" width="47.29" height="47.29"/></g>
+            <g><rect class="tile" id="0,3" x="151.35" y="2" style="fill:transparent;" width="47.3" height="47.29"/></g>
+            <g><rect class="tile" id="0,4" x="201.14" y="2" style="fill:transparent;" width="47.29" height="47.29"/></g>
+            <g><rect class="tile" id="0,5" x="250.92" y="2" style="fill:transparent;" width="47.3" height="47.29"/></g>
+            <g><rect class="tile" id="0,6" x="300.71" y="2" style="fill:transparent;" width="47.29" height="47.29"/></g>
+            <g><rect class="tile" id="1,0" x="2" y="51.78" style="fill:transparent;" width="47.29" height="47.3"/></g>
+            <g><rect class="tile" id="1,1" x="51.78" y="51.78" style="fill:transparent;" width="47.3" height="47.3"/></g>
+            <g><rect class="tile" id="1,2" x="101.57" y="51.78" style="fill:transparent;" width="47.29" height="47.3"/></g>
+            <g><rect class="tile" id="1,3" x="151.35" y="51.78" style="fill:transparent;" width="47.3" height="47.3"/></g>
+            <g><rect class="tile" id="1,4" x="201.14" y="51.78" style="fill:transparent;" width="47.29" height="47.3"/></g>
+            <g><rect class="tile" id="1,5" x="250.92" y="51.78" style="fill:transparent;" width="47.3" height="47.3"/></g>
+            <g><rect class="tile" id="1,6" x="300.71" y="51.78" style="fill:transparent;" width="47.29" height="47.3"/></g>
+            <g><rect class="tile" id="2,0" x="2" y="101.57" style="fill:transparent;" width="47.29" height="47.29"/></g>
+            <g><rect class="tile" id="2,1" x="51.78" y="101.57" style="fill:transparent;" width="47.3" height="47.29"/></g>
+            <g><rect class="tile" id="2,2" x="101.57" y="101.57" style="fill:transparent;" width="47.29" height="47.29"/></g>
+            <g><rect class="tile" id="2,3" x="151.35" y="101.57" style="fill:transparent;" width="47.3" height="47.29"/></g>
+            <g><rect class="tile" id="2,4" x="201.14" y="101.57" style="fill:transparent;" width="47.29" height="47.29"/></g>
+            <g><rect class="tile" id="2,5" x="250.92" y="101.57" style="fill:transparent;" width="47.3" height="47.29"/></g>
+            <g><rect class="tile" id="2,6" x="300.71" y="101.57" style="fill:transparent;" width="47.29" height="47.29"/></g>
+            <g><rect class="tile" id="3,0" x="2" y="151.35" style="fill:transparent;" width="47.29" height="47.3"/></g>
+            <g><rect class="tile" id="3,1" x="51.78" y="151.35" style="fill:transparent;" width="47.3" height="47.3"/></g>
+            <g><rect class="tile" id="3,2" x="101.57" y="151.35" style="fill:transparent;" width="47.29" height="47.3"/></g>
+            <g><rect class="tile" id="3,3" x="151.35" y="151.35" style="fill:transparent;" width="47.3" height="47.3"/></g>
+            <g><rect class="tile" id="3,4" x="201.14" y="151.35" style="fill:transparent;" width="47.29" height="47.3"/></g>
+            <g><rect class="tile" id="3,5" x="250.92" y="151.35" style="fill:transparent;" width="47.3" height="47.3"/></g>
+            <g><rect class="tile" id="3,6" x="300.71" y="151.35" style="fill:transparent;" width="47.29" height="47.3"/></g>
+            <g><rect class="tile" id="4,0" x="2" y="201.14" style="fill:transparent;" width="47.29" height="47.29"/></g>
+            <g><rect class="tile" id="4,1" x="51.78" y="201.14" style="fill:transparent;" width="47.3" height="47.29"/></g>
+            <g><rect class="tile" id="4,2" x="101.57" y="201.14" style="fill:transparent;" width="47.29" height="47.29"/></g>
+            <g><rect class="tile" id="4,3" x="151.35" y="201.14" style="fill:transparent;" width="47.3" height="47.29"/></g>
+            <g><rect class="tile" id="4,4" x="201.14" y="201.14" style="fill:transparent;" width="47.29" height="47.29"/></g>
+            <g><rect class="tile" id="4,5" x="250.92" y="201.14" style="fill:transparent;" width="47.3" height="47.29"/></g>
+            <g><rect class="tile" id="4,6" x="300.71" y="201.14" style="fill:transparent;" width="47.29" height="47.29"/></g>
+            <g><rect class="tile" id="5,0" x="2" y="250.92" style="fill:transparent;" width="47.29" height="47.3"/></g>
+            <g><rect class="tile" id="5,1" x="51.78" y="250.92" style="fill:transparent;" width="47.3" height="47.3"/></g>
+            <g><rect class="tile" id="5,2" x="101.57" y="250.92" style="fill:transparent;" width="47.29" height="47.3"/></g>
+            <g><rect class="tile" id="5,3" x="151.35" y="250.92" style="fill:transparent;" width="47.3" height="47.3"/></g>
+            <g><rect class="tile" id="5,4" x="201.14" y="250.92" style="fill:transparent;" width="47.29" height="47.3"/></g>
+            <g><rect class="tile" id="5,5" x="250.92" y="250.92" style="fill:transparent;" width="47.3" height="47.3"/></g>
+            <g><rect class="tile" id="5,6" x="300.71" y="250.92" style="fill:transparent;" width="47.29" height="47.3"/></g>
+            <g><rect class="tile" id="6,0" x="2" y="300.71" style="fill:transparent;" width="47.29" height="47.29"/></g>
+            <g><rect class="tile" id="6,1" x="51.78" y="300.71" style="fill:transparent;" width="47.3" height="47.29"/></g>
+            <g><rect class="tile" id="6,2" x="101.57" y="300.71" style="fill:transparent;" width="47.29" height="47.29"/></g>
+            <g><rect class="tile" id="6,3" x="151.35" y="300.71" style="fill:transparent;" width="47.3" height="47.29"/></g>
+            <g><rect class="tile" id="6,4" x="201.14" y="300.71" style="fill:transparent;" width="47.29" height="47.29"/></g>
+            <g><rect class="tile" id="6,5" x="250.92" y="300.71" style="fill:transparent;" width="47.3" height="47.29"/></g>
+            <g><rect class="tile" id="6,6" x="300.71" y="300.71" style="fill:transparent;" width="47.29" height="47.29"/></g>
+          </g>
+          <path id="Grid" stroke="#000000" d="M0.5,0.5v349h349V0.5H0.5z M49.29,348H2v-47.29h47.29V348z M49.29,298.22H2v-47.3h47.29V298.22z M49.29,248.43H2
+            v-47.29h47.29V248.43z M49.29,198.65H2v-47.3h47.29V198.65z M49.29,148.86H2v-47.29h47.29V148.86z M49.29,99.08H2v-47.3h47.29V99.08
+            z M49.29,49.29H2V2h47.29V49.29z M99.08,348h-47.3v-47.29h47.3V348z M99.08,298.22h-47.3v-47.3h47.3V298.22z M99.08,248.43h-47.3
+            v-47.29h47.3V248.43z M99.08,198.65h-47.3v-47.3h47.3V198.65z M99.08,148.86h-47.3v-47.29h47.3V148.86z M99.08,99.08h-47.3v-47.3
+            h47.3V99.08z M99.08,49.29h-47.3V2h47.3V49.29z M148.86,348h-47.29v-47.29h47.29V348z M148.86,298.22h-47.29v-47.3h47.29V298.22z
+             M148.86,248.43h-47.29v-47.29h47.29V248.43z M148.86,198.65h-47.29v-47.3h47.29V198.65z M148.86,148.86h-47.29v-47.29h47.29V148.86
+            z M148.86,99.08h-47.29v-47.3h47.29V99.08z M148.86,49.29h-47.29V2h47.29V49.29z M198.65,348h-47.3v-47.29h47.3V348z M198.65,298.22
+            h-47.3v-47.3h47.3V298.22z M198.65,248.43h-47.3v-47.29h47.3V248.43z M198.65,198.65h-47.3v-47.3h47.3V198.65z M198.65,148.86h-47.3
+            v-47.29h47.3V148.86z M198.65,99.08h-47.3v-47.3h47.3V99.08z M198.65,49.29h-47.3V2h47.3V49.29z M248.43,348h-47.29v-47.29h47.29
+            V348z M248.43,298.22h-47.29v-47.3h47.29V298.22z M248.43,248.43h-47.29v-47.29h47.29V248.43z M248.43,198.65h-47.29v-47.3h47.29
+            V198.65z M248.43,148.86h-47.29v-47.29h47.29V148.86z M248.43,99.08h-47.29v-47.3h47.29V99.08z M248.43,49.29h-47.29V2h47.29V49.29z
+             M298.22,348h-47.3v-47.29h47.3V348z M298.22,298.22h-47.3v-47.3h47.3V298.22z M298.22,248.43h-47.3v-47.29h47.3V248.43z
+             M298.22,198.65h-47.3v-47.3h47.3V198.65z M298.22,148.86h-47.3v-47.29h47.3V148.86z M298.22,99.08h-47.3v-47.3h47.3V99.08z
+             M298.22,49.29h-47.3V2h47.3V49.29z M348,348h-47.29v-47.29H348V348z M348,298.22h-47.29v-47.3H348V298.22z M348,248.43h-47.29
+            v-47.29H348V248.43z M348,198.65h-47.29v-47.3H348V198.65z M348,148.86h-47.29v-47.29H348V148.86z M348,99.08h-47.29v-47.3H348
+            V99.08z M348,49.29h-47.29V2H348V49.29z"/>
+        </svg>
+        <svg version="1.1" id="undo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="454.839px" height="454.839px" viewBox="0 0 454.839 454.839" style="enable-background:new 0 0 454.839 454.839;" xml:space="preserve">
+          <path d="M404.908,283.853c0,94.282-76.71,170.986-170.986,170.986h-60.526c-10.03,0-18.158-8.127-18.158-18.157v-6.053
+            c0-10.031,8.127-18.158,18.158-18.158h60.526c70.917,0,128.618-57.701,128.618-128.618c0-70.917-57.701-128.618-128.618-128.618
+            H122.255l76.905,76.905c8.26,8.257,8.26,21.699,0,29.956c-8.015,8.009-21.964,7.997-29.961,0L56.137,149.031
+            c-4.001-4.001-6.206-9.321-6.206-14.981c0-5.656,2.205-10.979,6.206-14.978L169.205,6.002c7.997-8.003,21.958-8.003,29.956,0
+            c8.26,8.255,8.26,21.699,0,29.953l-76.905,76.911h111.666C328.198,112.866,404.908,189.573,404.908,283.853z"/>
+        </svg>
+      </div>
+      <div class="playerUI" id="O">
+        <svg width="400" height="110">
+          <rect id="playerO" x="50" y="5" width="300" height="100" style="fill:rgb(255,0,0);" />
+          <text id="playerOText" x="155" y="95" fill="black" font-size="110" font-family="cursive">O</text>
+        </svg>
+        <svg width="400" height="180">
+          <rect id="blockO" x="125" y="15" width="150" height="150" style="fill:red;" />
+					<text id="blockOText" x="155" y="145" fill="black" font-size="150" font-family="cursive"></text>
+        </svg>
+      </div>
+    </div>
+    <div id="popoUpPrefs">
+      <div id="information">
+        <p></p>
+      </div>
+      <hr />
+      <div id="settings">
+        <div>
+          <label></label>
+          <input id="bgColor" type="color" />
+          <label></label>
+          <input id="gridColor" type="color" />
+        </div>
+        <div>
+          <label> X:</label>
+          <input id="colorX" type="color" />
+          <label> O:</label>
+          <input id="colorO" type="color" />
+        </div>
+      </div>
+      <div id="prefsActions">
+        <button id="closePrefs"></button>
+        <button id="savePrefs"></button>
+      </div>
+    </div>
+  </body>
+</html>

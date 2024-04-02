@@ -1,0 +1,30 @@
+#gameCanvas {
+  margin-top: 1vh;
+	flex: 10;
+}
+
+#gameUI {
+  align-items: stretch;
+}
+
+#undo {
+/*   padding-top: 1vh;
+  height: 5vh; */
+	margin-bottom: 1vh;
+	flex: 1;
+}
+
+.middlePlayerUI {
+  flex: 1;
+	display: flex;
+  flex-direction: column;
+	align-items: center;
+}
+
+.playerUI {
+  display: grid;
+  height: 100%;
+  flex: 1;
+  margin-top: 10vh;
+	max-width: min-content;
+}

@@ -1,211 +1,80 @@
+<!--
+
+	COORDINATE AXES: -> CANVAS
+	(1) Display a scene with default coordinate axes, where each axis is colored 
+	(x-axis in red, y-axis in green, z-axis in blue).
+
+	LOAD MODEL AND MODEL CONTROLS: -> MODEL 
+	(2) Load 3D models in glTF 2.0 format and position them in space 
+	(with options for translation, rotation, and scaling).
+
+	MODEL PROPERTIES: -> MODEL
+	(3) Display model properties: number of vertices, number of indices, and the size of the bounding box.
+
+	PROCEDURAL GEOMETRIES: -> PROCEDURAL GEOMETRY
+	(4) Add procedurally generated objects (plane, cube, sphere, torus).
+
+	CAMERA CONTROLS: -> CAMERAS
+	(5) Allow camera position and rotation control using mouse or keyboard input, 
+	with the ability to change the camera's focal point.
+
+	LIGHTS: -> LIGHTS
+	(6) Place point lights in the scene, with adjustable parameters for color, 
+	intensity, and attenuation (constant, linear, quadratic attenuation).
+	(7) Define the lighting model (Lambert and Phong) and shading parameters 
+	(diffuse and specular color, shininess) for each object.
+
+	FRAGMENT SHADER: ->
+	(8) Implement per-fragment lighting and shading calculations.
+
+	TEXTURES: -> MODEL.TEXTURES
+	(9) Assign textures to each object individually, with options for 
+	texture coordinate mapping (input file coordinates, planar mapping, 
+	cylindrical mapping, spherical mapping), and allow translation, rotation, 
+	scaling, and projection direction for UV coordinates.
+
+	GLOBALS:
+	(10) Provide a global setting to control texture wrapping modes (CLAMP_TO_EDGE, REPEAT, MIRRORED_REPEAT).
+	(11) Provide a global setting to control texture filtering modes (NEAREST, LINEAR) and mipmapping options.
+	(12) Allow global enabling and disabling of mipmaps.
+
+-->
+
 <!DOCTYPE html>
-<html lang="si">
-	<head>
-		<title>1. seminarska - OO - AR.js & A-Frame projekt, avgust 2023</title>
-		
-		<meta charset="UTF-8">
-		<meta name="description" content="AR.js projekt za prikaz dodatnih informacij v razširjeni resničnosti z uporabo črtnih kod.">
+<html>
 
-		<script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
-		<script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
-		<script src="js/info-message.js"></script>
-		<noscript>JavaScript mora biti omogočena, da lahko spletna stran deluje pravilno!</noscript>
-	</head>
-	
-	<style>
-		.a-loader-title {
-			color: white;
-		}
-		/*#freeze {
-			z-index: 420;
-			position: absolute;
-			height: 100px;
-			width: 100px;
-			bottom: -40px;
-			left: calc(50% - 50px);
-			background-color: red;
-			border-radius: 50%;
-			cursor: pointer;
-			transition: transform 0.7s ease-in-out;
-		}
-		.show#freeze {
-			display: block;
-			transform: scale(1);
-		}
-		.hide#freeze {
-			display: none;
-			transform: scale(0);
-		}
-		
-		#theExperience {
-			position: absolute;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
-			z-index: 4200;
-		}
-		.hide#theExperience {
-			display: none;
-		}
-		.show#theExperience {
-			display: block;
-		}*/
-	</style>
-	
-  <body style="margin : 0px; overflow: hidden;">
-    <a-scene 
-			renderer="logarithmicDepthBuffer: true;"
-			info-message="htmlSrc: #infoMsg"
-			vr-mode-ui="enabled: false;"
-			loading-screen="dotsColor: white; backgroundColor: black"
-			arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3;">
-			<!-- raycaster="far: 1000; objects: a-entity[clickable]" cursor="rayOrigin: mouse" -->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-			<a-assets>
-				<a-asset-item id="infoMsg" src="assets/info.html"></a-asset-item>
-				
-				<img id="globe" src="assets/images/globe.jpg">
-				
-				<a-mixin id="initial" 
-					position="0 0 0"
-					scale="1 1 1"
-					geometry="primitive: sphere; radius: 1"
-					material="src: #globe"
-					shadow="cast: true; receive: true"
-					animation="property: rotation; to: 0 360 0; loop: true; dur: 10000"
-					<!--animation="property: scale; to: 1 1 1; dur: 1500; loop: 1;"-->
-				></a-mixin>
-			</a-assets>
-			
-			<a-marker id="zero"
-				type="barcode" value="0" smooth="true"
-				clickable="id: zero" markerhandler> 
-				<a-entity
-					mixin="initial"
-					class="initial zero"
-				></a-entity>
-      </a-marker>
-      
-			<a-entity 
-				camera 
-				position="0 0 3">
-			</a-entity>
-    </a-scene>
+  <title>90 - Loading glTF files - ES6/WebGL 2.0 Examples</title>
 
-	
-	<script>
-		document.addEventListener("DOMContentLoaded", () => {
-			let camera = document.querySelector('a-entity[camera]').components["camera"];
-			let scene = document.querySelector("a-scene").components
-			//console.log(scene)
-			let currentEntity = {}
-			currentEntity.isPlaying = false
-			//let freeze = document.querySelector("#freeze")
-			
-			//lol
-			/*let markers = document.querySelectorAll("[clickable]")
-			markers.forEach(m => {
-				m.addEventListener("click", e => {
-					console.log(e)
-					//window.location.href = "./places.html"
-				})
-			})*/
-			//lol
-		
-			AFRAME.registerComponent('markerhandler', {
-				init: function () {
-					this.el.sceneEl.addEventListener('markerFound', (e) => {
-						if (!currentEntity.isPlaying) {
-							//toggleVisibility(freeze)
-							currentEntity = document.querySelector(`#${e.target.id}`).components["arjs-anchor"];							
-						}
-					})
-					this.el.sceneEl.addEventListener('markerLost', (e) => {
-						if (currentEntity.isPlaying) {
-							//toggleVisibility(freeze)
-							currentEntity = {}
-							currentEntity.isPlaying = false	
-						}
-					})
-				}
-			});
-			
-			/*AFRAME.registerComponent('dismisshandler', {
-        schema: {
-          txt: {default:''}
-        },        
-        init: function () {
-          var data = this.data;
-          var el = this.el;     
-          el.addEventListener('click', function () { 
-						if (currentEntity.el && document.querySelector(`.initial.${currentEntity.el.id}`).getAttribute("visible") == false) {
-							let id = currentEntity.el.id
-							let initial = document.querySelector(`.initial.${id}`)
-							initial.setAttribute("visible", true) //!initial.getAttribute("visible"))						
-								
-							let info = document.querySelector("#infoPanel").components["visible"]
-							info.el.object3D.visible = false;
-							
-							//currentEntity = {}
-							//currentEntity.isPlaying = false
-						}
-          });        
-        }
-      });*/
-			
-			AFRAME.registerComponent("clickable", {
-				schema: {
-          id: {default:''}
-        }, 
-				init: function () {
-					this.el.sceneEl.addEventListener('click', this.handleClick.bind(this));
-				},
-				handleClick: function (e) {
-					//, e.clientX, e.clientY)
-					//console.log(document.querySelector(`.initial.${currentEntity.el.id}`).getBoundingClientRect())//, e.clientX, e.clientY)
-					if (currentEntity.el && this.el.id == currentEntity.el.id && currentEntity.isPlaying == true && document.querySelector(`.initial.${currentEntity.el.id}`).getAttribute("visible") == true) {
-						//let id = currentEntity.el.id
-						//let initial = document.querySelector(`.initial.${id}`)
-						//console.log(initial.getAttribute("position"))
-						
-						//console.log(initial.getAttribute("visible"))
-						//initial.setAttribute("visible", false)
+  <link rel="stylesheet" type="text/css" href="./src/styles/style.css">
 
-						//let real = document.querySelector("#theExperience")
-						//window.location = "./places.html"
-						window.location.href = "./places.html"
-						
-						//set environment
-						
-						/*let movieImageEl;
-						let movieTitleEl = document.querySelector('#movieTitle');
-						let movieDescriptionEl = document.querySelector('#movieDescription');
+  <script type="importmap">
+            {
+                "imports": {
+                    "glMatrix": "./src/lib/glMatrix/index.js"
+                }
+            }
+        </script>
 
-						let movieInfo = {
-							zero: {
-								title: 'The Wind Rises (2013)',
-								imgEl: document.querySelector('#kazetachinuMovieImage'),
-								description: 'The Wind Rises is a fictionalised biographical film of Jiro Horikoshi (1903, 1982), designer of the Mitsubishi A5M fighter aircraft and its successor, the Mitsubishi A6M Zero, used by the Empire of Japan during World War II. The film is adapted from Miyazaki\'s manga of the same name, which was in turn loosely based on both the 1937 novel The Wind Has Risen by Tatsuo Hori and the life of Jiro Horikoshi.'
-							}
-						};
-						var minfo = movieInfo[id];
+  <script type="module" src="./index.js"></script>
+</head>
 
-						let info = document.querySelector("#infoPanel").components["visible"]
-						console.log(document.querySelector("#infoPanel"), info, minfo)
-						if (AFRAME.utils.device.isMobile()) { info.el.object3D.scale.set(1.4, 1.4, 1.4); }
-						info.el.object3D.visible = true;
+<body>
+  <div class="Fullscreen">
+    <canvas id="mainCanvas"></canvas>
+  </div>
+  <div class="Logs">
+    <span id="animationTime"></span>
+    seconds
+  </div>
+  <!--
+		<div class="miniscreen">
+			<canvas id="axesCanvas"></canvas>
+		</div>
+	-->
+</body>
 
-						movieImageEl = minfo.imgEl;
-						movieImageEl.object3D.visible = true;
-
-						movieTitleEl.setAttribute('text', 'value', minfo.title);
-						movieDescriptionEl.setAttribute('text', 'value', minfo.description);*/
-					}
-				}
-			})
-		});
-	</script>
-
-  </body>
 </html>

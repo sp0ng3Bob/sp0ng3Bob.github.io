@@ -30,7 +30,7 @@ const m101 = "./src/models/1Avocado/glTF-Binary/Avocado.glb"
 const m2 = "./src/models/2Helmet/FlightHelmet.gltf"
 const m3 = "./src/models/3Boombox/BoomBox.gltf"
 const m4 = "./src/models/4PBR/Box With Spaces.gltf"
-const m5 = "./src/models/5Animated/AnimatedCube.gltf"
+const m5 = "./src/models/5Animated/AnimatedCube-EMB.gltf"
 const m6 = "./src/models/6Skins/RiggedSimple.gltf" //also this... (GL_INVALID_OPERATION: Must have element array buffer bound.)
 const m7 = "./src/models/7Alpha/AlphaBlendModeTest.gltf"
 const m8 = "./src/models/8AnimateMorph/AnimatedMorphCube.gltf"
@@ -267,7 +267,7 @@ export class App extends Application {
     globalTextureFolder.add(this.state, "wrappingModeS", wrappingList).listen().onChange(this.changeWrappingS.bind(this))
     globalTextureFolder.add(this.state, "wrappingModeT", wrappingList).listen().onChange(this.changeWrappingT.bind(this))
     globalTextureFolder.add(this.state, "mipMaps").listen().onChange(this.changeMips.bind(this))
-    globalTextureFolder.add(this.state, "minFilterMode", filteringList).listen().onChange(this.changeFilteringMin.bind(this))
+    globalTextureFolder.add(this.state, "minFilterMode", { ...filteringList, ...mipmapsList }).listen().onChange(this.changeFilteringMin.bind(this))
     globalTextureFolder.add(this.state, "magFilterMode", { ...filteringList, ...mipmapsList }).listen().onChange(this.changeFilteringMag.bind(this))
     //this.globalFolder.domElement.style.display = "none"
   }
@@ -321,12 +321,12 @@ export class App extends Application {
     }
 
     // Globals
-    this.state.wrappingModeS = 33071
-    this.state.wrappingModeT = 33071
-    this.state.mipMaps = false
-    this.state.minFilterMode = 9729
-    this.state.magFilterMode = 9729
-    this.globalFolder.domElement.style.display = ""
+    //this.state.wrappingModeS = 33071
+    //this.state.wrappingModeT = 33071
+    //this.state.mipMaps = false
+    //this.state.minFilterMode = 9729
+    //this.state.magFilterMode = 9729
+    //this.globalFolder.domElement.style.display = ""
 
     // this.morphCtrls.forEach((ctrl) => ctrl.remove())
     // this.morphCtrls.length = 0
@@ -351,33 +351,6 @@ export class App extends Application {
       })
     }*/
 
-    /*if (this.clips?.length) {
-      this.animFolder.domElement.style.display = ""
-      const actionStates = this.state.actionStates = {}
-      this.clips.forEach((clip, clipIndex) => {
-        clip.name = `${clipIndex + 1}. ${clip.name ?? "animation"}`
-
-        // Autoplay the first clip.
-        let action
-        if (clipIndex === 0) {
-          actionStates[clip.name] = true
-          action = this.mixer.clipAction(clip)
-          action.play()
-        } else {
-          actionStates[clip.name] = false
-        }
-
-        // Play other clips when enabled.
-        const ctrl = this.animFolder.add(actionStates, clip.name).listen()
-        ctrl.onChange((playAnimation) => {
-          action = action || this.mixer.clipAction(clip)
-          action.setEffectiveTimeScale(1)
-          playAnimation ? action.play() : action.stop()
-        })
-        this.animCtrls.push(ctrl)
-        this.animFolder.add(clip, "name")
-      })
-    }*/
 
     //Lights
     /*for (let lightIndex in this.state.lightsList) {
@@ -491,6 +464,8 @@ export class App extends Application {
 
     this.renderer.prepareScene(this.scene)
 
+    this.setTextureStuff(this.scene.nodes)
+
     if (this.scene.animations) {
       (Object.keys(this.state.animationsList) ?? []).forEach(key => delete this.state.animationsList[key])
       this.animationsPlayer.addAnimations(this.scene.animations)
@@ -503,6 +478,27 @@ export class App extends Application {
     }
 
     this.updateGUI()
+  }
+
+  setTextureStuff(nodes) {
+    //this.scene.nodes[0].mesh.primitives[0].material.baseColorTexture.sampler
+    nodes.forEach(node => {
+      if (node.mesh) {
+        node.mesh.primitives.forEach(primitive => {
+          if (primitive?.material?.baseColorTexture) {
+            this.state.wrappingModeS = primitive.material.baseColorTexture.sampler.wrapS
+            this.state.wrappingModeT = primitive.material.baseColorTexture.sampler.wrapT
+            this.state.mipMaps = primitive.material.baseColorTexture.hasMipmaps
+            this.state.minFilterMode = primitive.material.baseColorTexture.sampler.min
+            this.state.magFilterMode = primitive.material.baseColorTexture.sampler.mag
+            return
+          }
+        })
+      }
+      if (node.children.length > 0) {
+        this.setTextureStuff(node.children)
+      }
+    })
   }
 
   playAnimations() {

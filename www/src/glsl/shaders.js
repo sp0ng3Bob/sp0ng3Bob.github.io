@@ -1,9 +1,9 @@
 const vertex = `#version 300 es
 precision mediump float;
 
-layout (location = 0) in vec4 aPosition; //vec3 aPosition
+layout (location = 0) in vec3 aPosition; //vec3 aPosition
 layout (location = 1) in vec2 aTexCoord;
-layout (location = 2) in vec4 aNormal;
+layout (location = 2) in vec3 aNormal;
 
 /* SKINNING */
 layout (location = 3) in vec4 aJoint0;
@@ -15,14 +15,42 @@ layout (location = 7) in vec4 aTangent;
 
 uniform mat4 uMvpMatrix;
 
-//out vec4 gl_Position;
+/*uniform JointMatrix
+{
+    mat4 matrix[65];
+} u_jointMatrix;*/
+
 out vec3 vNormal;
 out vec2 vTexCoord;
 out vec4 vTangent;
 
 void main() {
-  gl_Position = uMvpMatrix * aPosition; //vec4(aPosition, 1.0);
-  vNormal = (uMvpMatrix * aNormal).xyz;
+  mat4 skinMatrix = mat4(1.0); // Default to identity matrix
+
+  /*if (aWeight0 != vec4(0.0)) {
+      skinMatrix = aWeight0.x * u_jointMatrix.matrix[int(aJoint0.x)] +
+                    aWeight0.y * u_jointMatrix.matrix[int(aJoint0.y)] +
+                    aWeight0.z * u_jointMatrix.matrix[int(aJoint0.z)] +
+                    aWeight0.w * u_jointMatrix.matrix[int(aJoint0.w)];
+  }
+
+  if (aWeight1 != vec4(0.0)) {
+      skinMatrix += aWeight1.x * u_jointMatrix.matrix[int(aJoint1.x)] +
+                    aWeight1.y * u_jointMatrix.matrix[int(aJoint1.y)] +
+                    aWeight1.z * u_jointMatrix.matrix[int(aJoint1.z)] +
+                    aWeight1.w * u_jointMatrix.matrix[int(aJoint1.w)];
+  }*/
+
+  gl_Position = uMvpMatrix * skinMatrix * vec4(aPosition, 1.0);
+
+  if (aNormal != vec3(0.0)) {
+      vec3 transformedNormal = mat3(transpose(inverse(skinMatrix))) * aNormal;
+      vNormal = (uMvpMatrix * vec4(transformedNormal, 0.0)).xyz;
+  } else {
+      vNormal = vec3(0.0); // Default normal if not defined
+  }
+  //gl_Position = uMvpMatrix * aPosition; //vec4(aPosition, 1.0);
+  //vNormal = (uMvpMatrix * aNormal).xyz;
   vTexCoord = aTexCoord;
   vTangent = aTangent;
 }

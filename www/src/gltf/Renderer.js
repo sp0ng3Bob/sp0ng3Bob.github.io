@@ -40,6 +40,11 @@ export class Renderer {
       WEIGHTS_1: 6,
       TANGENT: 7
     }
+    this.morphAttributeNameToIndexMap = {
+      POSITION: 8,
+      NORMAL: 10,
+      TANGENT: 12
+    }
   }
 
   changeClearColor(color) {
@@ -200,7 +205,11 @@ export class Renderer {
     gl.bindVertexArray(vao)
     if (primitive.indices) {
       const bufferView = primitive.indices.bufferView
-      bufferView.target = gl.ELEMENT_ARRAY_BUFFER
+
+      if (!bufferView.target) {
+        bufferView.target = gl.ELEMENT_ARRAY_BUFFER
+      }
+
       const buffer = this.prepareBufferView(bufferView)
       gl.bindBuffer(bufferView.target, buffer)
     }
@@ -211,7 +220,10 @@ export class Renderer {
       const attributeIndex = this.attributeNameToIndexMap[name]
 
       if (attributeIndex !== undefined) { //https://stackoverflow.com/questions/50712696/when-to-release-a-vertex-array-object
-        bufferView.target = gl.ARRAY_BUFFER
+        if (!bufferView.target) {
+          bufferView.target = gl.ARRAY_BUFFER
+        }
+
         const buffer = this.prepareBufferView(bufferView)
         gl.bindBuffer(bufferView.target, buffer)
         gl.enableVertexAttribArray(attributeIndex)
@@ -222,6 +234,33 @@ export class Renderer {
           accessor.normalized,
           bufferView.byteStride,
           accessor.byteOffset)
+      }
+    }
+
+    for (let target in primitive.targets) {
+      if (Number(target) < 2) {
+        for (let name in primitive.targets[target]) {
+          const accessor = primitive.targets[target][name]
+          const bufferView = accessor.bufferView
+          const attributeIndex = this.morphAttributeNameToIndexMap[name]
+
+          if (attributeIndex !== undefined) {
+            if (!bufferView.target) {
+              bufferView.target = gl.ARRAY_BUFFER
+            }
+
+            const buffer = this.prepareBufferView(bufferView)
+            gl.bindBuffer(bufferView.target, buffer)
+            gl.enableVertexAttribArray(attributeIndex)
+            gl.vertexAttribPointer(
+              attributeIndex,
+              accessor.numComponents,
+              accessor.componentType,
+              accessor.normalized,
+              bufferView.byteStride,
+              accessor.byteOffset)
+          }
+        }
       }
     }
 
@@ -337,6 +376,16 @@ export class Renderer {
     if (node.mesh) {
       const program = this.programs.simple
       gl.uniformMatrix4fv(program.uniforms.uMvpMatrix, false, mvpMatrix)
+
+      let w0 = 0.0
+      let w1 = 0.0
+      if (node.mesh.weights) {
+        w0 = node.mesh.weights[0]
+        w1 = node.mesh.weights[1] ?? 0.0
+      }
+      gl.uniform1f(program.uniforms.uMorphTargetWeight0, w0)
+      gl.uniform1f(program.uniforms.uMorphTargetWeight1, w1)
+
       for (const primitive of node.mesh.primitives) {
         this.renderPrimitive(primitive)
       }

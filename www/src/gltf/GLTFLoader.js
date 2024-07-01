@@ -198,6 +198,20 @@ export class GLTFLoader {
     return bufferView;
   }
 
+  loadSparseBuffer(nameOrIndex, sparseData) {
+    const gltfSpec = this.findByNameOrIndex(this.gltf.bufferViews, nameOrIndex);
+    if (this.cache.has(gltfSpec)) {
+      return this.cache.get(gltfSpec);
+    }
+
+    const bufferView = new BufferView({
+      byteLength: sparseData.length,
+      buffer: sparseData.buffer,
+    });
+    this.cache.set(gltfSpec, bufferView);
+    return bufferView;
+  }
+
   async loadAccessor(nameOrIndex) {
     const gltfSpec = this.findByNameOrIndex(this.gltf.accessors, nameOrIndex);
     if (this.cache.has(gltfSpec)) {
@@ -214,11 +228,67 @@ export class GLTFLoader {
       MAT4: 16,
     };
 
-    const accessor = new Accessor({
+    const typedArrayConstructor = {
+      5120: Int8Array,
+      5121: Uint8Array,
+      5122: Int16Array,
+      5123: Uint16Array,
+      5125: Uint32Array,
+      5126: Float32Array
+    }
+
+    let accessor
+    let bufferView
+    const type = accessorTypeToNumComponentsMap[gltfSpec.type]
+    const byteLength = gltfSpec.count * type
+    if (gltfSpec.sparse) {
+      const { count, values, indices } = gltfSpec.sparse;
+
+      const valuesAccessor = await this.loadBufferView(values.bufferView)
+      const indicesAccessor = await this.loadBufferView(indices.bufferView)
+
+      const ValuesArray = typedArrayConstructor[gltfSpec.componentType]
+      let sparseData
+      if (gltfSpec.bufferView) {
+        let startingData = await this.loadBufferView(gltfSpec.bufferView)
+        sparseData = new ValuesArray(startingData.buffer, startingData.byteOffset, startingData.byteLength / ValuesArray.BYTES_PER_ELEMENT)
+      } else {
+        sparseData = new ValuesArray(byteLength)
+        sparseData.set(0.0)
+      }
+
+      const IndicesArray = typedArrayConstructor[indices.componentType]
+      const indicesData = new IndicesArray(indicesAccessor.buffer, indicesAccessor.byteOffset, indicesAccessor.byteLength / IndicesArray.BYTES_PER_ELEMENT)
+      const valuesData = new ValuesArray(valuesAccessor.buffer, valuesAccessor.byteOffset, valuesAccessor.byteLength / ValuesArray.BYTES_PER_ELEMENT)
+
+      console.log("Sparse Accessor Debugging:");
+      console.log("Indices Data:", indicesData);
+      console.log("Values Data:", valuesData);
+
+      for (let i = 0; i < count; i++) { //indicesData.length; i++) {
+        const index = indicesData[i]
+        const value = valuesData.subarray(i * type, (i + 1) * type)
+        console.log(`Setting value at index ${index}:`, value);
+        sparseData.set(value, index * type);
+      }
+
+      console.log("Final Sparse Data:", sparseData);
+      bufferView = sparseData
+
+      /*bufferView = new BufferView({
+        buffer: sparseData.buffer,
+        byteLength: sparseData.length * ValuesArray.BYTES_PER_ELEMENT //sparseData.byteLength //ValuesArray.BYTES_PER_ELEMENT //gltfSpec.count //gltfSpec.byteLength //type //sparseData.buffer.byteLength
+      })*/
+    } else {
+      bufferView = await this.loadBufferView(gltfSpec.bufferView)
+    }
+
+    accessor = new Accessor({
       ...gltfSpec,
-      bufferView: await this.loadBufferView(gltfSpec.bufferView),
-      numComponents: accessorTypeToNumComponentsMap[gltfSpec.type],
+      bufferView,
+      numComponents: type,
     });
+
     this.cache.set(gltfSpec, accessor);
     return accessor;
   }
@@ -333,8 +403,8 @@ export class GLTFLoader {
 
     const options = { primitives: [] } //, weights: [] };
     for (const primitiveSpec of gltfSpec.primitives) {
-      const primitiveOptions = { targets: {} };
-      primitiveOptions.attributes = {};
+      const primitiveOptions = { attributes: {} };
+      //primitiveOptions.attributes = {};
       for (const name in primitiveSpec.attributes) {
         primitiveOptions.attributes[name] = await this.loadAccessor(primitiveSpec.attributes[name]);
       }
@@ -346,8 +416,9 @@ export class GLTFLoader {
       }
       primitiveOptions.mode = primitiveSpec.mode;
 
-      // morphing targets
+      // morphing targets - blend shapes
       if (primitiveSpec.targets) {
+        primitiveOptions.targets = []
         for (const target in primitiveSpec.targets) {
           primitiveOptions.targets[target] = {}
           for (const name in primitiveSpec.targets[target]) {

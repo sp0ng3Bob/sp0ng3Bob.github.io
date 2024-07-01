@@ -1,7 +1,7 @@
 const vertex = `#version 300 es
 precision mediump float;
 
-layout (location = 0) in vec3 aPosition; //vec3 aPosition
+layout (location = 0) in vec3 aPosition;
 layout (location = 1) in vec2 aTexCoord;
 layout (location = 2) in vec3 aNormal;
 
@@ -12,6 +12,17 @@ layout (location = 4) in vec4 aJoint1;
 layout (location = 6) in vec4 aWeight1;
 
 layout (location = 7) in vec4 aTangent;
+
+/* Morph target weights */
+layout(location = 8) in vec3 aPositionTarget0;
+layout(location = 9) in vec3 aPositionTarget1;
+layout(location = 10) in vec3 aNormalTarget0;
+layout(location = 11) in vec3 aNormalTarget1;
+layout(location = 12) in vec3 aTangentTarget0;
+layout(location = 13) in vec3 aTangentTarget1;
+
+uniform float uMorphTargetWeight0;
+uniform float uMorphTargetWeight1;
 
 uniform mat4 uMvpMatrix;
 
@@ -25,6 +36,22 @@ out vec2 vTexCoord;
 out vec4 vTangent;
 
 void main() {
+  vec3 position = aPosition;
+  vec3 normal = aNormal;
+  //vec3 tangent = aTangent.xyz
+
+  // Apply morph targets
+  if (uMorphTargetWeight0 < 0.0) {
+    position += aPositionTarget0 * uMorphTargetWeight0;
+
+    if (uMorphTargetWeight1 < 0.0) {
+      position += aPositionTarget1 * uMorphTargetWeight1;
+    }
+  }
+
+  //normal += aNormalTarget0 * uMorphTargetWeight0;
+  //normal += aNormalTarget1 * uMorphTargetWeight1;
+
   mat4 skinMatrix = mat4(1.0); // Default to identity matrix
 
   /*if (aWeight0 != vec4(0.0)) {
@@ -41,10 +68,10 @@ void main() {
                     aWeight1.w * u_jointMatrix.matrix[int(aJoint1.w)];
   }*/
 
-  gl_Position = uMvpMatrix * skinMatrix * vec4(aPosition, 1.0);
+  gl_Position = uMvpMatrix * skinMatrix * vec4(position, 1.0);
 
   if (aNormal != vec3(0.0)) {
-      vec3 transformedNormal = mat3(transpose(inverse(skinMatrix))) * aNormal;
+      vec3 transformedNormal = mat3(transpose(inverse(skinMatrix))) * normal;
       vNormal = (uMvpMatrix * vec4(transformedNormal, 0.0)).xyz;
   } else {
       vNormal = vec3(0.0); // Default normal if not defined
@@ -272,8 +299,13 @@ vec4 baseColor = hasBaseColorTexture == 1 ? texture(uBaseColorTexture, vTexCoord
     diffuse += uLightColors[i] * uDiffuseColor[i] * lambertian + uAmbientalColor[i];
   }
   
-  vec3 finalColor = mix(albedo.rgb * diffuse, uBaseColor.rgb, 0.1);
-  oColor = vec4(finalColor, mix(albedo.a, uBaseColor.a, 0.1));
+  if (uBaseColor != vec4(1.0)) {
+    vec3 finalColor = mix(albedo.rgb, uBaseColor.rgb, 0.2) * diffuse;
+    oColor = vec4(finalColor, mix(albedo.a, uBaseColor.a, 0.2));
+  } else {
+    vec3 finalColor = albedo.rgb * diffuse;
+    oColor = vec4(finalColor, albedo.a); 
+  }
   
   
   

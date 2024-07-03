@@ -55,7 +55,7 @@ export class AnimationsPlayer {
     if (!this.isPlaying) return
 
     for (const animationIndex of this.animationsToPlay.keys()) {
-      this.animations[animationIndex].update(this.getCurrentTime())
+      this.animations[animationIndex].update(this.currentTime) //this.getCurrentTime())
     }
 
     this.currentTime += deltaTime

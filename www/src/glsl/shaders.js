@@ -6,6 +6,7 @@ layout (location = 1) in vec2 aTexCoord;
 layout (location = 2) in vec3 aNormal;
 
 /* SKINNING */
+uniform int hasSkinning;
 layout (location = 3) in vec4 aJoint0;
 layout (location = 5) in vec4 aWeight0;
 layout (location = 4) in vec4 aJoint1;
@@ -26,6 +27,7 @@ uniform float uMorphTargetWeight1;
 
 uniform mat4 uMvpMatrix;
 
+uniform mat4 u_jointMatrix[2];
 /*uniform JointMatrix
 {
     mat4 matrix[65];
@@ -54,6 +56,12 @@ void main() {
 
   mat4 skinMatrix = mat4(1.0); // Default to identity matrix
 
+  if (hasSkinning == 1) {
+    skinMatrix =  aWeight0.x * u_jointMatrix[int(aJoint0.x)] +
+                  aWeight0.y * u_jointMatrix[int(aJoint0.y)] +
+                  aWeight0.z * u_jointMatrix[int(aJoint0.z)] +
+                  aWeight0.w * u_jointMatrix[int(aJoint0.w)];
+  }
   /*if (aWeight0 != vec4(0.0)) {
       skinMatrix = aWeight0.x * u_jointMatrix.matrix[int(aJoint0.x)] +
                     aWeight0.y * u_jointMatrix.matrix[int(aJoint0.y)] +

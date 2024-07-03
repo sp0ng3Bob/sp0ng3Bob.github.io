@@ -373,8 +373,21 @@ export class Renderer {
     mvpMatrix = mat4.clone(mvpMatrix)
     mat4.mul(mvpMatrix, mvpMatrix, node.matrix)
 
+    const program = this.programs.simple
+
+    if (node.skin) {
+      //node.skin.updateJointMatrices()
+      for (const i in node.skin.joints) {
+        //gl.uniformMatrix4fv(program.uniforms.u_jointMatrix[i], false, node.skin.getJointMatrix(Number(i)))
+        gl.uniformMatrix4fv(program.uniforms[`u_jointMatrix[${i}]`], false, node.skin.updateJointMatrices(Number(i)))
+      }
+      gl.uniform1i(program.uniforms.hasSkinning, 1)
+    } else {
+      gl.uniform1i(program.uniforms.hasSkinning, 0)
+    }
+
     if (node.mesh) {
-      const program = this.programs.simple
+      //const program = this.programs.simple
       gl.uniformMatrix4fv(program.uniforms.uMvpMatrix, false, mvpMatrix)
 
       let w0 = 0.0

@@ -499,7 +499,11 @@ export class GLTFLoader {
     }
 
     if (gltfSpec.skin !== undefined) {
-      options.skin = await this.loadSkin(gltfSpec.skin);
+      options.skin = await this.loadSkin(gltfSpec.skin)
+      /*options.skin = []
+      for (const skin in gltfSpec.skins) {
+        options.skin.push(await this.loadSkin(skin))
+      }*/
     }
 
     const node = new Node(options);
@@ -542,16 +546,13 @@ export class GLTFLoader {
     }
 
     let options = { joints: [] }
-    options.name = gltfSpec.name ?? options.name
+    options.name = `Skin_${nameOrIndex}` //gltfSpec.name ?? `Skin_${nameOrIndex}`
 
     if (gltfSpec.skeleton) {
       options.skeleton = await this.loadNode(gltfSpec.skeleton)
     }
-    /*for (const jointIndex of gltfSpec.joints ?? []) {
-      options.joints[jointIndex] = await this.loadNode(jointIndex)
-    }*/
 
-    for (const jointIndex of gltfSpec.joints ?? []) {
+    for (const jointIndex of gltfSpec.joints) {
       options.joints.push(await this.loadNode(jointIndex))
     }
 
@@ -570,7 +571,7 @@ export class GLTFLoader {
       return this.cache.get(gltfSpec)
     }
 
-    let options = { name: gltfSpec.name ?? "_", channels: [] } //, samplers: [] }
+    let options = { name: gltfSpec.name ?? `Animation_${nameOrIndex}`, channels: [] } //, samplers: [] }
 
     for (const channelIndex in gltfSpec.channels) {
       const channel = {}

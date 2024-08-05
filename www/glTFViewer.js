@@ -21,8 +21,6 @@ const vec3 = glMatrix.vec3
 const mat4 = glMatrix.mat4
 const quat = glMatrix.quat
 
-//let m = "./models/Cameras.gltf"
-//let m = "./models/MultipleScenes.gltf" //doesnt work.. again (in renderer -> if (primitive.indices) ...) --> whn changing from 0 back to 1: GL_INVALID_OPERATION: Insufficient buffer size.
 const m = "./src/models/Duck.gltf"
 const m0 = "./src/models/0Suzanne/Suzanne.gltf"
 const m01 = "./src/models/0.1SparseAcc/SimpleSparseAccessor.gltf"
@@ -30,9 +28,10 @@ const m1 = "./src/models/1Avocado/glTF/Avocado.gltf"
 const m101 = "./src/models/1Avocado/glTF-Binary/Avocado.glb"
 const m2 = "./src/models/2Helmet/FlightHelmet.gltf"
 const m3 = "./src/models/3Boombox/BoomBox.gltf"
+const m301 = "./src/models/17Corset/Corset.gltf"
 const m4 = "./src/models/4PBR/Box With Spaces.gltf"
 const m5 = "./src/models/5Animated/AnimatedCube.gltf"
-const m6 = "./src/models/6Skins/RiggedSimple.gltf" //also this... (GL_INVALID_OPERATION: Must have element array buffer bound.)
+const m6 = "./src/models/6Skins/RiggedSimple.gltf"
 const m7 = "./src/models/7Alpha/AlphaBlendModeTest.gltf"
 const m8 = "./src/models/8AnimateMorph/AnimatedMorphCube.gltf"
 const m9 = "./src/models/9BoxAnimated/BoxAnimated-EMB.gltf"
@@ -41,12 +40,12 @@ const m11 = "./src/models/11MorphTest/MorphPrimitivesTest.gltf"
 const m12 = "./src/models/12UltimateTest/MorphStressTest.gltf"
 const m13 = "./src/models/13ColorEnc/TextureEncodingTest.gltf"
 const m14 = "./src/models/14AnimTri/AnimatedTriangle.gltf"
-const m15 = "./src/models/15AnimInter/InterpolationTest.gltf" //glb" //?? (GL_INVALID_OPERATION: Insufficient buffer size.)
+const m15 = "./src/models/15AnimInter/InterpolationTest.glb"
 const m16 = "./src/models/16FoxMultiAnim/Fox.gltf"
 const m99 = "./src/models/99Unicode/Unicode❤♻Test.glb"
 const noModel = ""
-let model = noModel //m //m1
-const modelList = { "-": noModel, "Duck": m, "Suzanne": m0, "Sparse Accessors": m01, "Avocado": m1, "AvocadoBIN": m101, "Fight Helmet": m2, "BoomBox": m3, "Box": m4, "Animated Cube": m5, "Rigged Simple": m6, "Alpha Test": m7, "Morph Cube": m8, "BoxAnimated": m9, "Simple Skin": m10, "Morph Test": m11, "Stress Test": m12, "Color encoding": m13, "Simple rotation anim": m14, "Anim interpolations": m15, "Fox Multi Anim": m16, "Unicode test": m99 }
+let model = noModel
+const modelList = { "-": noModel, "Duck": m, "Suzanne": m0, "Sparse Accessors": m01, "Avocado": m1, "AvocadoBIN": m101, "Fight Helmet": m2, "BoomBox": m3, "Corset": m301, "Box": m4, "Animated Cube": m5, "Rigged Simple": m6, "Alpha Test": m7, "Morph Cube": m8, "BoxAnimated": m9, "Simple Skin": m10, "Morph Test": m11, "Stress Test": m12, "Color encoding": m13, "Simple rotation anim": m14, "Anim interpolations": m15, "Fox Multi Anim": m16, "Unicode test": m99 }
 const modelListCORS = {
   "2CylinderEngine": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/main/2.0/2CylinderEngine/glTF-Embedded/2CylinderEngine.gltf",
   "AlphaBlendModeTest": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/main/2.0/AlphaBlendModeTest/glTF-Embedded/AlphaBlendModeTest.gltf",
@@ -132,6 +131,26 @@ export class App extends Application {
       //Lights
       lightsList: [],
 
+      //Procedural geometry
+      newGeoObject: {
+        shape: 0, //"Plane",
+        size: 1,
+        position: "0, 0, 0",
+        rotation: "0, 0, 0, 1",
+        color: [127, 127, 255],
+        texture: "./src/models/1Avocado/glTF/Avocado_baseColor.png",
+        textureMapping: {
+          mapping: 'UV',
+          translateX: 0,
+          translateY: 0,
+          rotate: 0,
+          scaleX: 1,
+          scaleY: 1
+        },
+        innerHole: 0.2, //tube's radius size
+      },
+      deleteLastGeoOfType: "Any",
+
       //Globals
       lookingAt: "0, 0, 0",
       wrappingModeS: 10497,
@@ -144,24 +163,28 @@ export class App extends Application {
     // Axes helper view
     this.axes = new Axes({
       glContext: this.gl,
-      program: this.renderer.programs.axes
+      program: this.renderer.programs.axes,
+      //mvpMatrix: this.camera.camera.matrix
     })
 
+    // glTF animations player
     this.animationsPlayer = new AnimationsPlayer()
     this.frameCount = 1
     this.animationTimeLogs = logsDOMElement.querySelector("#animationTime")
-    this.animationTimeLogstextContent = 0
+    this.animationTimeLogs.textContent = 0
 
-    // User Controls
+    // User Controls and logging
     this.controls = new Controls()
     this.freeCamera = 0
+    this.cameraPositionLogs = logsDOMElement.querySelector("#cameraPosition")
+    this.cameraRotationLogs = logsDOMElement.querySelector("#cameraRotation")
 
     // Lights
     this.lightsNumberLimit = 8
 
     //put the light and the procgeo sphere in the same object - TODO
     this.state.lightsList.push(new PointLight({ position: "-0.6, 0.1, 0", color: [255, 120, 120], type: "" }))
-    globalLightsList.push(Geo.createSphere(this.gl, 0.01, [-0.6, 0.1, 0], "rotation?!", [255, 120, 120], "./src/models/1Avocado/glTF/Avocado_baseColor.png"))
+    globalLightsList.push(Geo.createSphere(this.gl, this.renderer.programs.pbr, 0.01, [-0.6, 0.1, 0], undefined, [255, 120, 120], "./src/models/1Avocado/glTF/Avocado_baseColor.png"))
 
     this.state.lightsList.push(new PointLight({ position: "-0.3, 0.1, 0", color: [100, 255, 100], type: "" }))
     //globalLightsList.push(Geo.createSphere(this.gl, 0.1, [-0.3, 0.1, 0], "rotation?!", [100, 255, 100], "./src/models/1Avocado/glTF/Avocado_baseColor.png"))
@@ -196,7 +219,7 @@ export class App extends Application {
     this.modelsFolder = gui.addFolder("Model")
     this.modelsFolder.domElement.children[0].children[0].classList.add("green")
     this.modelSelector = this.modelsFolder.add(this.state, "selectedModel", { ...modelList, ...{ "-v- Embeded glLTs -v-": "" }, ...modelListCORS }).onChange(this.changeModel.bind(this))
-    this.modelsFolder.add(this.state, "selectedModel").listen().domElement.children[0].setAttribute("disabled", "disabled") //.onFinishChange(this.changeModel.bind(this))
+    this.modelsFolder.add(this.state, "selectedModel").listen().onFinishChange(this.changeModel.bind(this)) //.domElement.children[0].setAttribute("disabled", "disabled") //.onFinishChange(this.changeModel.bind(this))
     //this.modelsFolder.add(this.state, "selectedModel").onFinishChange(this.changeModelWithUrl.bind(this))
     this.modelsFolder.open()
 
@@ -209,6 +232,8 @@ export class App extends Application {
     this.infoFolder.add(this.state, "numberOfIndices").listen()
     this.infoFolder.add(this.state, "boundingBox").listen()
     this.infoFolder.__controllers.forEach((ctrl) => ctrl.domElement.children[0].setAttribute("disabled", "disabled"))
+    //const modelPositioningFolder = this.infoFolder.addFolder("Model positioning")
+    //modelPositioningFolder.add(this.scene.nodes[]).listen()
     this.infoFolder.domElement.style.display = "none"
 
     // Model scenes controls.
@@ -275,23 +300,41 @@ export class App extends Application {
     this.geometryFolder = gui.addFolder("Procedural geometry")
     this.geometryFolder.domElement.children[0].children[0].classList.add("blue")
 
-    let planeFolder = this.geometryFolder.addFolder("Plane")
-    const addPlaneAction = planeFolder.add(this, "addGeoPlane").name("ADD PLANE TO SCENE")
+    const addGeoFolder = this.geometryFolder.addFolder("Add a model")
+    addGeoFolder.add(this.state.newGeoObject, "shape", { "Plane": 0, "Cube": 1, "Sphere": 2, "Torus": 3 }).name("Shape").onChange(this.selectGeoAction.bind(this))
+    this.geometryActions = []
+    const addPlaneAction = addGeoFolder.add(this, "addGeoPlane").name("ADD PLANE TO SCENE")
+    const addCubeAction = addGeoFolder.add(this, "addGeoCube").name("ADD CUBE TO SCENE")
+    const addSphereAction = addGeoFolder.add(this, "addGeoSphere").name("ADD SPHERE TO SCENE")
+    const addTorusAction = addGeoFolder.add(this, "addGeoTorus").name("ADD TORUS TO SCENE")
     addPlaneAction.__li.classList.add("centered")
-
-    let cubeFolder = this.geometryFolder.addFolder("Cube")
-    const addCubeAction = cubeFolder.add(this, "addGeoCube").name("ADD CUBE TO SCENE")
     addCubeAction.__li.classList.add("centered")
-
-    let sphereFolder = this.geometryFolder.addFolder("Sphere")
-    const addSphereAction = sphereFolder.add(this, "addGeoSphere").name("ADD SPHERE TO SCENE")
     addSphereAction.__li.classList.add("centered")
-
-    let torusFolder = this.geometryFolder.addFolder("Torus")
-    const addTorusAction = torusFolder.add(this, "addGeoTorus").name("ADD TORUS TO SCENE")
     addTorusAction.__li.classList.add("centered")
+    addCubeAction.__li.style.display = "none"
+    addSphereAction.__li.style.display = "none"
+    addTorusAction.__li.style.display = "none"
+    this.geometryActions.push([addPlaneAction, addCubeAction, addSphereAction, addTorusAction])
 
-    let geomListFolder = this.geometryFolder.addFolder("List of added geometries")
+    const geoSize = addGeoFolder.add(this.state.newGeoObject, "size", 1, 10, 0.1).name("Size").listen()
+    const geoInnerHole = addGeoFolder.add(this.state.newGeoObject, "innerHole", 0.1, 2.5, 0.1).name("Tube radius").listen()
+    const geoPosition = addGeoFolder.add(this.state.newGeoObject, "position").name("Position").listen()
+    const geoRotation = addGeoFolder.add(this.state.newGeoObject, "rotation").name("Rotation").listen()
+    const geoColor = addGeoFolder.addColor(this.state.newGeoObject, "color").name("Base color").listen()
+    const geoUV = addGeoFolder.add(this.state.newGeoObject, "texture").name("Texture").listen()
+    addGeoFolder.add(this.state.newGeoObject.textureMapping, 'mapping', ['UV', 'Planar', 'Cylindrical', 'Spherical']).onChange(this.updateMapping)
+    addGeoFolder.add(this.state.newGeoObject.textureMapping, 'translateX', -1, 1).onChange(this.updateUVs)
+    addGeoFolder.add(this.state.newGeoObject.textureMapping, 'translateY', -1, 1).onChange(this.updateUVs)
+    addGeoFolder.add(this.state.newGeoObject.textureMapping, 'rotate', 0, Math.PI * 2).onChange(this.updateUVs)
+    addGeoFolder.add(this.state.newGeoObject.textureMapping, 'scaleX', 0.1, 2).onChange(this.updateUVs)
+    addGeoFolder.add(this.state.newGeoObject.textureMapping, 'scaleY', 0.1, 2).onChange(this.updateUVs)
+    geoInnerHole.__li.style.display = "none"
+    this.geometryActions.push([geoSize, geoPosition, geoRotation, geoColor, geoUV, geoInnerHole])
+
+    const geomListFolder = this.geometryFolder.addFolder("List of added geometries")
+    geomListFolder.add(this.state, 'deleteLastGeoOfType', ["Any", "Plane", "Cube", "Sphere", "Torus"]).listen().name("Geo type to remove")
+    const removeLastGeoButton = geomListFolder.add(this, "removeLastGeoNode").name("Remove lastly added geo model")
+    removeLastGeoButton.__li.classList.add("centered")
     //this.geometryFolder.domElement.style.display = "none"
 
     // Global controls.
@@ -349,7 +392,7 @@ export class App extends Application {
     //for (let ctrl of this.cameraFolder.__controllers) { this.cameraFolder.remove(ctrl) }
     while (this.cameraFolder.__controllers.length > 0) { this.cameraFolder.remove(this.cameraFolder.__controllers[0]) }
     //if (Object.keys(camerasList).length > 0) {
-    this.cameraFolder.add(this.state, "selectedCamera", camerasList).onChange(this.changeCamera.bind(this))
+    this.cameraFolder.add(this.state, "selectedCamera", camerasList).listen().onChange(this.changeCamera.bind(this))
     this.cameraFolder.domElement.style.display = ""
     //} else {
     //   this.cameraFolder.domElement.style.display = "none"
@@ -418,10 +461,6 @@ export class App extends Application {
     }*/
   }
 
-  updateDisplay() {
-
-  }
-
   setClearColor(color) {
     this.renderer.changeClearColor(color)
     this.axes.changeClearColor(color)
@@ -436,32 +475,130 @@ export class App extends Application {
 
 
   /* PROCEDURAL GEOMETRIES */
+
+  selectGeoAction() {
+    for (const index in this.geometryActions[0]) {
+      if (index != this.state.newGeoObject.shape) {
+        this.geometryActions[0][index].__li.style.display = "none"
+      }
+    }
+    this.geometryActions[0][this.state.newGeoObject.shape].__li.style.display = ""
+
+    if (2 == this.state.newGeoObject.shape) {
+      this.geometryActions[1][0].name("Radius")
+      this.geometryActions[1][5].__li.style.display = "none"
+    } else if (3 == this.state.newGeoObject.shape) {
+      this.geometryActions[1][0].name("Radius")
+      this.geometryActions[1][5].__li.style.display = ""
+    } else {
+      this.geometryActions[1][0].name("Size")
+      this.geometryActions[1][5].__li.style.display = "none"
+    }
+  }
+
   addGeoPlane() {
-    proceduralModelsList.push(Geo.createPlane(this.gl, 1, [0, 0, 0], "rotation?!", [170, 170, 170], "./src/models/1Avocado/glTF/Avocado_baseColor.png"))
+    const size = this.state.newGeoObject.size
+    const position = this.state.newGeoObject.position.split(",").map(Number)
+    const rotation = this.state.newGeoObject.rotation //lolll
+    const color = this.state.newGeoObject.color
+    const texture = this.state.newGeoObject.texture
+    const textureMappingOptions = this.state.newGeoObject.textureMapping
+
+    proceduralModelsList.push(Geo.createPlane(this.gl, this.renderer.programs.pbr, size, position, rotation, color, texture, textureMappingOptions))
   }
 
   addGeoCube() {
-    proceduralModelsList.push(Geo.createCube(this.gl, 1, [0, 0, 0], "rotation?!", [170, 170, 170], "./src/models/1Avocado/glTF/Avocado_baseColor.png"))
+    const size = this.state.newGeoObject.size
+    const position = this.state.newGeoObject.position.split(",").map(Number)
+    const rotation = this.state.newGeoObject.rotation
+    const color = this.state.newGeoObject.color
+    const texture = this.state.newGeoObject.texture
+
+    proceduralModelsList.push(Geo.createCube(this.gl, this.renderer.programs.pbr, size, position, rotation, color, texture))
   }
 
   addGeoSphere() {
-    proceduralModelsList.push(Geo.createSphere(this.gl, 1, [0, 0, 0], "rotation?!", [170, 170, 170], "./src/models/1Avocado/glTF/Avocado_baseColor.png"))
+    const size = this.state.newGeoObject.size
+    const position = this.state.newGeoObject.position.split(",").map(Number)
+    const rotation = this.state.newGeoObject.rotation
+    const color = this.state.newGeoObject.color
+    const texture = this.state.newGeoObject.texture
+
+    proceduralModelsList.push(Geo.createSphere(this.gl, this.renderer.programs.pbr, size, position, rotation, color, texture))
   }
 
   addGeoTorus() {
-    proceduralModelsList.push(Geo.createTorus(this.gl, 1, 0.35, [0, 0, 0], "rotation?!", [170, 170, 170], "./src/models/1Avocado/glTF/Avocado_baseColor.png"))
+    const size = this.state.newGeoObject.size
+    const position = this.state.newGeoObject.position.split(",").map(Number)
+    const rotation = this.state.newGeoObject.rotation
+    const color = this.state.newGeoObject.color
+    const texture = this.state.newGeoObject.texture
+    const innerHole = this.state.newGeoObject.innerHole
+
+    proceduralModelsList.push(Geo.createTorus(this.gl, this.renderer.programs.pbr, size, innerHole, position, rotation, color, texture))
+  }
+
+  removeLastGeoNode() {
+    const type = this.state.deleteLastGeoOfType
+
+    switch (type) {
+      case "Plane":
+      case "Cube":
+      case "Sphere":
+      case "Torus":
+        this.removeLatsGeoNodeOfType(type)
+        break
+      default:
+        proceduralModelsList.pop()
+    }
+  }
+
+  removeLatsGeoNodeOfType(type) {
+    for (let i = proceduralModelsList.length - 1; i >= 0; i--) {
+      if (proceduralModelsList[i].type === type) {
+        proceduralModelsList.splice(i, 1)
+        break
+      }
+    }
   }
   /****************************************************************************************************************/
 
 
   /* TEXTURES */
+  /*updateMapping() {
+    let uvs
+    switch (params.mapping) {
+      case 'Planar':
+        uvs = applyPlanarMapping(plane.positions)
+        break
+      case 'Cylindrical':
+        uvs = applyCylindricalMapping(plane.positions)
+        break
+      case 'Spherical':
+        uvs = applySphericalMapping(plane.positions)
+        break
+      default:
+        uvs = getUVsFromModel(plane)
+        break
+    }
+    setUVs(gl, plane, uvs)
+  }
+
+  updateUVs() {
+    let uvs = getCurrentUVs(gl, plane)
+    uvs = translateUVs(uvs, params.translateX, params.translateY)
+    uvs = rotateUVs(uvs, params.rotate)
+    uvs = scaleUVs(uvs, params.scaleX, params.scaleY)
+    setUVs(gl, plane, uvs)
+  }*/
+
   changeWrappingS(val) {
     //this.renderer.wrappingModeS = parseInt(val, 10)
     //this.renderer.prepareScene(this.scene)
     for (let o of this.loader.cache.values()) {
       if (o instanceof Texture) {
         //o.sampler.wrapS = parseInt(val, 10)
-        this.renderer.setWrappingModeS(parseInt(val, 10)) //Number(val) ???
+        this.renderer.setWrappingModeS(Number(val)) //parseInt(val, 10) //Number(val) ???
       }
     }
   }
@@ -526,7 +663,7 @@ export class App extends Application {
 
     this.renderer.prepareScene(this.scene)
 
-    this.setTextureStuff(this.scene.nodes)
+    //this.setTextureStuff(this.scene.nodes)
 
     if (this.scene.animations) {
       (Object.keys(this.state.animationsList) ?? []).forEach(key => delete this.state.animationsList[key])
@@ -575,6 +712,7 @@ export class App extends Application {
     })
   }
 
+  /* ANIMATIONS */
   playAnimations() {
     if (this.animationsPlayer.isPaused || !this.animationsPlayer.isPlaying) {
       this.animationsPlayer.play()
@@ -594,6 +732,7 @@ export class App extends Application {
   queueAnimation(animationIndex) {
     this.animationsPlayer.toggleAnimationToPlaylist(animationIndex)
   }
+  //****************************************************************************************************************
 
   async loadSceneAndCamera() {
     if (this.state.selectedModel != "") {
@@ -636,8 +775,9 @@ export class App extends Application {
     //camerasList = {}
     let promises = []
     for (let c in this.loader.gltf.cameras) {
-      camerasList[`Model camera ${c}`] = c
-      promises.push(await this.loader.loadNode("camera", parseInt(c, 10)))
+      c = Number(c)
+      camerasList[`Model camera ${c}`] = c + 1
+      promises.push(await this.loader.loadNode("camera", c))
     }
     return promises
   }
@@ -645,83 +785,88 @@ export class App extends Application {
   async loadCameras() {
     let viewMatrix = mat4.create()
 
-    if (this.glTFBox) { //glTF model selected and loaded
-      const { min, max } = this.glTFBox
-      const modelSizeX = max[0] - min[0]
-      const modelSizeY = max[1] - min[1]
-      const modelSizeZ = max[2] - min[2]
-      const maxModelSize = Math.max(modelSizeX, modelSizeY, modelSizeZ)
-      this.controls.setZoom(maxModelSize / 10)
-      /*this.state.eye = [
-        0, //+ (min[0] + max[0]) / 2,
-        0, //+ (min[1] + max[1]) / 2,
-        -modelSizeZ * 5 //5*min[2]
-      ]
-      this.state.lookingAt = this.scene.nodes[0].translation
-      //mat4.lookAt(matrix, this.state.eye, this.state.lookingAt, [0, 1, 0])
-      mat4.lookAt(viewMatrix, this.state.eye, [0,0,0], [0, 1, 0])*/
-      //this.state.eye = [0, 0, 2]  // Assuming a positive Z coordinate here
+    const { min, max } = this.glTFBox
+    const modelSizeX = max[0] - min[0]
+    const modelSizeY = max[1] - min[1]
+    const modelSizeZ = max[2] - min[2]
+    const maxModelSize = Math.max(modelSizeX, modelSizeY, modelSizeZ)
+    this.controls.setZoom(maxModelSize / 10)
 
-      // Set the look-at point to the center of the GLTF object
-      this.state.lookingAt = [(min[0] + max[0]) / 2, (min[1] + max[1]) / 2, (min[2] + max[2]) / 2]
-      this.state.eye = [...this.state.lookingAt]
-      this.state.eye[2] *= 3
+    this.state.lookingAt = [(min[0] + max[0]) / 2, (min[1] + max[1]) / 2, (min[2] + max[2]) / 2]
+    this.state.eye = [...this.state.lookingAt]
+    //this.state.eye[2] *= 2 //3
 
-      // Calculate the view matrix using the eye and look-at point
-      mat4.lookAt(viewMatrix, this.state.eye, this.state.lookingAt, [0, 1, 0])
+    // Calculate the view matrix using the eye and look-at point
+    mat4.lookAt(viewMatrix, this.state.eye, this.state.lookingAt, [0, 1, 0])
+    //this.state.eye = [0, 0, (this.state.lookingAt[2] / -this.state.lookingAt[2]) * 5]
+    //mat4.lookAt(viewMatrix, this.state.eye, [0, 0, 0], [0, 1, 0]) //this.state.lookingAt, [0, 1, 0])
 
-      const fov = 2 * Math.atan(maxModelSize / Math.abs(this.state.eye[2] * 2))
-      const freeCamera = new PerspectiveCamera({
-        aspect: this.canvas.clientWidth / this.canvas.clientHeight,
-        fov: fov,
-        near: 0.001 //maxModelSize/20,
-        //far    : maxModelSize*200
-      })
-      const vpMatrix = mat4.create()
-      mat4.multiply(vpMatrix, freeCamera.matrix, viewMatrix)
-      let options = {
-        "camera": freeCamera,
-        "matrix": vpMatrix
-      }
+    const fov = 2 * Math.atan(maxModelSize / Math.abs(this.state.eye[2] * 2))
+    const freeCamera = new PerspectiveCamera({
+      aspect: this.canvas.clientWidth / this.canvas.clientHeight,
+      fov: fov,
+      near: 0.01, //maxModelSize / 20,
+      far: maxModelSize * 50
+    })
+    const vpMatrix = mat4.create()
+    /*const camInverted = mat4.create()
+    mat4.invert(camInverted, freeCamera.matrix)
+    mat4.multiply(vpMatrix, viewMatrix, camInverted)*/
+    mat4.multiply(vpMatrix, viewMatrix, freeCamera.matrix)
+    let options = {
+      "camera": freeCamera,
+      "matrix": vpMatrix
+    }
 
-      camerasList = {}
-      this.cameras = []
+    camerasList = {}
+    this.cameras = []
+    camerasList["Free camera"] = 0
+    this.cameras.push(new Node(options))
 
-      let promises = await this.getCameras()
-      let gltfCameras = await Promise.all(promises)
-      for (let c of gltfCameras) { this.cameras.push(c) }
 
-      camerasList["Free camera"] = gltfCameras.length
-      this.cameras.push(new Node(options))
+    let promises = await this.getCameras()
+    let gltfCameras = await Promise.all(promises)
+    for (let c of gltfCameras) { this.cameras.push(c) }
 
-      this.camera = this.cameras[this.loader.defaultCamera]
-      this.freeCamera = this.cameras.length == 1 ? 0 : this.cameras.length - 1
-      this.camera.lookingAt = this.state.lookingAt
+    this.freeCamera = 0 //this.cameras.length == 1 ? 0 : this.cameras.length - 1
+    this.state.selectedCamera = this.cameras.length > 1 ? 1 : 0 //this.loader.defaultCamera
+    this.camera = this.cameras[this.state.selectedCamera]
+    this.camera.lookingAt = this.state.lookingAt
 
-      // delete this or fix it ?!?!?!?!?!?!?!?!?!*!*?!*?*!?*!?*!*?!*!?*?!?*!?*!*!*?!*?!*?!*!?*!?*!?!*?!*!?*?!*?!*?*!?*!
-      this.cameras[this.freeCamera].translation = [...this.state.eye] //this.state.eye[2]
-      this.cameras[this.freeCamera].translation[2] = modelSizeZ == 0 ? 1.2 : modelSizeZ * 3 //this.state.eye[2]
-      this.cameras[this.freeCamera].updateMatrix()
-      //*?!*?!*!?*!?*!?!*!?*!?!*?!!*?!*!?!*?!*!?*!?!*?!*!?*!?!*!?*!?!*!?!*?! wtf ??
-    } else {
-      //this.state.lookingAt = [0,0,0]
-      mat4.lookAt(viewMatrix, [0, 0.5, 5], [0, 0, 0], [0, 1, 0])
-      const freeCamera = new PerspectiveCamera()
-      const vpMatrix = mat4.create()
-      mat4.multiply(vpMatrix, freeCamera.matrix, viewMatrix)
-      let options = {
-        "camera": freeCamera,
-        "matrix": vpMatrix
-      }
+    // delete this or fix it ?!?!?!?!?!?!?!?!?!*!*?!*?*!?*!?*!*?!*!?*?!?*!?*!*!*?!*?!*?!*!?*!?*!?!*?!*!?*?!*?!*?*!?*!
+    this.cameras[this.freeCamera].translation = [...this.state.eye] //this.state.eye[2]
+    this.cameras[this.freeCamera].translation[2] = modelSizeZ == 0 ? 1.4 : modelSizeZ * 2 //this.state.eye[2]
+    this.cameras[this.freeCamera].updateMatrix()
+    //*?!*?!*!?*!?*!?!*!?*!?!*?!!*?!*!?!*?!*!?*!?!*?!*!?*!?!*!?*!?!*!?!*?! wtf ??
+  }
 
-      camerasList = {}
-      this.cameras = []
-      this.cameras.push(new Node(options))
+  setupFreeCamera() {
+    const viewMatrix = mat4.create()
+    mat4.lookAt(viewMatrix, [0, 1, 5], [0, 0, 0], [0, 1, 0])
+    const freeCamera = new PerspectiveCamera({
+      //aspect: this.canvas.clientWidth / this.canvas.clientHeight
+    })
+    const vpMatrix = mat4.create()
+    mat4.multiply(vpMatrix, freeCamera.matrix, viewMatrix)
+    let options = {
+      "camera": freeCamera,
+      "matrix": vpMatrix
+    }
+    /*let options = { //?????????????
+      "camera": freeCamera,
+      "matrix": viewMatrix //vpMatrix
+    }*/
 
-      this.freeCamera = 0
-      this.camera = this.cameras[0]
-      camerasList["Free camera"] = 0
-      this.camera.lookingAt = [0, 0, 0]
+    camerasList = {}
+    this.cameras = []
+    this.cameras.push(new Node(options))
+
+    this.freeCamera = 0
+    this.camera = this.cameras[0]
+    camerasList["Free camera"] = 0
+    this.camera.lookingAt = [0, 0, 0]
+    if (this?.state) {
+      this.state.selectedCamera = 0
     }
   }
 
@@ -740,13 +885,15 @@ export class App extends Application {
   }
 
   changeCamera(id) {
-    this.camera = this.cameras[id]
+    id = Number(id)
+    this.camera = this.cameras[id - 1 < 0 ? id : id--]
   }
 
   async start() {
     this.loader = new GLTFLoader()
     this.renderer = new Renderer(this.gl)
-    await this.loadCameras()
+    //await this.loadCameras()
+    this.setupFreeCamera()
     this.scene = { nodes: [], geoNodes: [] }
 
     //delete this**********************!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!
@@ -757,7 +904,7 @@ export class App extends Application {
   render() {
     if (this.renderer) {
 
-      // Animations
+      /* glTF Animations */
       if (this.animationsPlayer.animations && this.animationsPlayer.isPlaying) {
         const deltaTime = (performance.now() - this.lastTime) / 1000
         this.lastTime = performance.now()
@@ -768,23 +915,29 @@ export class App extends Application {
           this.frameCount++
         }
       }
+
+      /* Updating logs */
+      const [ctx, cty, ctz] = this.camera.translation
+      const [crx, cry, crz] = this.controls.quatToEuler(this.camera.rotation)//.map(angle => angle * (180 / Math.PI))
+      this.cameraPositionLogs.textContent = `X: ${ctx.toFixed(3)}, Y: ${cty.toFixed(3)}, Z: ${ctz.toFixed(3)}`
+      this.cameraRotationLogs.textContent = `Pitch: ${crx.toFixed(3)}°, Yaw: ${cry.toFixed(3)}°, Roll: ${crz.toFixed(3)}°`
       this.animationTimeLogs.textContent = this.animationsPlayer.getCurrentTime().toFixed(3)
 
-      // Skins
 
-      //this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT)
+      /* glTF Skinning matrix - TODO */
 
-      if (this.state.rotateModelEnabled) { this.rotateModel(this.scene.nodes, [0, 0.5, 0]) } // over Y
 
-      //if (this.state.rotateModelEnabled) { this.controls.rotateCamera(this.camera, [0,0.5,0]) } //over Y
-
-      //this.lights()
       //this.renderer.prepareScene(this.scene)
-      //this.scene.geoNodes = proceduralModelsList
-      //this.scene.lights = globalLightsList
+      this.scene.geoNodes = [...proceduralModelsList]
+      this.scene.lights = [...globalLightsList]
       this.renderer.render(this.scene, this.camera, this.lights())
 
-      //if (this.state.axesShown) { this.axes.draw(this.camera) }
+      /* Draw axes */
+      if (this.state.axesShown) { this.axes.draw(this.camera) }
+
+      /* Random shiet */
+      if (this.state.rotateModelEnabled) { this.rotateModel(this.scene.nodes, [0, 0.5, 0]) } // over Y
+      //this.rotateCamera()
     }
   }
 
@@ -814,40 +967,36 @@ export class App extends Application {
   }
 
   rotateCamera() {
-    //this.controls.rotateCamera(this.camera)
+    //let [erx, ery, erz] = this.controls.quatToEuler(this.camera.rotation)
+    //console.log(erx, ery, erz)
+    //erx = erx + 0.1 % (2 * Math.PI) //% 360
+    //ery = ery + 0.2 //% 360
+    //erz = erz + 0.3 //% 360
+    //const [roll, pitch, yaw] = [erx, ery, erz]//.map(angle => angle * (Math.PI / 180)) // back to radians
+    const newRotation = quat.create()
+    //quat.fromEuler(newRotation, roll, pitch, yaw)
+    quat.rotateY(newRotation, this.camera.rotation, 0.1)
+    this.camera.rotation = newRotation
+    this.camera.updateMatrix()
+    //this.cameras[this.freeCamera].rotation = new Float32Array([0, 1, 0, 0]) // 180 y
+    //this.cameras[this.freeCamera].rotation = new Float32Array([0, 0, 1, 0]) // 180 z
+    //this.cameras[this.freeCamera].rotation = new Float32Array([0.5, 0.5, 0.5, 1])
+    //this.cameras[this.freeCamera].rotation = new Float32Array([-0.5, 0.5, 0.5, 1])
+    //this.cameras[this.freeCamera].rotation = new Float32Array([0.5, -0.5, 0.5, 1])
+    //this.cameras[this.freeCamera].rotation = new Float32Array([-0.5, -0.5, 0.5, 1])
 
-    let lookAtPosition = this.state.lookingAt
-    /*let lookAtPosition
-    if (this.state.lookingAt.length > 3) {
-      lookAtPosition = this.state.lookingAt.split(",").map(Number) //[0, 0, 0]  // Adjust this to your desired lookAt position
-    } else {
-      lookAtPosition = this.state.lookingAt
-    }*/
-
+    /*let lookAtPosition = this.state.lookingAt
     this.cameraPhi = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, this.cameraPhi)) //Math.max(0.1, Math.min(Math.PI - 0.1, this.cameraPhi))
-    //lookAtPosition = [0,0,0]
-    //this.cameraTheta += 0.01
-    //this.cameraPhi += 0.01
 
-    // Calculate the camera position in spherical coordinates
-    //const x = lookAtPosition[0] + this.cameraRadius * Math.sin(this.cameraPhi) * Math.cos(this.cameraTheta)
-    //const y = lookAtPosition[1] + this.cameraRadius * Math.sin(this.cameraPhi) * Math.sin(this.cameraTheta)
-    //const z = lookAtPosition[2] + this.cameraRadius * Math.cos(this.cameraPhi)
     this.camera.translation[0] = lookAtPosition[0] + this.cameraRadius * Math.sin(this.cameraPhi) * Math.cos(this.cameraTheta)
     this.camera.translation[2] = lookAtPosition[2] + this.cameraRadius * Math.sin(this.cameraPhi) * Math.sin(this.cameraTheta)
     this.camera.translation[1] = lookAtPosition[1] + this.cameraRadius * Math.cos(this.cameraPhi)
-
-    /*this.camera.translation[0] = lookAtPosition[0] + this.camera.translation[2] * Math.sin(this.cameraPhi) * Math.cos(this.cameraTheta)
-    this.camera.translation[2] = lookAtPosition[2] + this.camera.translation[2] * Math.sin(this.cameraPhi) * Math.sin(this.cameraTheta)
-    this.camera.translation[1] = lookAtPosition[1] + this.camera.translation[2] * Math.cos(this.cameraPhi)*/
 
     // Update the view matrix or set the camera position accordingly
     const viewMatrix = mat4.create()
     mat4.lookAt(viewMatrix, this.camera.translation, lookAtPosition, [0, 1, 0])
     mat4.multiply(this.camera.matrix, viewMatrix, this.camera.camera.matrix)
-    //this.camera.translation = new Float32Array([x, y, z])
-    //this.camera.updateMatrix()
-    this.camera.updateMatrix()
+    this.camera.updateMatrix()*/
   }
 
   rotateModel(nodes, r) {

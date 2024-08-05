@@ -15,12 +15,16 @@ export class Renderer {
     this.gl = gl
     this.glObjects = new Map()
     let shaderSources = structuredClone(shaders)
-    delete shaderSources.axes
+    //delete shaderSources.axes
+    //delete shaderSources.simple
     this.programs = WebGL.buildPrograms(gl, shaderSources) //simple) // COMPILING AXES SHADER TWO TIMES!!!!!!!
 
     gl.clearColor(1, 1, 1, 1)
     gl.enable(gl.DEPTH_TEST)
     gl.enable(gl.CULL_FACE)
+
+    // Disable color space conversion - https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#images
+    gl.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL, gl.NONE)
 
     // Texture global options
     /*this.wrappingModeS = gl.REPEAT
@@ -128,12 +132,12 @@ export class Renderer {
     return glSampler
   }
 
-  prepareImage(image) {
+  prepareImage(image, options) {
     if (this.glObjects.has(image)) {
       return this.glObjects.get(image)
     }
 
-    const glTexture = WebGL.createTexture(this.gl, { image })
+    const glTexture = WebGL.createTexture(this.gl, { image, ...options })
     this.glObjects.set(image, glTexture)
     return glTexture
   }
@@ -142,7 +146,7 @@ export class Renderer {
     const gl = this.gl
 
     const texSampler = this.prepareSampler(texture.sampler)
-    const glTexture = this.prepareImage(texture.image)
+    const glTexture = this.prepareImage(texture.image, {}) //{ ...texture.sampler, mip: true })
 
     const mipmapModes = [
       gl.NEAREST_MIPMAP_NEAREST,
@@ -154,7 +158,7 @@ export class Renderer {
     console.log(texture, texSampler, glTexture)
     //console.log(this.wrappingModeS, this.wrappingModeT, this.filteringMode, this.mips)
 
-    if (!texture.hasMipmaps && mipmapModes.includes(texture.sampler.min)) { //this.mips && 
+    if (mipmapModes.includes(texture.sampler.min)) { //!texture.hasMipmaps &&  //this.mips && 
       gl.bindTexture(gl.TEXTURE_2D, glTexture)
       //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, this.filteringMode)
       //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, this.wrappingModeS)
@@ -203,12 +207,16 @@ export class Renderer {
     const gl = this.gl
     const vao = gl.createVertexArray()
     gl.bindVertexArray(vao)
+
     if (primitive.indices) {
       const bufferView = primitive.indices.bufferView
 
-      if (!bufferView.target) {
+      /*if (!bufferView.target) {
         bufferView.target = gl.ELEMENT_ARRAY_BUFFER
-      }
+      } else {
+        console.log(`WTF primitive?: ${bufferView.target}`)
+      }*/
+      bufferView.target = gl.ELEMENT_ARRAY_BUFFER
 
       const buffer = this.prepareBufferView(bufferView)
       gl.bindBuffer(bufferView.target, buffer)
@@ -237,7 +245,7 @@ export class Renderer {
       }
     }
 
-    for (let target in primitive.targets) {
+    /*for (let target in primitive.targets) {
       if (Number(target) < 2) {
         for (let name in primitive.targets[target]) {
           const accessor = primitive.targets[target][name]
@@ -262,10 +270,11 @@ export class Renderer {
           }
         }
       }
-    }
+    }*/
 
-    this.glObjects.set(primitive, vao)
+    //gl.bindVertexArray(null)
     //gl.bindBuffer(gl.ARRAY_BUFFER, null)
+    this.glObjects.set(primitive, vao)
     return vao
   }
 
@@ -276,6 +285,15 @@ export class Renderer {
   }
 
   prepareNode(node) {
+    /*let s = prompt('Scale', node.scale)
+    let r = prompt('Rotate', node.rotation)
+    let t = prompt('Translate', node.translation)
+
+    node.scale = new Float32Array([...s.split(",").map(Number)])
+    node.rotation = new Float32Array([...r.split(",").map(Number)])
+    node.translation = new Float32Array([...t.split(",").map(Number)])
+    node.updateMatrix()*/
+
     if (node.mesh) {
       this.prepareMesh(node.mesh)
     }
@@ -317,12 +335,12 @@ export class Renderer {
     return vpMatrix
   }
 
-  render(scene, camera, lights) {
+  render(scene, camera, lights) { //premakni lights v scene...
     const gl = this.gl
 
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 
-    const program = this.programs.simple
+    const program = this.programs.pbr
     gl.useProgram(program.program)
     gl.uniform1i(program.uniforms.uTexture, 0)
     gl.uniform1i(program.uniforms.uNormalTexture, 1)
@@ -343,62 +361,52 @@ export class Renderer {
 
     const mvpMatrix = this.getViewProjectionMatrix(camera)
 
-    for (const light of scene.lights ?? []) {
-      this.renderGeoNode(light, null, mvpMatrix)
-    }
-
-    for (const geo of scene.geoNodes ?? []) {
-      this.renderGeoNode(geo, null, mvpMatrix)
-    }
-
     for (const node of scene.nodes) {
       this.renderNode(node, mvpMatrix)
     }
 
-    //gl.bindBuffer(gl.ARRAY_BUFFER, null)
-    //gl.useProgram(null)
-    //console.error(gl.getError())
+    for (const light of scene.lights ?? []) {
+      this.renderGeoNode(light, "pbr", mvpMatrix)
+    }
+
+    for (const geo of scene.geoNodes ?? []) {
+      this.renderGeoNode(geo, "pbr", mvpMatrix)
+    }
   }
 
-  renderGeoNode(geoBuffers, programInfoo, mvpMatrix) {
-    const gl = this.gl;
-    const programInfo = this.programs.simple;
+  renderGeoNode(geoBuffers, prog, mvpMatrix) {
+    const gl = this.gl
+    const program = this.programs[prog] //.pbr //.simple
     mvpMatrix = mat4.clone(mvpMatrix)
 
-    // Bind position buffer
-    gl.bindBuffer(gl.ARRAY_BUFFER, geoBuffers.position);
-    gl.vertexAttribPointer(
-      programInfo.attributes.aPosition,
-      3, gl.FLOAT, false, 0, 0);
-    gl.enableVertexAttribArray(programInfo.attributes.aPosition);
-
-    // Bind normal buffer
-    gl.bindBuffer(gl.ARRAY_BUFFER, geoBuffers.normals);
-    gl.vertexAttribPointer(
-      programInfo.attributes.aNormal,
-      3, gl.FLOAT, false, 0, 0);
-    gl.enableVertexAttribArray(programInfo.attributes.aNormal);
-
-    // Bind index buffer
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, geoBuffers.indices);
-
     // Use shader program
-    //gl.useProgram(programInfo.program);
+    gl.useProgram(program.program)
 
-    // Set uniforms (like model-view-projection matrix)
-    gl.uniformMatrix4fv(programInfo.uniforms.uMvpMatrix, false, mvpMatrix)
-    gl.uniform4fv(programInfo.uniforms.uBaseColor, [1, 1, 1, 1])
-    gl.uniform1f(programInfo.uniforms.uMetallicFactor, 0.5)
-    gl.uniform1f(programInfo.uniforms.uRoughnessFactor, 0.5)
-    gl.uniform1i(programInfo.uniforms.uHasSkinning, 0)
-    gl.uniform1i(programInfo.uniforms.uHasBaseColorTexture, 0)
-    gl.uniform1i(programInfo.uniforms.uHasNormalTexture, 0)
-    gl.uniform1i(programInfo.uniforms.uHasEmissiveTexture, 0)
-    gl.uniform1i(programInfo.uniforms.uHasMetallicRoughnessTexture, 0)
-    gl.uniform1i(programInfo.uniforms.uHasOcclusionTexture, 0)
+    gl.bindVertexArray(geoBuffers.vao)
 
-    // Draw the plane
-    gl.drawElements(gl.TRIANGLES, geoBuffers.indexCount, gl.UNSIGNED_SHORT, 0);
+    // Set uniforms
+    gl.uniformMatrix4fv(program.uniforms.uMvpMatrix, false, mvpMatrix)
+    gl.uniform4fv(program.uniforms.uBaseColor, [...geoBuffers.baseColor, 1])
+    gl.uniform1f(program.uniforms.uMetallicFactor, 0.5)
+    gl.uniform1f(program.uniforms.uRoughnessFactor, 0.5)
+    gl.uniform1i(program.uniforms.uHasSkinning, 0)
+
+    if (geoBuffers.texture) {
+      //gl.uniform1i(program.uniforms.uTexture, 0)
+      gl.activeTexture(gl.TEXTURE0)
+      gl.bindTexture(gl.TEXTURE_2D, geoBuffers.texture)
+      //gl.bindSampler(0, geoBuffers.sampler)
+      gl.uniform1i(program.uniforms.uHasBaseColorTexture, 1)
+    } else {
+      gl.uniform1i(program.uniforms.uHasBaseColorTexture, 0)
+    }
+
+    gl.uniform1i(program.uniforms.uHasNormalTexture, 0)
+    gl.uniform1i(program.uniforms.uHasEmissiveTexture, 0)
+    gl.uniform1i(program.uniforms.uHasMetallicRoughnessTexture, 0)
+    gl.uniform1i(program.uniforms.uHasOcclusionTexture, 0)
+
+    gl.drawElements(gl.TRIANGLES, geoBuffers.indexCount, gl.UNSIGNED_SHORT, 0)
   }
 
   renderNode(node, mvpMatrix) {
@@ -407,7 +415,7 @@ export class Renderer {
     mvpMatrix = mat4.clone(mvpMatrix)
     mat4.mul(mvpMatrix, mvpMatrix, node.matrix)
 
-    const program = this.programs.simple
+    const program = this.programs.pbr
 
     if (node.skin) {
       //node.skin.updateJointMatrices()
@@ -449,27 +457,26 @@ export class Renderer {
     const vao = this.glObjects.get(primitive)
     const material = primitive.material
 
-    let texture
-    let glTexture
-    let glSampler
+    gl.bindVertexArray(vao)
 
-    gl.uniform4fv(this.programs.simple.uniforms.uBaseColor, material.baseColorFactor)
-    gl.uniform1f(this.programs.simple.uniforms.uMetallicFactor, material.metallicFactor)
-    gl.uniform1f(this.programs.simple.uniforms.uRoughnessFactor, material.roughnessFactor)
+    gl.uniform4fv(this.programs.pbr.uniforms.uBaseColor, material.baseColorFactor)
+    gl.uniform1f(this.programs.pbr.uniforms.uMetallicFactor, material.metallicFactor)
+    gl.uniform1f(this.programs.pbr.uniforms.uRoughnessFactor, material.roughnessFactor)
+
+    let texture, glTexture, glSampler
 
     if (material.baseColorTexture !== null) {
       texture = material.baseColorTexture
       glTexture = this.glObjects.get(texture.image)
       glSampler = this.glObjects.get(texture.sampler)
 
-      gl.bindVertexArray(vao)
       gl.activeTexture(gl.TEXTURE0)
       gl.bindTexture(gl.TEXTURE_2D, glTexture)
       gl.bindSampler(0, glSampler)
 
-      gl.uniform1i(this.programs.simple.uniforms.uHasBaseColorTexture, 1)
+      gl.uniform1i(this.programs.pbr.uniforms.uHasBaseColorTexture, 1)
     } else {
-      gl.uniform1i(this.programs.simple.uniforms.uHasBaseColorTexture, 0)
+      gl.uniform1i(this.programs.pbr.uniforms.uHasBaseColorTexture, 0)
     }
 
     if (material.normalTexture !== null) {
@@ -477,15 +484,14 @@ export class Renderer {
       glTexture = this.glObjects.get(texture.image)
       glSampler = this.glObjects.get(texture.sampler)
 
-      gl.bindVertexArray(vao)
       gl.activeTexture(gl.TEXTURE1)
       gl.bindTexture(gl.TEXTURE_2D, glTexture)
       gl.bindSampler(1, glSampler)
 
-      gl.uniform1f(this.programs.simple.uniforms.uNormalTextureScale, material.normalFactor)
-      gl.uniform1i(this.programs.simple.uniforms.uHasNormalTexture, 1)
+      gl.uniform1f(this.programs.pbr.uniforms.uNormalTextureScale, material.normalFactor)
+      gl.uniform1i(this.programs.pbr.uniforms.uHasNormalTexture, 1)
     } else {
-      gl.uniform1i(this.programs.simple.uniforms.uHasNormalTexture, 0)
+      gl.uniform1i(this.programs.pbr.uniforms.uHasNormalTexture, 0)
     }
 
     if (material.emissiveTexture !== null) {
@@ -493,15 +499,14 @@ export class Renderer {
       glTexture = this.glObjects.get(texture.image)
       glSampler = this.glObjects.get(texture.sampler)
 
-      gl.bindVertexArray(vao)
       gl.activeTexture(gl.TEXTURE2)
       gl.bindTexture(gl.TEXTURE_2D, glTexture)
       gl.bindSampler(2, glSampler)
 
-      gl.uniform3fv(this.programs.simple.uniforms.uEmissiveFactor, material.emissiveFactor)
-      gl.uniform1i(this.programs.simple.uniforms.uHasEmissiveTexture, 1)
+      gl.uniform3fv(this.programs.pbr.uniforms.uEmissiveFactor, material.emissiveFactor)
+      gl.uniform1i(this.programs.pbr.uniforms.uHasEmissiveTexture, 1)
     } else {
-      gl.uniform1i(this.programs.simple.uniforms.uHasEmissiveTexture, 0)
+      gl.uniform1i(this.programs.pbr.uniforms.uHasEmissiveTexture, 0)
     }
 
     if (material.metallicRoughnessTexture !== null) {
@@ -509,14 +514,13 @@ export class Renderer {
       glTexture = this.glObjects.get(texture.image)
       glSampler = this.glObjects.get(texture.sampler)
 
-      gl.bindVertexArray(vao)
       gl.activeTexture(gl.TEXTURE3)
       gl.bindTexture(gl.TEXTURE_2D, glTexture)
       gl.bindSampler(3, glSampler)
 
-      gl.uniform1i(this.programs.simple.uniforms.uHasMetallicRoughnessTexture, 1)
+      gl.uniform1i(this.programs.pbr.uniforms.uHasMetallicRoughnessTexture, 1)
     } else {
-      gl.uniform1i(this.programs.simple.uniforms.uHasMetallicRoughnessTexture, 0)
+      gl.uniform1i(this.programs.pbr.uniforms.uHasMetallicRoughnessTexture, 0)
     }
 
     if (material.occlusionTexture !== null) {
@@ -524,15 +528,14 @@ export class Renderer {
       glTexture = this.glObjects.get(texture.image)
       glSampler = this.glObjects.get(texture.sampler)
 
-      gl.bindVertexArray(vao)
       gl.activeTexture(gl.TEXTURE4)
       gl.bindTexture(gl.TEXTURE_2D, glTexture)
       gl.bindSampler(4, glSampler)
 
-      gl.uniform1f(this.programs.simple.uniforms.uOcclusionStrength, material.occlusionFactor)
-      gl.uniform1i(this.programs.simple.uniforms.uHasOcclusionTexture, 1)
+      gl.uniform1f(this.programs.pbr.uniforms.uOcclusionStrength, material.occlusionFactor)
+      gl.uniform1i(this.programs.pbr.uniforms.uHasOcclusionTexture, 1)
     } else {
-      gl.uniform1i(this.programs.simple.uniforms.uHasOcclusionTexture, 0)
+      gl.uniform1i(this.programs.pbr.uniforms.uHasOcclusionTexture, 0)
     }
 
     //Drawing

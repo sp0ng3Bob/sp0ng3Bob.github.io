@@ -499,7 +499,7 @@ export class App extends Application {
   addGeoPlane() {
     const size = this.state.newGeoObject.size
     const position = this.state.newGeoObject.position.split(",").map(Number)
-    const rotation = this.state.newGeoObject.rotation //lolll
+    const rotation = this.state.newGeoObject.rotation.split(",").map(Number)
     const color = this.state.newGeoObject.color
     const texture = this.state.newGeoObject.texture
     const textureMappingOptions = this.state.newGeoObject.textureMapping
@@ -510,7 +510,7 @@ export class App extends Application {
   addGeoCube() {
     const size = this.state.newGeoObject.size
     const position = this.state.newGeoObject.position.split(",").map(Number)
-    const rotation = this.state.newGeoObject.rotation
+    const rotation = this.state.newGeoObject.rotation.split(",").map(Number)
     const color = this.state.newGeoObject.color
     const texture = this.state.newGeoObject.texture
 
@@ -520,7 +520,7 @@ export class App extends Application {
   addGeoSphere() {
     const size = this.state.newGeoObject.size
     const position = this.state.newGeoObject.position.split(",").map(Number)
-    const rotation = this.state.newGeoObject.rotation
+    const rotation = this.state.newGeoObject.rotation.split(",").map(Number)
     const color = this.state.newGeoObject.color
     const texture = this.state.newGeoObject.texture
 
@@ -530,7 +530,7 @@ export class App extends Application {
   addGeoTorus() {
     const size = this.state.newGeoObject.size
     const position = this.state.newGeoObject.position.split(",").map(Number)
-    const rotation = this.state.newGeoObject.rotation
+    const rotation = this.state.newGeoObject.rotation.split(",").map(Number)
     const color = this.state.newGeoObject.color
     const texture = this.state.newGeoObject.texture
     const innerHole = this.state.newGeoObject.innerHole

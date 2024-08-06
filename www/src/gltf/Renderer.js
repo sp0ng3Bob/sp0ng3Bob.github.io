@@ -392,10 +392,10 @@ export class Renderer {
     gl.uniform1i(program.uniforms.uHasSkinning, 0)
 
     if (geoBuffers.texture) {
-      //gl.uniform1i(program.uniforms.uTexture, 0)
+      gl.uniform1i(program.uniforms.uTexture, 0)
       gl.activeTexture(gl.TEXTURE0)
       gl.bindTexture(gl.TEXTURE_2D, geoBuffers.texture)
-      //gl.bindSampler(0, geoBuffers.sampler)
+      gl.bindSampler(0, geoBuffers.sampler)
       gl.uniform1i(program.uniforms.uHasBaseColorTexture, 1)
     } else {
       gl.uniform1i(program.uniforms.uHasBaseColorTexture, 0)

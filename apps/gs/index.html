@@ -47,8 +47,14 @@
 					top: 8px;
 					right: 8px;
         }
+        #location {
+          position: fixed;
+          top: 8px;
+          left: 8px;
+        }
         #info,
         #minMax,
+        #location,
         dialog button {
           display: grid;
           justify-items: center;
@@ -81,8 +87,26 @@
         #maps.Hidden,
         #info.Hidden,
         #sciName.Hidden,
+        #location.Hidden,
+        #locationSearch.Hidden,
         #minMax.Hidden {
           display: none;
+        }
+        
+        #locationSearch {
+          position: fixed;
+          top: calc(8px + 25px + 8px);
+          left: calc(50% - 133px);
+        }
+        #locationSearch input {
+          width: 306px;
+        }
+        .Marker {
+          position: absolute;
+          width: 10px;
+          height: 10px;
+          background-color: red;
+          border-radius: 50%;
         }
         
         dialog {
@@ -179,7 +203,13 @@
 		</div>
     <div id="info">
 			<button type="button">ℹ️</button>
+		</div>    
+    <div id="location">
+			<button type="button">🧭</button>
 		</div>
+    <div id="locationSearch" class="Hidden">
+      <input type="search" name="search" placeholder="Prikaži kraj, naslov ali koordinate na zemljevidu" />
+    </div>
     <dialog>
       <button type="button">❌</button>
       <p>Spletna stran uporablja <a href="http://www.zgs.si/gozdovi_slovenije/o_gozdovih_slovenije/karte/index.html" target=”_blank”>zemljevide</a> gozdov iz spletne strani <a href="http://www.zgs.si/" target=”_blank”>ZGS.si</a></p>
@@ -188,10 +218,68 @@
     </dialog>
 		<script>
       function toggleSideButtons() {
+        compass.classList.toggle("Hidden")
+        locationSearch.classList.toggle("Hidden")
         info.classList.toggle("Hidden")
         latName.classList.toggle("Hidden")
         minMax.classList.toggle("Hidden")
         mapsButtons.classList.toggle("Hidden")
+      }
+      
+      function convertGeoToPixel(coords, mapWidth, mapHeight) {
+        const northLat = 46.8767
+        const southLat = 45.4219
+        const eastLng = 16.6092
+        const westLng = 13.3755
+        
+        const latitude = coords.lat
+        const longitude = coords.lon
+
+        const xNorm = (longitude - westLng) / (eastLng - westLng)
+        const yNorm = (latitude - southLat) / (northLat - southLat)
+
+        const xPixel = xNorm * mapWidth
+        const yPixel = mapHeight - (yNorm * mapHeight)
+
+        return { x: xPixel - 6, y: yPixel - 45 } //little off
+      }
+
+      async function getCoordinates(place) {
+        const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${place}&format=json&limit=1`)
+        const data = await response.json()
+        if (data.length > 0) {
+          const { lat, lon } = data[0]
+          return { lat: parseFloat(lat), lon: parseFloat(lon) }
+        } else {
+          throw new Error('Place not found')
+        }
+      }
+
+      async function placeMarker(place) {
+        const mapWidth = mainFrame.clientWidth //1961 ... from 7 to 1949+7
+        const mapHeight = mainFrame.clientHeight //1374 ... from 46 to 1279+46
+        
+        let coords
+        if (places[place]) {
+          coords = places[place]
+        } else {
+          try {
+            coords = await getCoordinates(place)
+          } catch (error) {
+            console.error(error)
+          }
+        }
+        
+        const pixelPoint = convertGeoToPixel(coords, mapWidth, mapHeight)
+        checkPointOnMap(pixelPoint)
+      }
+      
+      function checkPointOnMap(pixelPoint) {
+        const div = document.createElement("DIV")
+        div.classList.add("Marker")
+        div.style.left = `${pixelPoint.x}px`
+        div.style.top = `${pixelPoint.y}px`
+        mainFrame.appendChild(div)
       }
       
       const body = document.querySelector("body")
@@ -203,12 +291,20 @@
 			const latName = document.querySelector("#sciName")
       const dialog = document.querySelector("dialog")
       const info = document.querySelector("#info")
+      const compass = document.querySelector("#location")
+      const locationSearch = document.querySelector("#locationSearch")
       const closeDialog = dialog.querySelector("button")
 			
 			const zemljevidi = ['Zemljevid_Slovenije_23_Beli_gaber.png', 'Zemljevid_Slovenije_22_Breza.png', 'Zemljevid_Slovenije_21_Bukev.png', 'Zemljevid_Slovenije_20_Cer.png', 'Zemljevid_Slovenije_19_Cesnja.png', 'Zemljevid_Slovenije_18_Crna_jelsa.png', 'Zemljevid_Slovenije_17_Crni_gaber.png', 'Zemljevid_Slovenije_16_Dob.png', 'Zemljevid_Slovenije_15_Gorski_brest.png', 'Zemljevid_Slovenije_14_Gorski_javor.png', 'Zemljevid_Slovenije_13_Graden.png', 'Zemljevid_Slovenije_12_Jelka.png', 'Zemljevid_Slovenije_11_Jerebika.png', 'Zemljevid_Slovenije_10_Kostanj.png', 'Zemljevid_Slovenije_9_Lipa_in_lipovec.png', 'Zemljevid_Slovenije_8_Macesen.png', 'Zemljevid_Slovenije_7_Mali_jesen.png', 'Zemljevid_Slovenije_6_Mokovec.png', 'Zemljevid_Slovenije_5_Ostrolistni_in_topokrpi_javor.png', 'Zemljevid_Slovenije_4_Rdeci_bor.png','Zemljevid_Slovenije_3_Robinija.png', 'Zemljevid_Slovenije_2_Smreka.png', 'Zemljevid_Slovenije_1_Trepetlika.png', 'Zemljevid_Slovenije_0_Veliki_jesen.png']
       const slovenskaImena = ['Beli gaber', 'Breza', 'Bukev', 'Cer', 'Češnja', 'Črna jelša', 'Črni gaber', 'Dob', 'Gorski brest', 'Gorski javor', 'Graden', 'Jelka', 'Jerebika', 'Kostanj', 'Lipa in lipovec', 'Macesen', 'Mali jesen', 'Mokovec', 'Ostrolistni in topokrpi javor', 'Rdeči bor', 'Robinija', 'Smreka', 'Trepetlika', 'Veliki jesen']
 			const latinskaImena = {"Beli gaber": "Carpinus betulus", "Breza": "Betula", "Bukev": "Fagus sylvatica", "Cer": "Quercus cerris", "Cesnja": "Prunus avium", "Crna jelsa": "Alnus glutinosa", "Crni gaber": "Ostrya carpinifolia", "Dob": "Quercus robur", "Gorski brest": "Ulmus glabra", "Gorski javor": "Acer pseudoplatanus", "Graden": "Quercus petraea", "Jelka": "Abies", "Jerebika": "Sorbus aucuparia", "Kostanj": "Castanea", "Lipa in lipovec": "Tilia platyphyllos & Tilia cordata", "Macesen": "Larix", "Mali jesen": "Fraxinus ornus (= Črni jesen)", "Mokovec": "Sorbus aria", "Ostrolistni in topokrpi javor": "Acer platanoides & Acer obtusatum", "Rdeci bor": "Pinus sylvestris", "Robinija": "Robinia pseudoacacia", "Smreka": "Picea abies", "Trepetlika": "Populus tremula", "Veliki jesen": "Fraxinus excelsior"}
 			
+      const places = {
+        'Ljubljana': { lat: 46.0569, lon: 14.5058 },
+        'Maribor': { lat: 46.5547, lon: 15.6459 },
+        // Add more places as needed
+      }
+      
       const select = document.createElement("SELECT")
 			for (let id in zemljevidi) {
 				const option = document.createElement("OPTION")
@@ -217,6 +313,14 @@
 				select.add(option)
 			}
 			mapsButtons.appendChild(select)
+      
+      compass.addEventListener("click", () => {
+        locationSearch.classList.toggle("Hidden")
+      })
+      
+      locationSearch.addEventListener("search", () => {
+        placeMarker(locationSearch.firstElementChild.value)
+      })
 
       info.addEventListener("click", () => {
         dialog.showModal() //.show() -- doesn't trigger the backdrop

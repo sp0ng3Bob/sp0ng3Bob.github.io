@@ -244,7 +244,7 @@
         return { x: xPixel - 6, y: yPixel - 45 } //little off
       }
 
-      async function getCoordinates(place) {
+      async function getCoordinates(place) { //TODO - search also by coordinates (lat, lon pair)
         const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${place}&format=json&limit=1`)
         const data = await response.json()
         if (data.length > 0) {
@@ -271,7 +271,7 @@
         }
         
         const pixelPoint = convertGeoToPixel(coords, mapWidth, mapHeight)
-        checkPointOnMap(pixelPoint)
+        checkPointOnMap(pixelPoint) //place the marker only if on the rectangle map. If Out dont place the marker
       }
       
       function checkPointOnMap(pixelPoint) {

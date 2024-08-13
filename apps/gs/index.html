@@ -34,7 +34,8 @@
 					background-image: url("assets/Zemljevid_Slovenije_Layer-0.png");
 					background-repeat: no-repeat;
 				}
-				#overlay {
+				#overlay,
+        #debugOverlay {
 					mix-blend-mode: multiply;
 				}
 				#minMax {
@@ -96,10 +97,10 @@
         #locationSearch {
           position: fixed;
           top: calc(8px + 25px + 8px);
-          left: calc(50% - 133px);
+          left: calc(50% - 150px + 20px);
         }
         #locationSearch input {
-          width: 306px;
+          width: 300px;
         }
         .Marker {
           position: absolute;
@@ -107,8 +108,7 @@
           height: 10px;
           background-color: transparent;
           border-radius: 50%;
-border: 2px solid red;
-
+          border: 2px solid red;
         }
         
         dialog {
@@ -171,6 +171,9 @@ border: 2px solid red;
 						margin: 0px;
 						padding: 0px;
 					}
+          #main {
+            margin-top: 8px;
+          }
 					nav {
 						left: calc(50vw - 200px);
 					}
@@ -178,15 +181,36 @@ border: 2px solid red;
 						width: 400px;
 						font-size: 1.3em;
 					}
+          #locationSearch {
+            left: calc(50vw - 200px + 12px);
+          }
+          #locationSearch input {
+            width: 400px;
+            font-size: 1em;
+          }
 				}
-				@media screen and (max-width: 549px) { /* small screen sizes*/
-					nav {
+				@media screen and (max-width: 549px) { /* small screen sizes */
+					#main {
+            margin-top: 24px;
+          }
+          nav {
 						left: 8px;
 					}
 					select {
 						min-width: 150px;
             width: 70vw;
 					}
+          #locationSearch {
+            left: calc(8px + 12px);
+          }
+          #locationSearch input {
+            width: 70vw;
+            min-width: 150px;
+            font-size: 1em;
+          }
+          #location {
+            display: none;
+          }
 				}
 			</style>
 	</head>
@@ -196,6 +220,7 @@ border: 2px solid red;
 		</nav>
 		<div id="main">
 			<img id="overlay" src="assets/Zemljevid_Slovenije_23_Beli_gaber.png" />
+      <!-- <img id="debugOverlay" src="assets/Slovenia_location_map-with_extremities.png" /> -->
 		</div>
 		<div id="minMax">
 			<button type="button">🗺️</button>
@@ -209,7 +234,7 @@ border: 2px solid red;
     <div id="location">
 			<button type="button">🧭</button>
 		</div>
-    <div id="locationSearch" class="Hidden">
+    <div id="locationSearch">
       <input type="search" name="search" placeholder="Prikaži kraj, naslov ali koordinate na zemljevidu" />
     </div>
     <dialog>
@@ -220,23 +245,39 @@ border: 2px solid red;
     </dialog>
 		<script>
       function toggleSideButtons() {
-        compass.classList.toggle("Hidden")
-        locationSearch.classList.toggle("Hidden")
         info.classList.toggle("Hidden")
         latName.classList.toggle("Hidden")
         minMax.classList.toggle("Hidden")
         mapsButtons.classList.toggle("Hidden")
+        toggleLocationSearch()
+      }
+
+      function toggleLocationSearch() {
+        if (isSmallScreen) {
+          locationSearch.classList.toggle("Hidden")
+        } else {
+          compass.classList.toggle("Hidden")
+          if (!locationSearch.classList.contains("Hidden")) {
+            locationSearch.classList.toggle("Hidden")
+            restoreLocationSearch = true
+          } else if (restoreLocationSearch) {
+            locationSearch.classList.toggle("Hidden")
+            restoreLocationSearch = false
+          }
+        }
       }
       
+      const htmlMargin = 8
       function convertGeoToPixel(coords, mapWidth, mapHeight) {
         const northLat = 46.8767
         const southLat = 45.4219
         const eastLng = 16.6092
         const westLng = 13.3755
-	const mapX1 = 7-5
-	const mapY1 = 46-3
-	const mapX2 = 1956-2
-	const mapY2 = 1325-5
+        
+        const mapX1 = 2 //33 + htmlMargin //7-5
+        const mapY1 = 33 //54 + htmlMargin //46-13
+        const mapX2 = 1956 //1894 //1956
+        const mapY2 = 1322 //1314 //1325-2
         
         const latitude = coords.lat
         const longitude = coords.lon
@@ -250,24 +291,41 @@ border: 2px solid red;
         return { x: xPixel, y: yPixel }
       }
 
-      async function getCoordinates(place) { //TODO - search also by coordinates (lat, lon pair)
+      async function getCoordinates(place) {
         const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${place}&format=json&limit=1`)
         const data = await response.json()
         if (data.length > 0) {
           const { lat, lon } = data[0]
-          return { lat: parseFloat(lat), lon: parseFloat(lon) }
+          console.log(`\"${place}\": { lat: ${Number(lat)}, lon: ${Number(lon)} }`)
+          return { lat: Number(lat), lon: Number(lon) }
         } else {
           throw new Error('Place not found')
         }
       }
+      
+      function isValidCoordinates(str) {
+        const regex = /^-?\d+(\.\d+)?\s*,?\s*-?\d+(\.\d+)?$/
+        return regex.test(str)
+      }
 
       async function placeMarker(place) {
-        const mapWidth = mainFrame.clientWidth //1961 ... from 7 to 1949+7
-        const mapHeight = mainFrame.clientHeight //1374 ... from 46 to 1279+46
+        const mapWidth = mainFrame.clientWidth
+        const mapHeight = mainFrame.clientHeight
         
         let coords
-        if (places[place]) {
-          coords = places[place]
+
+        // Normalize place to lowercase
+        const normalizedPlace = place.toLowerCase()
+
+        // Search for the place in the places object, also normalized to lowercase
+        const foundPlace = Object.keys(places).find(key => key.toLowerCase() === normalizedPlace)
+
+        if (foundPlace) {
+          coords = places[foundPlace]
+        } else if (isValidCoordinates(place)) {
+          // Check if it's lat, lon coordinates directly
+          const p = place.split(/[\s,]+/) // Split by whitespace and/or comma
+          coords = { lat: Number(p[0]), lon: Number(p[1]) }
         } else {
           try {
             coords = await getCoordinates(place)
@@ -275,16 +333,20 @@ border: 2px solid red;
             console.error(error)
           }
         }
-        
-        const pixelPoint = convertGeoToPixel(coords, mapWidth, mapHeight)
-        checkPointOnMap(pixelPoint) //place the marker only if on the rectangle map. If Out dont place the marker
+
+        if (coords) {
+          const pixelPoint = convertGeoToPixel(coords, mapWidth, mapHeight)
+          checkPointOnMap(pixelPoint) // Place the marker only if it's on the rectangle map. - TODO
+          console.log(`${place}: ${pixelPoint.x}, ${pixelPoint.y}`)
+        }
       }
       
       function checkPointOnMap(pixelPoint) {
+        // add tooltip info on the coordinates and the name of the place
         const div = document.createElement("DIV")
         div.classList.add("Marker")
-        div.style.left = `${pixelPoint.x}px`
-        div.style.top = `${pixelPoint.y}px`
+        div.style.left = `${pixelPoint.x}px` //`${pixelPoint.x - 5}px`
+        div.style.top = `${pixelPoint.y}px` //`${pixelPoint.y - 5}px`
         mainFrame.appendChild(div)
       }
       
@@ -305,41 +367,33 @@ border: 2px solid red;
       const slovenskaImena = ['Beli gaber', 'Breza', 'Bukev', 'Cer', 'Češnja', 'Črna jelša', 'Črni gaber', 'Dob', 'Gorski brest', 'Gorski javor', 'Graden', 'Jelka', 'Jerebika', 'Kostanj', 'Lipa in lipovec', 'Macesen', 'Mali jesen', 'Mokovec', 'Ostrolistni in topokrpi javor', 'Rdeči bor', 'Robinija', 'Smreka', 'Trepetlika', 'Veliki jesen']
 			const latinskaImena = {"Beli gaber": "Carpinus betulus", "Breza": "Betula", "Bukev": "Fagus sylvatica", "Cer": "Quercus cerris", "Cesnja": "Prunus avium", "Crna jelsa": "Alnus glutinosa", "Crni gaber": "Ostrya carpinifolia", "Dob": "Quercus robur", "Gorski brest": "Ulmus glabra", "Gorski javor": "Acer pseudoplatanus", "Graden": "Quercus petraea", "Jelka": "Abies", "Jerebika": "Sorbus aucuparia", "Kostanj": "Castanea", "Lipa in lipovec": "Tilia platyphyllos & Tilia cordata", "Macesen": "Larix", "Mali jesen": "Fraxinus ornus (= Črni jesen)", "Mokovec": "Sorbus aria", "Ostrolistni in topokrpi javor": "Acer platanoides & Acer obtusatum", "Rdeci bor": "Pinus sylvestris", "Robinija": "Robinia pseudoacacia", "Smreka": "Picea abies", "Trepetlika": "Populus tremula", "Veliki jesen": "Fraxinus excelsior"}
 			
-      const places = {
-    'Bled': { lat: 46.3692, lon: 14.1131 },
-    'Bohinj': { lat: 46.2769, lon: 13.9563 },
-    'Brežice': { lat: 45.9039, lon: 15.5911 },
-    'Celje': { lat: 46.2383, lon: 15.2677 },
-    'Gornja Radgona': { lat: 46.6778, lon: 15.9925 },
-    'Idrija': { lat: 46.0025, lon: 14.0308 },
-    'Izola': { lat: 45.5367, lon: 13.6603 },
-    'Jesenice': { lat: 46.4301, lon: 14.0664 },
-    'Kamnik': { lat: 46.2256, lon: 14.6094 },
-    'Koper': { lat: 45.5469, lon: 13.7294 },
-    'Kostanjevica na Krki': { lat: 45.8439, lon: 15.4228 },
-    'Kranj': { lat: 46.2389, lon: 14.3556 },
-    'Kranjska Gora': { lat: 46.4847, lon: 13.7833 },
-    'Lipica': { lat: 45.6678, lon: 13.8806 },
-    'Ljubljana': { lat: 46.0569, lon: 14.5058 },
-    'Maribor': { lat: 46.5547, lon: 15.6459 },
-    'Metlika': { lat: 45.6472, lon: 15.3133 },
-    'Murska Sobota': { lat: 46.6625, lon: 16.1667 },
-    'Nova Gorica': { lat: 45.9566, lon: 13.6483 },
-    'Novo Mesto': { lat: 45.8030, lon: 15.1684 },
-    'Piran': { lat: 45.5286, lon: 13.5681 },
-    'Pivka': { lat: 45.6794, lon: 14.1944 },
-    'Postojna': { lat: 45.7764, lon: 14.2153 },
-    'Ptuj': { lat: 46.4207, lon: 15.8709 },
-    'Radlje ob Dravi': { lat: 46.6144, lon: 15.2289 },
-    'Radovljica': { lat: 46.3422, lon: 14.1744 },
-    'Rogaška Slatina': { lat: 46.2372, lon: 15.6406 },
-    'Sežana': { lat: 45.7064, lon: 13.8714 },
-    'Šentjur': { lat: 46.2181, lon: 15.3967 },
-    'Škofja Loka': { lat: 46.1656, lon: 14.3067 },
-    'Tolmin': { lat: 46.1836, lon: 13.7336 },
-    'Trbovlje': { lat: 46.1553, lon: 15.0539 },
-    'Velenje': { lat: 46.3589, lon: 15.1103 }
-}
+      const places = { "Bled": { lat: 46.3692, lon: 14.1131 }, "Bohinj": { lat: 46.2769, lon: 13.9563 }, "Brežice": { lat: 45.9039, lon: 15.5911 }, "Celje": { lat: 46.2383, lon: 15.2677 }, "Gornja Radgona": { lat: 46.6778, lon: 15.9925 }, "Idrija": { lat: 46.0025, lon: 14.0308 }, "Izola": { lat: 45.5367, lon: 13.6603 }, "Jesenice": { lat: 46.4301, lon: 14.0664 }, "Kamnik": { lat: 46.2256, lon: 14.6094 }, "Koper": { lat: 45.5469, lon: 13.7294 }, "Kostanjevica na Krki": { lat: 45.8439, lon: 15.4228 }, "Kranj": { lat: 46.2389, lon: 14.3556 }, "Kranjska Gora": { lat: 46.4847, lon: 13.7833 }, "Lipica": { lat: 45.6678, lon: 13.8806 }, "Ljubljana": { lat: 46.0569, lon: 14.5058 }, "Maribor": { lat: 46.5547, lon: 15.6459 }, "Metlika": { lat: 45.6472, lon: 15.3133 }, "Murska Sobota": { lat: 46.6625, lon: 16.1667 }, "Nova Gorica": { lat: 45.9566, lon: 13.6483 }, "Novo Mesto": { lat: 45.8030, lon: 15.1684 }, "Piran": { lat: 45.5286, lon: 13.5681 }, "Pivka": { lat: 45.6794, lon: 14.1944 }, "Postojna": { lat: 45.7764, lon: 14.2153 }, "Ptuj": { lat: 46.4207, lon: 15.8709 }, "Radlje ob Dravi": { lat: 46.6144, lon: 15.2289 }, "Radovljica": { lat: 46.3422, lon: 14.1744 }, "Rogaška Slatina": { lat: 46.2372, lon: 15.6406 }, "Sežana": { lat: 45.7064, lon: 13.8714 }, "Šentjur": { lat: 46.2181, lon: 15.3967 }, "Škofja Loka": { lat: 46.1656, lon: 14.3067 }, "Tolmin": { lat: 46.1836, lon: 13.7336 }, "Trbovlje": { lat: 46.1553, lon: 15.0539 }, "Velenje": { lat: 46.3589, lon: 15.1103 } }
+      
+      /* Debugging */
+      /*placeMarker("Budinci")
+      placeMarker("Damelj")
+      placeMarker("Benica")
+      placeMarker("Breginj")
+      
+      placeMarker("Bled")
+      placeMarker("Bohinj")
+      placeMarker("Škofja loka")
+      placeMarker("Domžale")
+      placeMarker("Slovenj gradec")
+      placeMarker("Slovenske konjice")
+      placeMarker("Krško")
+      placeMarker("Laško")
+      placeMarker("Grosuplje")
+      placeMarker("Črnomelj")
+      placeMarker("Postojna")
+      placeMarker("Pivka")
+      placeMarker("Ajdovščina")
+      placeMarker("Idrija")
+      placeMarker("Slovenska bistrica")
+      placeMarker("Koper")
+      placeMarker("Piran")*/
+      /* debugging - END */
+      
       
       const select = document.createElement("SELECT")
 			for (let id in zemljevidi) {
@@ -349,6 +403,13 @@ border: 2px solid red;
 				select.add(option)
 			}
 			mapsButtons.appendChild(select)
+      
+      const isSmallScreen = window.matchMedia("screen and (max-width: 549px)").matches
+      let restoreLocationSearch = false
+      
+      if (!isSmallScreen) {
+        locationSearch.classList.toggle("Hidden")
+      }
       
       compass.addEventListener("click", () => {
         locationSearch.classList.toggle("Hidden")
@@ -363,11 +424,27 @@ border: 2px solid red;
       });
 
       closeDialog.addEventListener("click", () => {
-        dialog.close();
-      });
+        dialog.close()
+      })
       
-      mainFrame.addEventListener("dblclick", () => {
-        toggleSideButtons()
+      /*mainFrame.addEventListener("dbclick", () => { //"dbclick", but dbclick is not supported on mobile
+        toggleSideButtons
+      })*/
+      const isMobile = window.matchMedia("(any-hover: none)").matches
+      let timeout, clickCount = 0 
+      mainFrame.addEventListener("click", () => { //"dbclick", but dbclick is not supported on mobile, use touchstart or click
+        if (timeout) {
+          clearTimeout(timeout);
+        }
+        clickCount++
+
+        if (clickCount === 2) {
+          toggleSideButtons()
+          clickCount = 0
+        }
+        timeout = setTimeout(() => {
+          clickCount = 0
+        }, 300)
       })
       
       document.addEventListener("keydown", (event) => {
@@ -392,11 +469,12 @@ border: 2px solid red;
           lastTapTime = currentTime
         }
       })*/
-			
+      
 			minMaxButton.addEventListener("click", (e) => {
 				mainFrame.classList.toggle("fullMap")
 				overlay.classList.toggle("fullMap")
 				body.classList.toggle("fullMap")
+        toggleLocationSearch()
 			})
 			
 			maps.addEventListener("change", (e) => {

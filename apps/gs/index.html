@@ -29,6 +29,9 @@
 					border: none;
           width: min-content;
 				}
+        /*select > option:nth-last-of-type(-n+2) {
+          background: #aceace;
+        }*/
 				#main {
 					position: absolute;
 					background-image: url("assets/Zemljevid_Slovenije_Layer-0.png");
@@ -85,13 +88,8 @@
 					border-radius: 3px;
 				}
         
-        #maps.Hidden,
-        #info.Hidden,
-        #sciName.Hidden,
-        #location.Hidden,
-        #locationSearch.Hidden,
-        #minMax.Hidden {
-          display: none;
+        .Hidden {
+          display: none !important;
         }
         
         #locationSearch {
@@ -109,6 +107,10 @@
           background-color: transparent;
           border-radius: 50%;
           border: 2px solid red;
+          display: flex;
+          flex-direction: row;
+          flex-wrap: wrap;
+          justify-content: center;
         }
         
         dialog {
@@ -138,6 +140,27 @@
           );
           opacity: 0.75;
         }
+        
+        .Marker .Tooltip {
+          position: absolute;
+          visibility: hidden;
+          width: max-content;
+          background-color: black;
+          color: #fff;
+          text-align: center;
+          padding: 5px 10px;
+          border-radius: 5px;
+          border: red 2px dotted;
+          opacity: .75;
+          bottom: 130%;
+        }
+
+        .Tooltip:focus,
+        .Marker:hover .Tooltip,
+        .Marker:focus .Tooltip {
+          visibility: visible;
+        }
+        /*Tooltip - END*/
           
 				@media (orientation: landscape) {
           body.fullMap {
@@ -241,7 +264,7 @@
       <button type="button">❌</button>
       <p>Spletna stran uporablja <a href="http://www.zgs.si/gozdovi_slovenije/o_gozdovih_slovenije/karte/index.html" target=”_blank”>zemljevide</a> gozdov iz spletne strani <a href="http://www.zgs.si/" target=”_blank”>ZGS.si</a></p>
       <p><b>Izvorna koda</b> je na voljo na <a href="https://github.com/sp0ng3Bob/sp0ng3Bob.github.io/tree/master/apps/gs" target=”_blank”>githubu</a>.</p>
-      <p><b>Dvojni klik</b> na zemljevidu ali <b>ALT + H</b> skrije ali pokaže izbirnik dreves, obrobne gumbe in latinsko ime drevesa.</p>
+      <p><b>Dvojni klik</b> na zemljevidu ali <b>ALT + H</b> skrije ali pokaže izbirnik dreves, obrobne gumbe, latinsko ime drevesa in iskalec lokacije.</p>
     </dialog>
 		<script>
       function toggleSideButtons() {
@@ -249,9 +272,12 @@
         latName.classList.toggle("Hidden")
         minMax.classList.toggle("Hidden")
         mapsButtons.classList.toggle("Hidden")
-        toggleLocationSearch()
+        
+        if (!onMinMaxView) {
+          toggleLocationSearch()        
+        }
       }
-
+  
       function toggleLocationSearch() {
         if (isSmallScreen) {
           locationSearch.classList.toggle("Hidden")
@@ -264,7 +290,7 @@
             locationSearch.classList.toggle("Hidden")
             restoreLocationSearch = false
           }
-        }
+        }        
       }
       
       const htmlMargin = 8
@@ -336,18 +362,31 @@
 
         if (coords) {
           const pixelPoint = convertGeoToPixel(coords, mapWidth, mapHeight)
-          checkPointOnMap(pixelPoint) // Place the marker only if it's on the rectangle map. - TODO
+          checkPointOnMap(pixelPoint, place) // Place the marker only if it's on the rectangle map. - TODO
           console.log(`${place}: ${pixelPoint.x}, ${pixelPoint.y}`)
         }
       }
       
-      function checkPointOnMap(pixelPoint) {
+      function checkPointOnMap(pixelPoint, place) {
         // add tooltip info on the coordinates and the name of the place
         const div = document.createElement("DIV")
         div.classList.add("Marker")
+        //div.setAttribute("place", place)
         div.style.left = `${pixelPoint.x}px` //`${pixelPoint.x - 5}px`
         div.style.top = `${pixelPoint.y}px` //`${pixelPoint.y - 5}px`
+        
+        const tooltip = document.createElement("SPAN")
+        tooltip.classList.add("Tooltip")
+        tooltip.innerText = place
+        
+        div.appendChild(tooltip)
         mainFrame.appendChild(div)
+      }
+      
+      function toggleSearchMarkers() {
+        for (let marker of mainFrame.querySelectorAll(".Marker")) {
+          marker.classList.toggle("Hidden")
+        }
       }
       
       const body = document.querySelector("body")
@@ -363,9 +402,9 @@
       const locationSearch = document.querySelector("#locationSearch")
       const closeDialog = dialog.querySelector("button")
 			
-			const zemljevidi = ['Zemljevid_Slovenije_23_Beli_gaber.png', 'Zemljevid_Slovenije_22_Breza.png', 'Zemljevid_Slovenije_21_Bukev.png', 'Zemljevid_Slovenije_20_Cer.png', 'Zemljevid_Slovenije_19_Cesnja.png', 'Zemljevid_Slovenije_18_Crna_jelsa.png', 'Zemljevid_Slovenije_17_Crni_gaber.png', 'Zemljevid_Slovenije_16_Dob.png', 'Zemljevid_Slovenije_15_Gorski_brest.png', 'Zemljevid_Slovenije_14_Gorski_javor.png', 'Zemljevid_Slovenije_13_Graden.png', 'Zemljevid_Slovenije_12_Jelka.png', 'Zemljevid_Slovenije_11_Jerebika.png', 'Zemljevid_Slovenije_10_Kostanj.png', 'Zemljevid_Slovenije_9_Lipa_in_lipovec.png', 'Zemljevid_Slovenije_8_Macesen.png', 'Zemljevid_Slovenije_7_Mali_jesen.png', 'Zemljevid_Slovenije_6_Mokovec.png', 'Zemljevid_Slovenije_5_Ostrolistni_in_topokrpi_javor.png', 'Zemljevid_Slovenije_4_Rdeci_bor.png','Zemljevid_Slovenije_3_Robinija.png', 'Zemljevid_Slovenije_2_Smreka.png', 'Zemljevid_Slovenije_1_Trepetlika.png', 'Zemljevid_Slovenije_0_Veliki_jesen.png']
-      const slovenskaImena = ['Beli gaber', 'Breza', 'Bukev', 'Cer', 'Češnja', 'Črna jelša', 'Črni gaber', 'Dob', 'Gorski brest', 'Gorski javor', 'Graden', 'Jelka', 'Jerebika', 'Kostanj', 'Lipa in lipovec', 'Macesen', 'Mali jesen', 'Mokovec', 'Ostrolistni in topokrpi javor', 'Rdeči bor', 'Robinija', 'Smreka', 'Trepetlika', 'Veliki jesen']
-			const latinskaImena = {"Beli gaber": "Carpinus betulus", "Breza": "Betula", "Bukev": "Fagus sylvatica", "Cer": "Quercus cerris", "Cesnja": "Prunus avium", "Crna jelsa": "Alnus glutinosa", "Crni gaber": "Ostrya carpinifolia", "Dob": "Quercus robur", "Gorski brest": "Ulmus glabra", "Gorski javor": "Acer pseudoplatanus", "Graden": "Quercus petraea", "Jelka": "Abies", "Jerebika": "Sorbus aucuparia", "Kostanj": "Castanea", "Lipa in lipovec": "Tilia platyphyllos & Tilia cordata", "Macesen": "Larix", "Mali jesen": "Fraxinus ornus (= Črni jesen)", "Mokovec": "Sorbus aria", "Ostrolistni in topokrpi javor": "Acer platanoides & Acer obtusatum", "Rdeci bor": "Pinus sylvestris", "Robinija": "Robinia pseudoacacia", "Smreka": "Picea abies", "Trepetlika": "Populus tremula", "Veliki jesen": "Fraxinus excelsior"}
+			const zemljevidi = ['Zemljevid_Slovenije_23_Beli_gaber.png', 'Zemljevid_Slovenije_22_Breza.png', 'Zemljevid_Slovenije_21_Bukev.png', 'Zemljevid_Slovenije_20_Cer.png', 'Zemljevid_Slovenije_19_Cesnja.png', 'Zemljevid_Slovenije_18_Crna_jelsa.png', 'Zemljevid_Slovenije_17_Crni_gaber.png', 'Zemljevid_Slovenije_16_Dob.png', 'Zemljevid_Slovenije_15_Gorski_brest.png', 'Zemljevid_Slovenije_14_Gorski_javor.png', 'Zemljevid_Slovenije_13_Graden.png', 'Zemljevid_Slovenije_12_Jelka.png', 'Zemljevid_Slovenije_11_Jerebika.png', 'Zemljevid_Slovenije_10_Kostanj.png', 'Zemljevid_Slovenije_9_Lipa_in_lipovec.png', 'Zemljevid_Slovenije_8_Macesen.png', 'Zemljevid_Slovenije_7_Mali_jesen.png', 'Zemljevid_Slovenije_6_Mokovec.png', 'Zemljevid_Slovenije_5_Ostrolistni_in_topokrpi_javor.png', 'Zemljevid_Slovenije_4_Rdeci_bor.png','Zemljevid_Slovenije_3_Robinija.png', 'Zemljevid_Slovenije_2_Smreka.png', 'Zemljevid_Slovenije_1_Trepetlika.png', 'Zemljevid_Slovenije_0_Veliki_jesen.png'] //, 'Zemljevid_Slovenije_-1_Delez_gozda_2023.jpg', 'Zemljevid_Slovenije_-2_Mesanost_gozdov_2023.jpg']
+      const slovenskaImena = ['Beli gaber', 'Breza', 'Bukev', 'Cer', 'Češnja', 'Črna jelša', 'Črni gaber', 'Dob', 'Gorski brest', 'Gorski javor', 'Graden', 'Jelka', 'Jerebika', 'Kostanj', 'Lipa in lipovec', 'Macesen', 'Mali jesen', 'Mokovec', 'Ostrolistni in topokrpi javor', 'Rdeči bor', 'Robinija', 'Smreka', 'Trepetlika', 'Veliki jesen', 'Delež gozda', 'Mešanost gozdov']
+			const latinskaImena = {"Beli gaber": "Carpinus betulus", "Breza": "Betula pendula & Betula pubescens", "Bukev": "Fagus sylvatica", "Cer": "Quercus cerris", "Cesnja": "Prunus avium", "Crna jelsa": "Alnus glutinosa", "Crni gaber": "Ostrya carpinifolia", "Dob": "Quercus robur", "Gorski brest": "Ulmus glabra", "Gorski javor": "Acer pseudoplatanus", "Graden": "Quercus petraea", "Jelka": "Abies", "Jerebika": "Sorbus aucuparia", "Kostanj": "Castanea", "Lipa in lipovec": "Tilia platyphyllos & Tilia cordata", "Macesen": "Larix", "Mali jesen": "Fraxinus ornus (= Črni jesen)", "Mokovec": "Sorbus aria", "Ostrolistni in topokrpi javor": "Acer platanoides & Acer obtusatum", "Rdeci bor": "Pinus sylvestris", "Robinija": "Robinia pseudoacacia", "Smreka": "Picea abies", "Trepetlika": "Populus tremula", "Veliki jesen": "Fraxinus excelsior"}
 			
       const places = { "Bled": { lat: 46.3692, lon: 14.1131 }, "Bohinj": { lat: 46.2769, lon: 13.9563 }, "Brežice": { lat: 45.9039, lon: 15.5911 }, "Celje": { lat: 46.2383, lon: 15.2677 }, "Gornja Radgona": { lat: 46.6778, lon: 15.9925 }, "Idrija": { lat: 46.0025, lon: 14.0308 }, "Izola": { lat: 45.5367, lon: 13.6603 }, "Jesenice": { lat: 46.4301, lon: 14.0664 }, "Kamnik": { lat: 46.2256, lon: 14.6094 }, "Koper": { lat: 45.5469, lon: 13.7294 }, "Kostanjevica na Krki": { lat: 45.8439, lon: 15.4228 }, "Kranj": { lat: 46.2389, lon: 14.3556 }, "Kranjska Gora": { lat: 46.4847, lon: 13.7833 }, "Lipica": { lat: 45.6678, lon: 13.8806 }, "Ljubljana": { lat: 46.0569, lon: 14.5058 }, "Maribor": { lat: 46.5547, lon: 15.6459 }, "Metlika": { lat: 45.6472, lon: 15.3133 }, "Murska Sobota": { lat: 46.6625, lon: 16.1667 }, "Nova Gorica": { lat: 45.9566, lon: 13.6483 }, "Novo Mesto": { lat: 45.8030, lon: 15.1684 }, "Piran": { lat: 45.5286, lon: 13.5681 }, "Pivka": { lat: 45.6794, lon: 14.1944 }, "Postojna": { lat: 45.7764, lon: 14.2153 }, "Ptuj": { lat: 46.4207, lon: 15.8709 }, "Radlje ob Dravi": { lat: 46.6144, lon: 15.2289 }, "Radovljica": { lat: 46.3422, lon: 14.1744 }, "Rogaška Slatina": { lat: 46.2372, lon: 15.6406 }, "Sežana": { lat: 45.7064, lon: 13.8714 }, "Šentjur": { lat: 46.2181, lon: 15.3967 }, "Škofja Loka": { lat: 46.1656, lon: 14.3067 }, "Tolmin": { lat: 46.1836, lon: 13.7336 }, "Trbovlje": { lat: 46.1553, lon: 15.0539 }, "Velenje": { lat: 46.3589, lon: 15.1103 } }
       
@@ -470,16 +509,20 @@
         }
       })*/
       
+      let onMinMaxView = false
 			minMaxButton.addEventListener("click", (e) => {
 				mainFrame.classList.toggle("fullMap")
 				overlay.classList.toggle("fullMap")
 				body.classList.toggle("fullMap")
         toggleLocationSearch()
+        toggleSearchMarkers()
+        onMinMaxView = !onMinMaxView
 			})
 			
 			maps.addEventListener("change", (e) => {
 				overlay.setAttribute("src", "assets/" + e.target.value)
-				latName.children[0].innerHTML = latinskaImena[e.target.value.split("_").slice(3).join(" ").slice(0, -4)]
+        const id = e.target.value.split("_").slice(3).join(" ").slice(0, -4)
+				latName.children[0].innerHTML = latinskaImena[id] ? latinskaImena[id] : id
 			})
 			
 			//Service worker

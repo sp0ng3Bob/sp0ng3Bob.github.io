@@ -293,27 +293,41 @@
         }        
       }
       
-      const htmlMargin = 8
       function convertGeoToPixel(coords, mapWidth, mapHeight) {
-        const northLat = 46.8767
-        const southLat = 45.4219
-        const eastLng = 16.6092
-        const westLng = 13.3755
+        const p1 = { name: "Piran", x: 111, y: 1223, ...places["Piran"] }
+        const p2 = { name: "Tolmin", x: 221, y: 650, ...places["Tolmin"] }
+        const p3 = { name: "Črnomelj", x: 1109, y: 1192, ...places["Črnomelj"] }
+        const p4 = { name: "Lendava", x: 1867, y: 318, ...places["Lendava"] }
         
-        const mapX1 = 2 //33 + htmlMargin //7-5
-        const mapY1 = 33 //54 + htmlMargin //46-13
-        const mapX2 = 1956 //1894 //1956
-        const mapY2 = 1322 //1314 //1325-2
+        /*const p1 = { name: "Piran", x: 110, y: 1221, ...places["Piran"] }
+        const p2 = { name: "Tolmin", x: 218, y: 647, ...places["Tolmin"] }
+        const p3 = { name: "Črnomelj", x: 1106, y: 1189, ...places["Črnomelj"] }
+        const p4 = { name: "Lendava", x: 1864, y: 315, ...places["Lendava"] }*/
         
-        const latitude = coords.lat
-        const longitude = coords.lon
+        checkPointOnMap({x: p1.x, y:p1.y}, p1.name)
+        checkPointOnMap({x: p2.x, y:p2.y}, p2.name)
+        checkPointOnMap({x: p3.x, y:p3.y}, p3.name)
+        checkPointOnMap({x: p4.x, y:p4.y}, p4.name)
 
-        const xNorm = (longitude - westLng) / (eastLng - westLng)
-        const yNorm = (latitude - southLat) / (northLat - southLat)
+        const northLat = Math.max(p1.lat, p2.lat, p3.lat, p4.lat);
+        const southLat = Math.min(p1.lat, p2.lat, p3.lat, p4.lat);
+        const eastLng = Math.max(p1.lon, p2.lon, p3.lon, p4.lon);
+        const westLng = Math.min(p1.lon, p2.lon, p3.lon, p4.lon);
 
-        const xPixel = xNorm * (mapX2 - mapX1) + mapX1
-        const yPixel = (1 - yNorm) * (mapY2 - mapY1) + mapY1
-	      
+        const mapX1 = Math.min(p1.x, p2.x, p3.x, p4.x);
+        const mapY1 = Math.min(p1.y, p2.y, p3.y, p4.y);
+        const mapX2 = Math.max(p1.x, p2.x, p3.x, p4.x);
+        const mapY2 = Math.max(p1.y, p2.y, p3.y, p4.y);
+
+        const latitude = coords.lat;
+        const longitude = coords.lon;
+
+        const xNorm = (longitude - westLng) / (eastLng - westLng);
+        const yNorm = (latitude - southLat) / (northLat - southLat);
+
+        const xPixel = xNorm * (mapX2 - mapX1) + mapX1;
+        const yPixel = (1 - yNorm) * (mapY2 - mapY1) + mapY1;
+
         return { x: xPixel, y: yPixel }
       }
 
@@ -362,18 +376,18 @@
 
         if (coords) {
           const pixelPoint = convertGeoToPixel(coords, mapWidth, mapHeight)
-          checkPointOnMap(pixelPoint, place) // Place the marker only if it's on the rectangle map. - TODO
+          if (pixelPoint.x > - 10 && pixelPoint.y > -10 || pixelPoint.x < mapWidth + 10 && pixelPoint.y < mapHeight + 10) {
+            checkPointOnMap(pixelPoint, place) // Place the marker only if it's on the rectangle map. - TODO
+          }
           console.log(`${place}: ${pixelPoint.x}, ${pixelPoint.y}`)
         }
       }
       
       function checkPointOnMap(pixelPoint, place) {
-        // add tooltip info on the coordinates and the name of the place
         const div = document.createElement("DIV")
         div.classList.add("Marker")
-        //div.setAttribute("place", place)
-        div.style.left = `${pixelPoint.x}px` //`${pixelPoint.x - 5}px`
-        div.style.top = `${pixelPoint.y}px` //`${pixelPoint.y - 5}px`
+        div.style.left = `${pixelPoint.x - 5}px`
+        div.style.top = `${pixelPoint.y - 5}px`
         
         const tooltip = document.createElement("SPAN")
         tooltip.classList.add("Tooltip")
@@ -406,7 +420,7 @@
       const slovenskaImena = ['Beli gaber', 'Breza', 'Bukev', 'Cer', 'Češnja', 'Črna jelša', 'Črni gaber', 'Dob', 'Gorski brest', 'Gorski javor', 'Graden', 'Jelka', 'Jerebika', 'Kostanj', 'Lipa in lipovec', 'Macesen', 'Mali jesen', 'Mokovec', 'Ostrolistni in topokrpi javor', 'Rdeči bor', 'Robinija', 'Smreka', 'Trepetlika', 'Veliki jesen', 'Delež gozda', 'Mešanost gozdov']
 			const latinskaImena = {"Beli gaber": "Carpinus betulus", "Breza": "Betula pendula & Betula pubescens", "Bukev": "Fagus sylvatica", "Cer": "Quercus cerris", "Cesnja": "Prunus avium", "Crna jelsa": "Alnus glutinosa", "Crni gaber": "Ostrya carpinifolia", "Dob": "Quercus robur", "Gorski brest": "Ulmus glabra", "Gorski javor": "Acer pseudoplatanus", "Graden": "Quercus petraea", "Jelka": "Abies", "Jerebika": "Sorbus aucuparia", "Kostanj": "Castanea", "Lipa in lipovec": "Tilia platyphyllos & Tilia cordata", "Macesen": "Larix", "Mali jesen": "Fraxinus ornus (= Črni jesen)", "Mokovec": "Sorbus aria", "Ostrolistni in topokrpi javor": "Acer platanoides & Acer obtusatum", "Rdeci bor": "Pinus sylvestris", "Robinija": "Robinia pseudoacacia", "Smreka": "Picea abies", "Trepetlika": "Populus tremula", "Veliki jesen": "Fraxinus excelsior"}
 			
-      const places = { "Bled": { lat: 46.3692, lon: 14.1131 }, "Bohinj": { lat: 46.2769, lon: 13.9563 }, "Brežice": { lat: 45.9039, lon: 15.5911 }, "Celje": { lat: 46.2383, lon: 15.2677 }, "Gornja Radgona": { lat: 46.6778, lon: 15.9925 }, "Idrija": { lat: 46.0025, lon: 14.0308 }, "Izola": { lat: 45.5367, lon: 13.6603 }, "Jesenice": { lat: 46.4301, lon: 14.0664 }, "Kamnik": { lat: 46.2256, lon: 14.6094 }, "Koper": { lat: 45.5469, lon: 13.7294 }, "Kostanjevica na Krki": { lat: 45.8439, lon: 15.4228 }, "Kranj": { lat: 46.2389, lon: 14.3556 }, "Kranjska Gora": { lat: 46.4847, lon: 13.7833 }, "Lipica": { lat: 45.6678, lon: 13.8806 }, "Ljubljana": { lat: 46.0569, lon: 14.5058 }, "Maribor": { lat: 46.5547, lon: 15.6459 }, "Metlika": { lat: 45.6472, lon: 15.3133 }, "Murska Sobota": { lat: 46.6625, lon: 16.1667 }, "Nova Gorica": { lat: 45.9566, lon: 13.6483 }, "Novo Mesto": { lat: 45.8030, lon: 15.1684 }, "Piran": { lat: 45.5286, lon: 13.5681 }, "Pivka": { lat: 45.6794, lon: 14.1944 }, "Postojna": { lat: 45.7764, lon: 14.2153 }, "Ptuj": { lat: 46.4207, lon: 15.8709 }, "Radlje ob Dravi": { lat: 46.6144, lon: 15.2289 }, "Radovljica": { lat: 46.3422, lon: 14.1744 }, "Rogaška Slatina": { lat: 46.2372, lon: 15.6406 }, "Sežana": { lat: 45.7064, lon: 13.8714 }, "Šentjur": { lat: 46.2181, lon: 15.3967 }, "Škofja Loka": { lat: 46.1656, lon: 14.3067 }, "Tolmin": { lat: 46.1836, lon: 13.7336 }, "Trbovlje": { lat: 46.1553, lon: 15.0539 }, "Velenje": { lat: 46.3589, lon: 15.1103 } }
+      const places = { "Bled": { lat: 46.369200, lon: 14.113100 },"Bohinj": { lat: 46.276900, lon: 13.956300 },"Brežice": { lat: 45.903900, lon: 15.591100 },"Celje": { lat: 46.238300, lon: 15.267700 },"Črnomelj": { lat: 45.571000, lon: 15.194000 },"Gornja Radgona": { lat: 46.677800, lon: 15.992500 },"Idrija": { lat: 46.002500, lon: 14.030800 },"Izola": { lat: 45.536700, lon: 13.660300 },"Jesenice": { lat: 46.430100, lon: 14.066400 },"Kamnik": { lat: 46.225600, lon: 14.609400 },"Koper": { lat: 45.546900, lon: 13.729400 },"Kostanjevica na Krki": { lat: 45.843900, lon: 15.422800 },"Kranj": { lat: 46.238900, lon: 14.355600 },"Kranjska Gora": { lat: 46.484700, lon: 13.783300 },"Lendava": { lat: 46.561000, lon: 16.451000 },"Lipica": { lat: 45.667800, lon: 13.880600 },"Ljubljana": { lat: 46.056900, lon: 14.505800 },"Maribor": { lat: 46.554700, lon: 15.645900 },"Metlika": { lat: 45.647200, lon: 15.313300 },"Murska Sobota": { lat: 46.662500, lon: 16.166700 },"Nova Gorica": { lat: 45.956600, lon: 13.648300 },"Novo Mesto": { lat: 45.803000, lon: 15.168400 },"Piran": { lat: 45.528600, lon: 13.568100 },"Pivka": { lat: 45.679400, lon: 14.194400 },"Postojna": { lat: 45.776400, lon: 14.215300 },"Ptuj": { lat: 46.420700, lon: 15.870900 },"Radlje ob Dravi": { lat: 46.614400, lon: 15.228900 },"Radovljica": { lat: 46.342200, lon: 14.174400 },"Rogaška Slatina": { lat: 46.237200, lon: 15.640600 },"Sežana": { lat: 45.706400, lon: 13.871400 },"Šentjur": { lat: 46.218100, lon: 15.396700 },"Škofja Loka": { lat: 46.165600, lon: 14.306700 },"Tolmin": { lat: 46.183600, lon: 13.733600 },"Trbovlje": { lat: 46.155300, lon: 15.053900 },"Velenje": { lat: 46.358900, lon: 15.110300 } }
       
       /* Debugging */
       /*placeMarker("Budinci")

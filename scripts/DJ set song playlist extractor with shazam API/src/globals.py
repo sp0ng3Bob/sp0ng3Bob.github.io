@@ -13,7 +13,7 @@ START_FROM = 0
 LAST_SHAZAM_ID = None
 
 # Your Shazam API key
-API_KEY = "cff80c23f6msh0f9ba7502624dfap173fa3jsn24e5bddfbb7e"  # Replace with your Shazam API key
+API_KEY = "Replace with your Shazam API key"
 API_URL = ""
 API_HOST = ""
 

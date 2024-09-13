@@ -1,31 +1,73 @@
+import glMatrix from "glMatrix"
+
+const vec3 = glMatrix.vec3
+const mat4 = glMatrix.mat4
+
 /* Texture (UV) mapping */
-function calculatePlanarMapping(vertices) {
+function calculatePlanarMapping(vertices, projectionDirection = "Z") {
   const uvs = []
   for (let i = 0; i < vertices.length; i += 3) {
-    uvs.push(vertices[i] * 0.5 + 0.5, vertices[i + 2] * 0.5 + 0.5)
+    let u, v
+
+    if (projectionDirection === "X") {
+      u = vertices[i + 1] * 0.5 + 0.5 // Y
+      v = vertices[i + 2] * 0.5 + 0.5 // Z
+    } else if (projectionDirection === "Y") {
+      u = vertices[i] * 0.5 + 0.5     // X
+      v = vertices[i + 2] * 0.5 + 0.5 // Z
+    } else {  // Default: Z projection
+      u = vertices[i] * 0.5 + 0.5     // X
+      v = vertices[i + 1] * 0.5 + 0.5 // Y
+    }
+
+    uvs.push(u, v)
   }
   return new Float32Array(uvs)
 }
 
-function calculateCylindricalMapping(vertices) {
+function calculateCylindricalMapping(vertices, projectionDirection = "Y") {
   const uvs = []
   for (let i = 0; i < vertices.length; i += 3) {
-    const theta = Math.atan2(vertices[i + 2], vertices[i])
-    uvs.push((theta + Math.PI) / (2 * Math.PI), vertices[i + 1] * 0.5 + 0.5)
+    let theta, v
+
+    if (projectionDirection === "X") {
+      theta = Math.atan2(vertices[i + 2], vertices[i + 1])  // Z and Y
+      v = vertices[i] * 0.5 + 0.5                           // X
+    } else if (projectionDirection === "Z") {
+      theta = Math.atan2(vertices[i + 1], vertices[i])  // Y and X
+      v = vertices[i + 2] * 0.5 + 0.5                   // Z
+    } else {  // Default: Y projection
+      theta = Math.atan2(vertices[i + 2], vertices[i])  // Z and X
+      v = vertices[i + 1] * 0.5 + 0.5                   // Y
+    }
+
+    uvs.push((theta + Math.PI) / (2 * Math.PI), v)
   }
   return new Float32Array(uvs)
 }
 
-function calculateSphericalMapping(vertices) {
+function calculateSphericalMapping(vertices, projectionDirection = "Y") {
   const uvs = []
   for (let i = 0; i < vertices.length; i += 3) {
     const length = Math.sqrt(vertices[i] ** 2 + vertices[i + 1] ** 2 + vertices[i + 2] ** 2)
-    const theta = Math.atan2(vertices[i + 2], vertices[i])
-    const phi = Math.acos(vertices[i + 1] / length)
+    let theta, phi
+
+    if (projectionDirection === "X") {
+      theta = Math.atan2(vertices[i + 2], vertices[i + 1])  // Z and Y
+      phi = Math.acos(vertices[i] / length)                 // X
+    } else if (projectionDirection === "Z") {
+      theta = Math.atan2(vertices[i + 1], vertices[i])  // Y and X
+      phi = Math.acos(vertices[i + 2] / length)         // Z
+    } else {  // Default: Y projection
+      theta = Math.atan2(vertices[i + 2], vertices[i])  // Z and X
+      phi = Math.acos(vertices[i + 1] / length)         // Y
+    }
+
     uvs.push((theta + Math.PI) / (2 * Math.PI), phi / Math.PI)
   }
   return new Float32Array(uvs)
 }
+
 
 
 /* Texture transformation */
@@ -76,7 +118,7 @@ function getCurrentDataFromGeoModel(gl, glBuffer) {
   return data
 }
 
-function setUVBuffer(gl, model, newUVs) {
+export function setUVBuffer(gl, model, newUVs) {
   gl.bindBuffer(gl.ARRAY_BUFFER, model.uvs)
   gl.bufferData(gl.ARRAY_BUFFER, newUVs, gl.STATIC_DRAW)
 }
@@ -92,32 +134,40 @@ function setUVBuffer(gl, model, newUVs) {
   - https://webgl2fundamentals.org/webgl/lessons/webgl-data-textures.html
   - https://webgl2fundamentals.org/webgl/lessons/webgl-2-textures.html
   - https://stackoverflow.com/questions/30960403/multitexturing-theory-with-texture-objects-and-samplers
+
+  - https://stackoverflow.com/questions/29577205/opengl-glgeneratemipmap-before-loading-texture-data
+  [ glGenerateMipmap() takes the current content of the base level image (where the base level is the 
+  level set as GL_TEXTURE_BASE_LEVEL, 0 by default), and generates all the mipmap levels from base 
+  level + 1 to the maximum level.
+
+  This means that glGenerateMipmap() has no effect on future calls to glTexImage2D(). 
+  If you want your mipmaps to be updated after modifying the texture data with calls like 
+  glTexImage2D() or glTexSubImage2D(), you have to call glGenerateMipmap() again. ]
+
 */
-export function updateMapping(gl, model, options) {
-  switch (options.mapping) {
-    case 'Planar':
-      return calculatePlanarMapping(model.positions)
-    case 'Cylindrical':
-      return calculateCylindricalMapping(model.positions)
-    case 'Spherical':
-      return calculateSphericalMapping(model.positions)
-    default:
-      return model.uvs //getUVFromGeoModel(model)
+export function updateMapping(bufferData, options) {
+  if (!options?.mapping) { return }
+
+  if ("Planar") {
+    bufferData.uvs = updateUVs(calculatePlanarMapping(bufferData.positions), options)
+  } else if ("Cylindrical") {
+    bufferData.uvs = updateUVs(calculateCylindricalMapping(bufferData.positions), options) //options.projectionDirection
+  } else if ("Spherical") {
+    bufferData.uvs = updateUVs(calculateSphericalMapping(bufferData.positions), options)
   }
 }
 
-function updateUVs(gl, model, options) {
-  let uvs = getCurrentUVFromGeoModel(gl, model)
+function updateUVs(uvs, options) {
   uvs = translateUVs(uvs, options.translateX, options.translateY)
   uvs = rotateUVs(uvs, options.rotate)
   uvs = scaleUVs(uvs, options.scaleX, options.scaleY)
-  setUVBuffer(gl, model, uvs)
-  //return uvs
+  return uvs
 }
 
 export function fetchImage(url) {
   return new Promise((resolve, reject) => {
     const image = new Image()
+    image.crossOrigin = "Anonymous"
     image.addEventListener('load', e => resolve(image))
     image.addEventListener('error', reject)
     image.src = url

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tarife omrežnine elektrike</title>
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <style>
+    body { font-family: monospace; }
+    .user { margin: 10px 0; padding: 10px; border: 1px solid #ddd; }
+    div.hidden { display: none; }
+    nav { display: flex; flex-direction: column; line-height: 3em; margin: 1em; gap: 10px; }
+    .ribbon-container { position: relative; display: inline-block; border: solid grey; border-radius: 1em; padding: 2px 10px; }
+    .ribbon-container a:last-child { text-decoration: none; font-size: 16px; padding: 10px 15px; position: relative; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+    .ribbon { border-radius: 2em; height: 20px; /*position: absolute;*/ top: -5px; right: -60px; text-decoration: none; padding: 5px 10px; font-size: 11px; color: #fff; background-color: #ff5722; }
+  </style>
+</head>
+
+<body>
+  <div id="info">
+    <h1>API možnosti:</h1>
+    <nav>
+      <div class="ribbon-container">
+        <a href="?tarifnePostavke&download" class="ribbon">JSON ⤵</a>
+        <a href="?tarifnePostavke">Tarifne postavke</a>
+      </div>
+      <div class="ribbon-container">
+        <a href="?tarifneSezone&download" class="ribbon">JSON ⤵</a>
+        <a href="?tarifneSezone">Tarifne sezone</a>
+      </div>      
+      <div class="ribbon-container">
+        <a href="?nizjaSezona&download" class="ribbon">JSON ⤵</a>
+        <a href="?nizjaSezona">Nižja tarifna sezona</a>
+      </div>      
+      <div class="ribbon-container">
+        <a href="?visjaSezona&download" class="ribbon">JSON ⤵</a>
+        <a href="?visjaSezona">Višja tarifna sezona</a>
+      </div>      
+      <div class="ribbon-container">
+        <a href="?trenutnaTarifa&download" class="ribbon">JSON ⤵</a>
+        <a href="?trenutnaTarifa">Trenutna omrežna tarifa</a>
+      </div>
+    </nav>
+  </div>
+
+  <div id="json" class="hidden">
+  </div>
+
+  <script type="module" src="api.js"></script>
+</body>
+</html>
+
+<!-- INFO: https://gen-i.si/podpora/elektricna-energija/omreznina/ -->

@@ -1,12 +1,13 @@
 import { praznikiCSV } from "./data.js"
 
-const time = new Date(Date.now())
-const year = time.getFullYear()
-const month = time.getMonth()
-const day = time.getDate()
-const hour = time.getHours()
+let time = new Date(Date.now())
+let year = time.getFullYear()
+let month = time.getMonth()
+let day = time.getDate()
+let hour = time.getHours()
 
 const prazniki = filterCSVData(parseCSV(), "DELA_PROST_DAN", "da", "===")
+const jeProstDan = isWorkfree()
 
 // Function to parse the CSV string into an array of objects
 function parseCSV() {
@@ -81,34 +82,51 @@ export function getSeasonMilestones() {
   }
 }
 
-export function getCurrentSeason() {
+function getCurrentSeason() {
   return month >= 2 && month <= 9 ? "nižja" : "višja"
 }
 
-export function isHoliday() {
+export function isWorkfree() {
   const filtered = filterCSVData(prazniki, "DATUM", `${day}.${(month + 1).toString().padStart(2, '0')}.${year}`, "===")
-  return filtered.length > 0 || time.getDay() === 0
+  return filtered.length > 0 || time.getDay() === 0 //nedelja, in sobota?
 }
 
-export function getCurrentRate(data) {
+export function getCurrentRate(nizjaSezona, visjaSezona) {
+  let data
+  if (getCurrentSeason() === "nižja") {
+    data = nizjaSezona[ jeProstDan ? "prostDan" : "delovniDan" ]
+  } else {
+    data = visjaSezona[ jeProstDan ? "prostDan" : "delovniDan" ]
+  }
   return data[hour]
 }
 
-export function getNextCheaperRate(data) {
+export function getNextCheaperRate(nizjaSezona, visjaSezona) { //change this shit...
+  let data
+  if (getCurrentSeason() === "nižja") {
+    data = nizjaSezona[ jeProstDan ? "prostDan" : "delovniDan" ]
+  } else {
+    data = visjaSezona[ jeProstDan ? "prostDan" : "delovniDan" ]
+  }
+  
   let currentHour = hour
   let currentRate = data[currentHour]
   currentHour++
   while (currentRate <= data[currentHour]) {
-    currentRate = data[currentHour]
-    currentHour++
+    //while(currentHour <= 23) {
+      currentRate = data[currentHour]
+      currentHour++      
+    //}
+    //currentHour = 0
+    //nadaljuj na naslednji dan...
   }
   
-  const startMinutes = new Date(Date.UTC(year, month, day, hour)).getTime / (1000 * 60) - time.getTime() / (1000 * 60)
+  const startMinutes = time.getMinutes() //(new Date(Date.UTC(year, month, day, hour)).getTime() / (1000 * 60)) - (time.getTime() / (1000 * 60))
   const endMinutes = (currentHour - hour) * 60
   
   return [
     data[currentHour], 
-    "todo", //endMinutes - startMinutes
-    currentHour
+    endMinutes - startMinutes,
+    new Date(Date.UTC(year, month, day, currentHour))
   ]
 }

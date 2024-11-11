@@ -15,7 +15,7 @@ export const tarifnePostavke = {
       },
       {
         "postavka": 2,
-        "barva": "#808080",
+        "barva": "#CCC",
         "cena": 0.19
       },
       {

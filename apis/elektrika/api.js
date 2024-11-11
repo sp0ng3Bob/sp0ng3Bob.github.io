@@ -7,10 +7,9 @@ import {
 
 import {
   getSeasonMilestones,
-  getCurrentSeason,
   getCurrentRate,
   getNextCheaperRate,
-  isHoliday
+  isWorkfree
 } from "./time.js"
 
 const infoDiv = document.querySelector("#info")
@@ -67,24 +66,17 @@ function displayDataBasedOnQuery() {
       case "visjaSezona":
         jsonData = visjaSezona;
         break;
-      case "trenutnaTarifa":
-        const jeProstDan = isHoliday()
-        const tarifnaSezona = getCurrentSeason()
-        
-        let postavka
-        if (tarifnaSezona === "nižja") {
-          postavka = nizjaSezona[ jeProstDan ? "prostDan" : "delovniDan" ]
-        } else {
-          postavka = visjaSezona[ jeProstDan ? "prostDan" : "delovniDan" ]
-        }
-        
+      case "trenutnaTarifa":        
         jsonData.naslov = "Trenutna tarifa";
-        jsonData.prostDan = jeProstDan ? "DA" : "NE"
-        jsonData.trenutnaTarifa = tarifnePostavke.postavke.seznam[getCurrentRate(postavka)]
-        
-        const cheaperRate = getNextCheaperRate(postavka)
-        jsonData.cenejsaTarifa = tarifnePostavke.postavke.seznam[cheaperRate[0]]
-        jsonData.cenejsaTarifa["seZačneČez"] = cheaperRate[1]
+        jsonData.prostDan = isWorkfree() ? "DA" : "NE"
+        jsonData.trenutnaTarifa = tarifnePostavke.postavke.seznam[getCurrentRate(nizjaSezona, visjaSezona)]
+
+        const cheaperRate = getNextCheaperRate(nizjaSezona, visjaSezona)
+        jsonData.cenejsaTarifa = tarifnePostavke.postavke.seznam[cheaperRate[0]] || {}
+        jsonData.cenejsaTarifa["seZačne"] = {}
+        jsonData.cenejsaTarifa["seZačne"]["čez"] = cheaperRate[1]
+        jsonData.cenejsaTarifa["seZačne"]["enota"] = "min"
+        jsonData.cenejsaTarifa["seZačne"]["ob"] = cheaperRate[2]
         break;
     }
     
@@ -103,6 +95,12 @@ function displayDataBasedOnQuery() {
 // Function to display data for "tarifnePostavke"
 function displayJsonData(jsonData) {
   jsonDiv.innerHTML = `<pre>${JSON.stringify(jsonData, undefined, 2)}</pre>`
+  
+  if (jsonData.prostDan) {
+    document.querySelector("body").style.backgroundColor = jsonData.trenutnaTarifa.barva
+  } else {
+    document.querySelector("body").style.backgroundColor = "white"
+  }
 }
 
 function displayNotFound() {

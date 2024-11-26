@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="si">
+<html lang="sl">
 	<head>
 			<meta charset="UTF-8">
 			<title>Zemljevidi gozdov slovenije</title>
@@ -273,6 +273,8 @@
       <p><b>Dvojni klik</b> na zemljevidu ali <b>ALT + H</b> skrije ali pokaže izbirnik dreves, obrobne gumbe, latinsko ime drevesa in iskalec lokacije.</p>
     </dialog>
 		<script type="module">
+      import { AreaSearcher } from "./AreaSearcher.js"
+    
       function toggleSideButtons() {
         info.classList.toggle("Hidden")
         latName.classList.toggle("Hidden")
@@ -310,10 +312,10 @@
         const p3 = { name: "Črnomelj", x: 1106, y: 1189, ...places["Črnomelj"] }
         const p4 = { name: "Lendava", x: 1864, y: 315, ...places["Lendava"] }*/
         
-        checkPointOnMap({x: p1.x, y:p1.y}, p1.name)
+        /*checkPointOnMap({x: p1.x, y:p1.y}, p1.name)
         checkPointOnMap({x: p2.x, y:p2.y}, p2.name)
         checkPointOnMap({x: p3.x, y:p3.y}, p3.name)
-        checkPointOnMap({x: p4.x, y:p4.y}, p4.name)
+        checkPointOnMap({x: p4.x, y:p4.y}, p4.name)*/
 
         const northLat = Math.max(p1.lat, p2.lat, p3.lat, p4.lat);
         const southLat = Math.min(p1.lat, p2.lat, p3.lat, p4.lat);
@@ -385,8 +387,10 @@
           if (pixelPoint.x > - 10 && pixelPoint.y > -10 || pixelPoint.x < mapWidth + 10 && pixelPoint.y < mapHeight + 10) {
             checkPointOnMap(pixelPoint, place)
           }
-          console.log(`${place}: ${pixelPoint.x}, ${pixelPoint.y}`)
+          return { x: pixelPoint.x, y: pixelPoint.y }
         }
+        
+        return null
       }
       
       function checkPointOnMap(pixelPoint, place) {
@@ -434,6 +438,10 @@
       const slovenskaImena = ['Beli gaber', 'Breza', 'Bukev', 'Cer', 'Češnja', 'Črna jelša', 'Črni gaber', 'Dob', 'Gorski brest', 'Gorski javor', 'Graden', 'Jelka', 'Jerebika', 'Kostanj', 'Lipa in lipovec', 'Macesen', 'Mali jesen', 'Mokovec', 'Ostrolistni in topokrpi javor', 'Rdeči bor', 'Robinija', 'Smreka', 'Trepetlika', 'Veliki jesen', 'Delež gozda', 'Mešanost gozdov']
 			const latinskaImena = {"Beli gaber": "Carpinus betulus", "Breza": "Betula pendula & Betula pubescens", "Bukev": "Fagus sylvatica", "Cer": "Quercus cerris", "Cesnja": "Prunus avium", "Crna jelsa": "Alnus glutinosa", "Crni gaber": "Ostrya carpinifolia", "Dob": "Quercus robur", "Gorski brest": "Ulmus glabra", "Gorski javor": "Acer pseudoplatanus", "Graden": "Quercus petraea", "Jelka": "Abies", "Jerebika": "Sorbus aucuparia", "Kostanj": "Castanea", "Lipa in lipovec": "Tilia platyphyllos & Tilia cordata", "Macesen": "Larix", "Mali jesen": "Fraxinus ornus (= Črni jesen)", "Mokovec": "Sorbus aria", "Ostrolistni in topokrpi javor": "Acer platanoides & Acer obtusatum", "Rdeci bor": "Pinus sylvestris", "Robinija": "Robinia pseudoacacia", "Smreka": "Picea abies", "Trepetlika": "Populus tremula", "Veliki jesen": "Fraxinus excelsior"}
 			
+      const barveLegende = { "#DDDDDD": "0", "#FCFE13": "do 1", "#CCFF66": "1 do 5", "#11FC11": "5 do 10", "#2AB629": "10 do 25", "#267011": "25 do 50", "#118EB4": "50 do 75", "#7111CE": "75 do 90", "#9C1457": "več kot 90" }
+      const iskalecZelenja = new AreaSearcher(barveLegende)
+      iskalecZelenja.setImage(overlay)
+      
       const places = { "Bled": { lat: 46.369200, lon: 14.113100 },"Bohinj": { lat: 46.276900, lon: 13.956300 },"Brežice": { lat: 45.903900, lon: 15.591100 },"Celje": { lat: 46.238300, lon: 15.267700 },"Črnomelj": { lat: 45.571000, lon: 15.194000 },"Gornja Radgona": { lat: 46.677800, lon: 15.992500 },"Idrija": { lat: 46.002500, lon: 14.030800 },"Izola": { lat: 45.536700, lon: 13.660300 },"Jesenice": { lat: 46.430100, lon: 14.066400 },"Kamnik": { lat: 46.225600, lon: 14.609400 },"Koper": { lat: 45.546900, lon: 13.729400 },"Kostanjevica na Krki": { lat: 45.843900, lon: 15.422800 },"Kranj": { lat: 46.238900, lon: 14.355600 },"Kranjska Gora": { lat: 46.484700, lon: 13.783300 },"Lendava": { lat: 46.561000, lon: 16.451000 },"Lipica": { lat: 45.667800, lon: 13.880600 },"Ljubljana": { lat: 46.056900, lon: 14.505800 },"Maribor": { lat: 46.554700, lon: 15.645900 },"Metlika": { lat: 45.647200, lon: 15.313300 },"Murska Sobota": { lat: 46.662500, lon: 16.166700 },"Nova Gorica": { lat: 45.956600, lon: 13.648300 },"Novo Mesto": { lat: 45.803000, lon: 15.168400 },"Piran": { lat: 45.528600, lon: 13.568100 },"Pivka": { lat: 45.679400, lon: 14.194400 },"Postojna": { lat: 45.776400, lon: 14.215300 },"Ptuj": { lat: 46.420700, lon: 15.870900 },"Radlje ob Dravi": { lat: 46.614400, lon: 15.228900 },"Radovljica": { lat: 46.342200, lon: 14.174400 },"Rogaška Slatina": { lat: 46.237200, lon: 15.640600 },"Sežana": { lat: 45.706400, lon: 13.871400 },"Šentjur": { lat: 46.218100, lon: 15.396700 },"Škofja Loka": { lat: 46.165600, lon: 14.306700 },"Tolmin": { lat: 46.183600, lon: 13.733600 },"Trbovlje": { lat: 46.155300, lon: 15.053900 },"Velenje": { lat: 46.358900, lon: 15.110300 } }
       
       /* Debugging */
@@ -482,8 +490,13 @@
         locationSearch.classList.toggle("Hidden")
       })
       
-      locationSearch.addEventListener("search", () => {
-        placeMarker(locationSearch.firstElementChild.value)
+      locationSearch.addEventListener("search", async () => {
+        const coords = await placeMarker(locationSearch.firstElementChild.value)
+        
+        //check for the searched area for woods
+        const result = iskalecZelenja.searchArea(coords.x, coords.y, 25, 1); // Center, radius, tolerance
+        //iskalecZelenja.drawCircle(coords.x, coords.y, 50, 'blue', 3)
+        console.log("Search Results:", result)
       })
 
       info.addEventListener("click", () => {
@@ -551,6 +564,7 @@
 				overlay.setAttribute("src", "assets/" + e.target.value)
         const id = e.target.value.split("_").slice(3).join(" ").slice(0, -4)
 				latName.children[0].innerHTML = latinskaImena[id] ? latinskaImena[id] : id
+        iskalecZelenja.setImage(overlay)
 			})
 			
 			//Service worker

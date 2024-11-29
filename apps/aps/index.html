@@ -88,7 +88,8 @@
       box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     }
 
-    .Hide#filters { 
+    .Hide#filters,
+    .hidden { 
       display: none; 
     }
 
@@ -189,6 +190,7 @@
       font-size: 0.9em;
       opacity: 0.8;
       transition: opacity 0.3s ease;
+      text-align: center;
     }
 
     .PlantCardType:hover {
@@ -211,8 +213,10 @@
     .PlantCardType[data-type="tree"] { background-color: #704524; }
 
     .PlantCardType span {
-      width: 50%;
       display: inline-block;
+    }
+    .PlantCardType span + span {
+      margin-left: 10px;
     }
     .PlantCardType span[data-type]:after {
       display: inline-block;
@@ -244,7 +248,7 @@
       position: absolute;
       top: 0px;
       left: 0px;
-      width: 100%;
+      width: 100% !important;
       height: 100%;
       background-color: #525659;
       display: block;
@@ -269,22 +273,51 @@
       content: "Exit view";
     }
 
-    @media only screen and (max-width: 920px) and (orientation: portrait) {
-      body { 
-        width: 97vw; 
+    @media only screen and (max-width: 1024px) and (orientation: portrait) {
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 5px;
+        overflow-x: hidden;
+      }
+      
+      button,
+      input,
+      .PlantCardFamily {
+        font-size: 0.8rem;
       }
       
       #content {
         height: 100vh;
         flex-direction: column;
+        overflow-x: hidden;
+        width: 100%;
+        max-width: 100%;
+      }
+      
+      #listOfPlants {
+        overflow-x: hidden;
       }
       
       #listOfPlants, #viewerRegion {
         width: 100%;
+        max-width: 100%;
       }
       
       #resizeHandle {
         display: none;
+      }
+
+      .PlantCardName {
+        font-size: 1rem;
+      }
+      
+      .PlantCardType {
+        
       }
     }
 	</style>
@@ -486,14 +519,33 @@
 			loadToView(baseFolderPlants + plantFileName)
 		}
 		
-    /*function handleMouseMove(e) {
+    /* Resizing separator */
+    function handleMouseMove(e) {
       if (isResizing) {
         const containerRect = content.getBoundingClientRect()
-        const newWidth = e.pageX/containerRect.width //e.clientX/containerRect.width //(e.clientX - containerRect.left) / containerRect.width
-        listOfPlants.style.width = `${newWidth*100}%` //flexBasis
-        viewerRegion.style.width = `${100 - newWidth*100}%` //`${(1-newWidth)*100}%`
+        const newWidth = e.clientX / containerRect.width
+        
+        // Ensure the resize stays within reasonable bounds (e.g., 20% to 80%)
+        const clampedWidth = Math.max(0.35, Math.min(0.65, newWidth))
+        
+        listOfPlants.style.width = `${clampedWidth * 100}%`
+        viewerRegion.style.width = `${(1 - clampedWidth) * 100}%`
       }
-    }*/
+    }
+
+    resizeHandle.addEventListener('mousedown', (e) => {
+      isResizing = true
+      
+      // Prevent text selection during resize
+      e.preventDefault()
+      
+      document.addEventListener('mousemove', handleMouseMove)
+      document.addEventListener('mouseup', () => {
+        isResizing = false
+        document.removeEventListener('mousemove', handleMouseMove)
+      }, { once: true })
+    })
+    /***************************************/
 		
 		/*function dragF11(e) {
 			if (f11.classList.contains("Fullscreen")) {
@@ -501,7 +553,6 @@
 				f11.style.left = `${e.pageX - 5}px`
 			}
 		}*/
-
 		
 		//listeners
 		search.addEventListener("keypress", (e) => {
@@ -532,28 +583,6 @@
 			f11.classList.toggle("Fullscreen")
 		})
 		
-		/*f11.addEventListener("mousedown", () =>
-			document.addEventListener("mousemove", dragF11)
-		);
-		f11.addEventListener("mouseup", () => {
-			document.removeEventListener("mousemove", dragF11)
-			if (f11.classList.contains("Fullscreen")) {
-				f11.style.bottom = "5px"
-				f11.style.left = "calc(50% - 50px)"
-			}
-		});*/
-		
-		
-		/*resizeHandle.addEventListener('mousedown', (e) => {
-			isResizing = true
-			
-			document.addEventListener('mousemove', handleMouseMove)
-			document.addEventListener('mouseup', () => {
-				isResizing = false
-				document.removeEventListener('mousemove', handleMouseMove)
-      })
-    })*/
-		
 		filterFamily.addEventListener("change", (e) => {
 			activeFilters["Family"] = e.target.value
 			searchTheDB()
@@ -569,10 +598,75 @@
 			})
 			searchTheDB()
 		})
+    
+    /* Swipe controls for mobile */
+    function toggleViews() {
+      if (listOfPlants.classList.contains("hidden")) {
+        listOfPlants.classList.remove("hidden")
+        viewerRegion.classList.add("hidden")
+      } else {
+        listOfPlants.classList.add("hidden")
+        viewerRegion.classList.remove("hidden")
+      }
+    }
+    
+    const MOVE_THRESHOLD = 100; // Minimum distance for a swipe
+    let initialX = 0;
+    let initialY = 0;
+
+    function setSwipeListener(targetDOM) {
+      targetDOM.addEventListener("touchstart", e => {
+        initialX = e.touches[0].pageX;
+        initialY = e.touches[0].pageY;
+      });
+
+      targetDOM.addEventListener("touchmove", e => {
+        const currentX = e.touches[0].pageX;
+        const currentY = e.touches[0].pageY;
+
+        const moveX = currentX - initialX;
+        const moveY = currentY - initialY;
+
+        //console.log(`Horizontal movement: ${moveX}, Vertical movement: ${moveY}`);
+      });
+
+      targetDOM.addEventListener("touchend", e => {
+        const moveX = e.changedTouches[0].pageX - initialX;
+        const moveY = e.changedTouches[0].pageY - initialY;
+
+        if (Math.abs(moveX) > Math.abs(moveY) && Math.abs(moveX) > MOVE_THRESHOLD) {
+          // Horizontal swipe
+          if (moveX > 0) {
+            console.log("Swiped right");
+          } else {
+            console.log("Swiped left");
+          }
+          toggleViews();
+        } /* else if (Math.abs(moveY) > MOVE_THRESHOLD) {
+          // Vertical swipe (if needed)
+          if (moveY > 0) {
+            console.log("Swiped down");
+          } else {
+            console.log("Swiped up");
+          }
+          // Handle vertical swipe if required
+        } else {
+          console.log("Not a significant swipe");
+        } */
+      });
+    }
+    /******************************/
 		
 		//main
 		loadToView(book)
 		loadJSON(dbPath)
+    
+    setSwipeListener(content)
+    const iframe = document.querySelector("iframe")
+    iframe.addEventListener("load", () => {
+      const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+      setSwipeListener(iframeDoc);
+    });
 	</script>
 </body>
 </html>

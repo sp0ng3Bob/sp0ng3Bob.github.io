@@ -1,0 +1,277 @@
+body {
+  font-family: monospace, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f4;
+  line-height: 1.6;
+  color: #333;
+}
+
+.hidden {
+  display: none !important;
+}
+
+#navigation {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 15vh;
+  background-color: #2c3e50;
+  z-index: 1;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+#navigation:hover,
+#navigation:focus,
+#navigation:active {
+  height: 90vh;
+  transition: height 0.3s ease-out;
+  box-shadow: 0 0px 10vh #03055596;
+}
+
+#content {
+  position: absolute;
+  top: 15vh;
+  left: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+#info {
+  display: flex;
+  width: 100%;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+#left {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  background-color: #f9f9f9;
+}
+
+#image {
+  width: 100%;
+  object-fit: contain;
+  border-radius: 10px;
+  background-color: #34495e;
+}
+
+#header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#name-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 35px;
+  text-align: center;
+}
+
+#name-container img {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background-color: #f1c40f;
+}
+
+#name {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#name label:first-child {
+  font-size: 1.5rem;
+  font-weight: bold;
+  letter-spacing: 2px;
+  color: #2c3e50;
+  text-align: center;
+}
+
+#name label:last-child {
+  color: #34495e;
+  font-style: italic;
+}
+
+.small {
+  text-align: center;
+  margin-top: 10px;
+  align-items: center !important;
+  flex-direction: row !important;
+}
+
+.small label {
+  font-size: 1rem !important;
+  color: #7f8c8d !important;
+  display: block;
+  width: 40px !important;
+}
+
+.small p {
+  font-size: 0.8rem !important;
+  color: #343b3c !important;
+}
+
+#right {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 20px;
+  background-color: palegoldenrod;
+  border-radius: 10px;
+}
+
+.info {
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+  margin-bottom: 15px;
+  align-items: flex-start;
+  border-bottom: 1px solid #ecf0f1;
+  padding-bottom: 10px;
+  align-items: baseline;
+}
+
+.info:last-child {
+  border-bottom: none;
+}
+
+.info label {
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: #2c3e50;
+  width: 150px;
+  flex-shrink: 0;
+}
+
+.info p {
+  font-size: 0.9rem;
+  color: #34495e;
+  margin: 0;
+}
+
+#additional {
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* #growing, #lookalikes {
+  background-color: #f9f9f9;
+  border-radius: 5px;
+} */
+
+.months-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 50px;
+  border-bottom: 2px solid #e0e0e0;
+  padding-inline: 10px;
+}
+
+.month {
+  position: relative;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 10px;
+  color: #7f8c8d;
+  background-color: #ecf0f1;
+  text-transform: uppercase;
+}
+
+.month.growing {
+  background-color: #2ecc71;
+  color: white;
+  font-weight: bold;
+}
+
+/* .modifiedTag::before {
+  display: block;
+  content: " ";
+  background-image: url(../assets/icons/info-circle-svgrepo-com.svg);
+  padding: 5px;
+  background-size: cover;
+  width: 25px;
+  height: 25px;
+  opacity: 0.6;
+}
+
+.modifiedTag {
+  
+} */
+
+/* Tooltip CSS */
+.marker {
+  position: relative;
+}
+
+.marker .tooltip {
+  position: absolute;
+  visibility: hidden;
+  width: max-content;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: blue 2px dotted;
+  opacity: .75;
+  bottom: 100%;
+  left: calc(100% - 70%);
+}
+
+.tooltip:focus,
+.marker:hover .tooltip,
+.marker:focus .tooltip {
+  visibility: visible;
+}
+/*Tooltip - END*/
+
+@media only screen and (max-width: 1000px) {
+  #navigation {
+    height: 10vh;
+  }
+  
+  #content {
+    top: 10vh;
+  }
+  
+  #info {
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+  
+  #left, #right {
+    width: 100%;
+  }
+  
+  .info {
+    flex-direction: column;
+    align-items: flex-start;
+    margin: 5px 10px;
+    padding-bottom: 15px;
+  }
+}

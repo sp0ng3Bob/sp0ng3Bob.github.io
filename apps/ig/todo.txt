@@ -1,0 +1,40 @@
+gobe = {  } #https://www.gobe.si/Gobe/Gobe
+
+gobe.pogostost
+gobe.url
+sloName
+latName
+(rod = latName[0])
+(vrsta = latName[1])
+data = {} (rastišce, klobuk, bet, ...)
+
+
+latRodovi = 
+sloRodovi =
+
+latVrste = 
+sloVrste = 
+
+
+examples 
+goba: https://www.gobe.si/Gobe/AbortiporusBiennis
+
+latRodovi: https://www.gobe.si/Gobe/GobeRodovi
+sloRodovi: https://www.gobe.si/Gobe/GobeIndexSIRodovi
+latVrste: https://www.gobe.si/Gobe/GobePoVrstah
+sloVrste: https://www.gobe.si/Gobe/GobeIndexSI
+
+
+podobneStrupeneNestrupene: https://www.gobe.si/Gobe/StrupeneGobeRazlika
+zdravilnaMoc: https://www.gobe.si/Gobe/ZdravilnaMocGob
+strupenost: https://www.gobe.si/Gobe/StrupeneGobe
+sindromi: https://www.gobe.si/Gobe/SindromiZastrupitev
+slovar: https://www.gobe.si/Mikologija/Slovar
+
+dodatno: https://www.gobe.si/Mikologija/Mikologija
+recepti: https://www.gobe.si/Recepti/Recepti
+
+
+------------------------------------------------------------------------------
+add filters
+add routing and data module

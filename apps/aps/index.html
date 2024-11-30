@@ -261,7 +261,7 @@
     }
 
     #f11:after {
-      content: "Fullscreen"
+      content: "Fullscreen";
     }
 
     .Fullscreen#f11 {
@@ -363,7 +363,7 @@
 		const listOfPlants = document.querySelector("#listOfPlants")
 		const viewerRegion = document.querySelector("#viewerRegion")
 		const pdfViewer 	 = document.querySelector("#pdfViewer")
-		const f11 = document.querySelector("#f11")
+		const f11          = document.querySelector("#f11")
     const resizeHandle = document.querySelector('#resizeHandle')
 		
 		const dbPath 					 = "./assets/book parts/Plants by family/PlantsData.json"
@@ -641,46 +641,75 @@
     let initialX = 0;
     let initialY = 0;
 
-    function setSwipeListener(targetDOM) {
-      targetDOM.addEventListener("touchstart", e => {
-        initialX = e.touches[0].pageX;
-        initialY = e.touches[0].pageY;
-      });
+    function touchStart(e) {
+      initialX = e.touches[0].pageX;
+      initialY = e.touches[0].pageY;
+    }
 
-      targetDOM.addEventListener("touchmove", e => {
-        const currentX = e.touches[0].pageX;
-        const currentY = e.touches[0].pageY;
+    function touchMove(e) {
+      const currentX = e.touches[0].pageX;
+      const currentY = e.touches[0].pageY;
 
-        const moveX = currentX - initialX;
-        const moveY = currentY - initialY;
+      const moveX = currentX - initialX;
+      const moveY = currentY - initialY;
 
-        //console.log(`Horizontal movement: ${moveX}, Vertical movement: ${moveY}`);
-      });
+      //console.log(`Horizontal movement: ${moveX}, Vertical movement: ${moveY}`);
+    }
 
-      targetDOM.addEventListener("touchend", e => {
-        const moveX = e.changedTouches[0].pageX - initialX;
-        const moveY = e.changedTouches[0].pageY - initialY;
+    function touchEnd(e) {
+      const moveX = e.changedTouches[0].pageX - initialX;
+      const moveY = e.changedTouches[0].pageY - initialY;
 
-        if (Math.abs(moveX) > Math.abs(moveY) && Math.abs(moveX) > MOVE_THRESHOLD) {
-          // Horizontal swipe
-          if (moveX > 0) {
-            console.log("Swiped right");
-          } else {
-            console.log("Swiped left");
-          }
-          toggleViews();
-        } /* else if (Math.abs(moveY) > MOVE_THRESHOLD) {
-          // Vertical swipe (if needed)
-          if (moveY > 0) {
-            console.log("Swiped down");
-          } else {
-            console.log("Swiped up");
-          }
-          // Handle vertical swipe if required
+      if (Math.abs(moveX) > Math.abs(moveY) && Math.abs(moveX) > MOVE_THRESHOLD) {
+        // Horizontal swipe
+        if (moveX > 0) {
+          console.log("Swiped right");
         } else {
-          console.log("Not a significant swipe");
-        } */
+          console.log("Swiped left");
+        }
+        toggleViews();
+      } /* else if (Math.abs(moveY) > MOVE_THRESHOLD) {
+        // Vertical swipe (if needed)
+        if (moveY > 0) {
+          console.log("Swiped down");
+        } else {
+          console.log("Swiped up");
+        }
+        // Handle vertical swipe if required
+      } else {
+        console.log("Not a significant swipe");
+      } */
+    }
+
+    function setSwipeListener(targetDOM) {
+      targetDOM.addEventListener("touchstart", touchStart);
+      targetDOM.addEventListener("touchmove", touchMove);
+      targetDOM.addEventListener("touchend", touchEnd);
+    }
+    
+    function removeSwipeListener(targetDOM) {
+      targetDOM.removeEventListener("touchstart", touchStart);
+      targetDOM.removeEventListener("touchmove", touchMove);
+      targetDOM.removeEventListener("touchend", touchEnd);
+    }
+    
+    function setSwipeMotion() {
+      setSwipeListener(content)
+      let iframeDoc = pdfViewer.contentDocument || pdfViewer.contentWindow.document 
+      if (iframeDoc) {
+        setSwipeListener(iframeDoc);
+      } else {
+      pdfViewer.addEventListener("load", () => {
+        iframeDoc = pdfViewer.contentDocument || pdfViewer.contentWindow.document;
+        setSwipeListener(iframeDoc);
       });
+      }
+    }
+    
+    function removeSwipeMotion() {
+      removeSwipeListener(content)
+      const iframeDoc = pdfViewer.contentDocument || pdfViewer.contentWindow.document;
+      removeSwipeListener(iframeDoc);
     }
     /******************************/
 		
@@ -688,12 +717,23 @@
 		loadToView(book)
 		loadJSON(dbPath)
     
-    setSwipeListener(content)
-    const iframe = document.querySelector("iframe")
-    iframe.addEventListener("load", () => {
-      const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-      setSwipeListener(iframeDoc);
-    });
+    const maxWidth1024 = window.matchMedia("only screen and (max-width: 1024px) and (orientation: portrait)")
+    if (maxWidth1024.matches) {
+      setSwipeMotion()
+    }
+    
+    maxWidth1024.addEventListener('change', e => {
+      if (e.matches) {
+        setSwipeMotion()
+      } else {
+        removeSwipeMotion()
+      }
+    })
+    /*if ('orientation' in screen) {
+      screen.orientation.addEventListener('change', function() {
+        console.log("Orientation changed! Current orientation: " + screen.orientation.type);
+      });
+    }*/
 	</script>
 </body>
 </html>

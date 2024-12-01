@@ -185,7 +185,7 @@
     .PlantCardType {
       text-transform: uppercase;
       font-weight: bold;
-      padding: 8px 12px;
+      padding: 4px 4px;
       border-radius: 20px;
       font-size: 0.9em;
       opacity: 0.8;
@@ -272,8 +272,12 @@
     .Fullscreen#f11:after {
       content: "Exit view";
     }
+    
+    #mobileSuggestions {
+      display: none;
+    }
 
-    @media only screen and (max-width: 1024px) and (orientation: portrait) {
+    @media only screen and (max-width: 1024px) {
       * {
         margin: 0;
         padding: 0;
@@ -287,8 +291,10 @@
       
       button,
       input,
+      #toggle,
       .PlantCardFamily {
-        font-size: 0.8rem;
+        font-size: 0.7rem;
+        line-height: 0.7rem;
       }
       
       #content {
@@ -301,6 +307,8 @@
       
       #listOfPlants {
         overflow-x: hidden;
+        padding: 0px 5px;
+        font-size: 0.6rem;
       }
       
       #listOfPlants, #viewerRegion {
@@ -313,11 +321,107 @@
       }
 
       .PlantCardName {
-        font-size: 1rem;
+        font-size: 0.8rem;
       }
       
-      .PlantCardType {
-        
+      .PlantCardType span + span {
+        margin-left: 5px;
+      }
+      .PlantCardType span[data-type]:after {
+        width: 20px;
+        height: 20px;
+        padding: 5px;
+      }
+      
+      #mobileSuggestions {
+        position: relative;
+        display: block;
+      }
+      
+      #mobileSuggestions div {
+        position: fixed;
+        top: 50%;
+        transform: translateY(-50%);
+        color: grey;
+        font-size: 1.5rem;
+        line-height: 1.5rem;
+        animation: none; /* Default state */
+      }
+
+      #mobileSuggestions div:first-child {
+        left: 0;
+        transform: translate(-50%, -50%);
+        animation: shakeLeft 5s cubic-bezier(0.25, 0.75, 0.6, 0.5) infinite;
+      }
+
+      #mobileSuggestions div:last-child {
+        right: 0;
+        transform: translate(50%, -50%);
+        animation: shakeRight 5s cubic-bezier(0.25, 0.75, 0.6, 0.5) infinite;
+      }
+
+      /* Keyframes for the left arrow with a bump effect */
+      @keyframes shakeLeft {
+        0% {
+          transform: translate(-50%, -50%);
+        }
+        10% {
+          transform: translate(-30%, -50%); /* Swipe forward */
+        }
+        15% {
+          transform: translate(-35%, -50%); /* Slight bump back */
+        }
+        20% {
+          transform: translate(-30%, -50%); /* Return to swipe position */
+        }
+        50% {
+          transform: translate(-50%, -50%); /* Return to initial position */
+        }
+        100% {
+          transform: translate(-50%, -50%); /* Idle phase */
+        }
+      }
+
+      /* Keyframes for the right arrow with a bump effect */
+      @keyframes shakeRight {
+        0% {
+          transform: translate(50%, -50%);
+        }
+        10% {
+          transform: translate(30%, -50%); /* Swipe forward */
+        }
+        15% {
+          transform: translate(35%, -50%); /* Slight bump back */
+        }
+        20% {
+          transform: translate(30%, -50%); /* Return to swipe position */
+        }
+        50% {
+          transform: translate(50%, -50%); /* Return to initial position */
+        }
+        100% {
+          transform: translate(50%, -50%); /* Idle phase */
+        }
+      }
+      
+      #search input {
+        position: relative;
+      }
+      
+      #search input::placeholder {
+        position: absolute;
+        display: inline-block;
+        white-space: wrap; /* Prevent text wrapping */
+        /*animation: scrollPlaceholder 10s linear infinite; */
+      }
+
+      @keyframes scrollPlaceholder {
+        0% {
+          transform: translateX(100%); /* Start text outside of the input */
+        }
+        100% {
+          transform: translateX(-100%); /* Move text completely out to the left */
+        }
       }
     }
 	</style>
@@ -343,6 +447,11 @@
 		</div>
 	</section>
 	
+  <section id="mobileSuggestions">
+    <div><p>&lt;&lt;</p></div>
+    <div><p>&gt;&gt;</p></div>
+  </section>
+  
 	<section id="content">
 		<ul id="listOfPlants"></ul>
 		<div id="resizeHandle"></div>
@@ -373,6 +482,7 @@
 		//const pdfPart3 				 = "./assets/book parts/Planning checklists for quick reference-fwv.pdf"
 		const book 						 = "./assets/book parts/Rest of the book.pdf"
 		
+    let iframeDoc    = null
 		let matchingPlants = {}
 		let plantsDataBase = {}
 		let filterFamilyOptions = []
@@ -695,20 +805,18 @@
     
     function setSwipeMotion() {
       setSwipeListener(content)
-      let iframeDoc = pdfViewer.contentDocument || pdfViewer.contentWindow.document 
       if (iframeDoc) {
         setSwipeListener(iframeDoc);
       } else {
-      pdfViewer.addEventListener("load", () => {
-        iframeDoc = pdfViewer.contentDocument || pdfViewer.contentWindow.document;
-        setSwipeListener(iframeDoc);
-      });
+        pdfViewer.addEventListener("load", () => {
+          iframeDoc = pdfViewer.contentDocument || pdfViewer.contentWindow.document;
+          setSwipeListener(iframeDoc);
+        });
       }
     }
     
     function removeSwipeMotion() {
       removeSwipeListener(content)
-      const iframeDoc = pdfViewer.contentDocument || pdfViewer.contentWindow.document;
       removeSwipeListener(iframeDoc);
     }
     /******************************/
@@ -717,9 +825,10 @@
 		loadToView(book)
 		loadJSON(dbPath)
     
-    const maxWidth1024 = window.matchMedia("only screen and (max-width: 1024px) and (orientation: portrait)")
+    const maxWidth1024 = window.matchMedia("only screen and (max-width: 1024px)")
     if (maxWidth1024.matches) {
       setSwipeMotion()
+      viewerRegion.classList.add("hidden")
     }
     
     maxWidth1024.addEventListener('change', e => {
@@ -727,6 +836,8 @@
         setSwipeMotion()
       } else {
         removeSwipeMotion()
+        listOfPlants.classList.remove("hidden")
+        viewerRegion.classList.remove("hidden")
       }
     })
     /*if ('orientation' in screen) {

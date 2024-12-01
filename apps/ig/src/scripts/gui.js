@@ -13,9 +13,16 @@ class GUI {
     await this.data.init();
 
     // Populate the UI after the data is loaded
-    const indexGobe = 420
+    const indexGobe = 0
     const goba = this.data.goba(indexGobe);
     this.populateNames(goba);
+    this.populateInfoCard(goba)
+    this.populateSecondaryInfo(goba)
+  }
+  
+  populateForIndex(id) {
+    const goba = this.data.goba(id)
+    this.populateNames(goba)
     this.populateInfoCard(goba)
     this.populateSecondaryInfo(goba)
   }

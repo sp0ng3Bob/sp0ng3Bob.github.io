@@ -45,7 +45,10 @@ class GUI {
             }
             break
           case "lookalikes":
-            //["podobneVrste"]
+            const data = goba.data["podobneVrste"]
+            if (!data) {
+              info.classList.add("hidden")
+            }
             break
         }
       }

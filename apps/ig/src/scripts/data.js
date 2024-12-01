@@ -11,7 +11,7 @@ class Data {
   
   async fetchData() {
     try {
-      const response = await fetch('../../database/gobe.si-without the značilnosti.json');
+      const response = await fetch('./../../database/gobe.si-without the značilnosti.json');
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -21,7 +21,7 @@ class Data {
     }
   }
   goba(index) {
-    return this.gobe["seznam"][index]
+    return this.gobe["seznam"][index] || undefined
   }
   
   seznam() {

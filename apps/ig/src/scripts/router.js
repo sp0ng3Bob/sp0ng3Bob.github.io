@@ -30,7 +30,7 @@ class Router {
   init() {
     const url = new URL(window.location);
     const goba = url.searchParams.get('goba') || '0';
-    this.updateURL(goba); // Set initial URL to ?goba=0 if not present
+    this.updateURL(goba);
 
     // Handle browser back/forward navigation
     window.addEventListener('popstate', (e) => {

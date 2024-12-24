@@ -83,3 +83,5 @@ This script is distributed under the MIT License. See the `LICENSE` file for mor
 ## Author(s)
 **Author:** Your Name  
 **Contact:** [your.email@example.com](mailto:your.email@example.com)
+
+> DISABLED

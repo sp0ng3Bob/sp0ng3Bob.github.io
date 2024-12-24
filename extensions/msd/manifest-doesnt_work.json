@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "Musescore.com Downloader",
+  "version": "1.0",
+  "description": "Extract the scores and open the print dialog",
+  "icons": {
+    "64": "icon64.png",
+    "512": "icon512.png"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "64": "icon64.png",
+      "512": "icon512.png"
+    }
+  },
+  "permissions": ["activeTab", "scripting", "tabs"],
+  "host_permissions": ["https://musescore.com/*"]
+}

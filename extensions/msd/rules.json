@@ -1,0 +1,13 @@
+[
+  {
+    "id": 1,
+    "priority": 1,
+    "action": {
+      "type": "allow"
+    },
+    "condition": {
+      "urlFilter": "||musescore.com/static/musescore/scoredata/*/score_*.svg*|s3.ultimate-guitar.com/musescore.scoredata/*/score_*.svg*",
+      "resourceTypes": ["image"]
+    }
+  }
+]

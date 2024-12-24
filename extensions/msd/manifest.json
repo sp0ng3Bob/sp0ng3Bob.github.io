@@ -1,0 +1,39 @@
+{
+  "manifest_version": 3,
+  "name": "Musescore SVG Downloader",
+  "version": "1.0",
+  "description": "Intercept responses to fetch SVGs from Musescore",
+  "icons": {
+    "64": "icon64.png",
+    "512": "icon512.png"
+  },
+  "permissions": [
+    "activeTab",
+    "storage",
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://musescore.com/*",
+    "https://s3.ultimate-guitar.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://musescore.com/*",
+        "https://s3.ultimate-guitar.com/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_start"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "64": "icon64.png",
+      "512": "icon512.png"
+    }
+  }
+}

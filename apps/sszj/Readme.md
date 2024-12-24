@@ -1,5 +1,4 @@
-# Slovar slovanskega znakovnega jezika <img src="https://github.com/sp0ng3Bob/sp0ng3Bob.github.io/blob/master/apps/sszj/src/images/icons/favicon.png?raw=true" />
-
+# Slovar slovanskega znakovnega jezika
 
 Slike v obstoječem repozitoriju so vzete s strani [Slovar slovenskega znakovnega jezika](http://sszj.fri.uni-lj.si/).
 ~~Aplikacija podpira 'OFFLINE' mode, kar pomeni, da v ozadju delujejo 'service workers', ki nadzirajo sranjevanje datotek pletne strani in tako omogočajo uporabo 'aplikacije' tudi, ko telefon oziroma druga naprava nima internetnega dostopa.~~

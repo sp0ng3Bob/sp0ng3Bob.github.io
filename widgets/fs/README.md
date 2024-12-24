@@ -1,3 +1,3 @@
 # Floating settings widget
 
-> DISABLED
+> DISABLED 

@@ -9,6 +9,7 @@ Slike v obstoječem repozitoriju so vzete s strani [Slovar slovenskega znakovneg
 * Izgled seznama besed polepšan
 * Seznam besed pravilno urejen po abecedi
 
+
 ### v.05
 
 * Dodana skripta za service worker-ja, ki omogoča shranjevanje slik in njihov prikaz v načinu brez interneta,

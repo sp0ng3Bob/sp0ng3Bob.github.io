@@ -1,0 +1,107 @@
+name: Update main README (Site map)
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Detect new app folders and update README
+        run: |
+          echo "Generating site map..."
+          # Base folders to scan for apps and games
+          BASE_FOLDERS=("apis" "apps" "extensions" "games" "scripts" "widgets" "study")
+          SITE_MAP="# Site map:\n\n"
+          
+          for CATEGORY in "${BASE_FOLDERS[@]}"; do
+              CATEGORY_ENTRIES=""
+          
+              # Loop through subdirectories in each base folder
+              for APP_FOLDER in "$CATEGORY"/*/; do
+                  if [ -d "$APP_FOLDER" ]; then
+                      README_FILE="${APP_FOLDER}README.md"
+          
+                      # Define potential directories to search for icons
+                      ICON_DIRS=(
+                          "${APP_FOLDER}src/assets/images"
+                          "${APP_FOLDER}src/assets/icons"
+                          "${APP_FOLDER}src/images/icons"
+                      )
+          
+                      # Initialize variables to store the icon paths
+                      ICON_LIGHT=""
+                      ICON_DARK=""
+          
+                      # Search for icons in the potential directories
+                      for DIR in "${ICON_DIRS[@]}"; do
+                          if [ -d "$DIR" ]; then
+                              ICON_LIGHT_PATH=$(find "$DIR" -type f -iname "icon-light.*" -print -quit)
+                              ICON_DARK_PATH=$(find "$DIR" -type f -iname "icon-dark.*" -print -quit)
+          
+                              # Construct the full GitHub raw URLs if icons are found
+                              if [ -n "$ICON_LIGHT_PATH" ]; then
+                                  ICON_LIGHT="https://raw.githubusercontent.com/sp0ng3Bob/sp0ng3Bob.github.io/refs/heads/master/${ICON_LIGHT_PATH#./}"
+                              fi
+                              if [ -n "$ICON_DARK_PATH" ]; then
+                                  ICON_DARK="https://raw.githubusercontent.com/sp0ng3Bob/sp0ng3Bob.github.io/refs/heads/master/${ICON_DARK_PATH#./}"
+                              fi
+          
+                              # Break out of the loop if both icons are found
+                              if [ -n "$ICON_LIGHT" ] && [ -n "$ICON_DARK" ]; then
+                                  break
+                              fi
+                          fi
+                      done
+          
+                      if [ -f "$README_FILE" ]; then
+                          # Skip folder if the last line starts with "> DISABLED"
+                          if [[ $(tail -n 1 "$README_FILE") =~ ^"> DISABLED" ]]; then
+                              echo "$(basename "$APP_FOLDER") disabled"
+                              continue
+                          fi
+          
+                          # Extract the title (first line, removing "# " and newlines)
+                          APP_TITLE=$(head -n 1 "$README_FILE" | sed 's/^# //' | tr -d '\n')
+          
+                          # Prepare <picture> HTML for icons
+                          ICON_HTML=""
+                          if [ -n "$ICON_LIGHT" ] && [ -n "$ICON_DARK" ]; then
+                              ICON_HTML="<picture><source media=\"(prefers-color-scheme: dark)\" srcset=\"$ICON_DARK\"><source media=\"(prefers-color-scheme: light)\" srcset=\"$ICON_LIGHT\"><img alt=\"App icon for $APP_TITLE\" src=\"$ICON_LIGHT\"  width=\"16\" height=\"16\"></picture>"
+                          elif [ -n "$ICON_LIGHT" ]; then
+                              ICON_HTML="<img src=\"$ICON_LIGHT\" alt=\"App icon for $APP_TITLE\" width=\"16\" height=\"16\">"
+                          fi
+          
+                          # Generate the link entry
+                          APP_LINK="https://sp0ng3Bob.github.io/$CATEGORY/$(basename "$APP_FOLDER")"
+                          CATEGORY_ENTRIES+="* $ICON_HTML [$APP_TITLE]($APP_LINK)\n"
+                      fi
+                  fi
+              done
+          
+              # Add category title and its entries to the site map only if entries exist
+              if [ -n "$CATEGORY_ENTRIES" ]; then
+                  CATEGORY_TITLE=$(echo "$CATEGORY" | tr '[:lower:]' '[:upper:]') # Convert category to uppercase
+                  SITE_MAP+="$CATEGORY_TITLE:\n$CATEGORY_ENTRIES\n\n"
+              fi
+          done
+          
+          # Write the site map to the test file
+          echo -e "$SITE_MAP" > README.md
+          echo "Site map successfully updated in README.md."
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "github-actions-README[bot]"
+          git config --global user.email "github-actions-README[bot]@users.noreply.github.com"
+          git add README.md
+          git commit -m "Site map updated."
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

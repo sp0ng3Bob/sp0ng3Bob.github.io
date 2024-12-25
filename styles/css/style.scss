@@ -1,94 +1,29 @@
---- 
-# Only the main Sass file needs front matter (the dashes are enough) 
----
-
-// We import the light theme first.
 @import "{{ site.theme }}";
 
-// We define css variables based on theme color
-:root {
-  --brand-color :           #{$brand-color};
-  --brand-color-light :     #{$brand-color-light};
-  --brand-color-dark :      #{$brand-color-dark};
-
-  --site-title-color :      #{$site-title-color};
-
-  --text-color :            #{$text-color};
-  --background-color :      #{$background-color};
-  --code-background-color : #{$code-background-color};
-
-  --link-base-color:        #{$link-base-color};
-  --link-visited-color:     #{$link-visited-color};
-  --link-hover-color:       #{$link-hover-color};
-
-  --border-color-01:        #{$border-color-01};
-  --border-color-02:        #{$border-color-02};
-  --border-color-03:        #{$border-color-03};
-
-  --table-text-color:       #{$table-text-color};
-  --table-zebra-color:      #{$table-zebra-color};
-  --table-header-bg-color:  #{$table-header-bg-color};
-  --table-header-border:    #{$table-header-border};
-  --table-border-color:     #{$table-border-color};
-}
-
-// now we redefine those variables to use css variables with a fallback
-$brand-color:           var(--brand-color,$brand-color); 
-$brand-color-light:     var(--brand-color-light,$brand-color-light); 
-$brand-color-dark:      var(--brand-color-dark,$brand-color-dark); 
-
-$site-title-color:      var(--site-title-color,$site-title-color);
-
-$text-color:            var(--text-color,$text-color);
-$background-color:      var(--background-color,$background-color);
-$code-background-color: var(--background-color,$code-background-color);
-
-$link-base-color:       var(--link-base-color,$link-base-color);
-$link-visited-color:    var(--link-visited-color,$link-visited-color);
-$link-hover-color:      var(--link-hover-color,$link-hover-color);
-
-$border-color-01:       var(--border-color-01,$border-color-01);
-$border-color-02:       var(--border-color-02,$border-color-02);
-$border-color-03:       var(--border-color-03,$border-color-03);
-
-$table-text-color:      var(--table-text-color,$table-text-color);
-$table-zebra-color:     var(--table-zebra-color,$table-zebra-color);
-$table-header-bg-color: var(--table-header-bg-color,$table-header-bg-color);
-$table-header-border:   var(--table-header-border,$table-header-border);
-$table-border-color:    var(--table-border-color,$table-border-color);
-
-// Define media query for dark theme users.
 @media (prefers-color-scheme: dark) {
-
-// Import dark skin.
-// We will have to alter it as well.
-// It gives our variables new meaning yet again.
-// But you have to remove  "!default" a the end of variable declarations in dark ...
-  @import "{{ site.theme }}";
-
   :root {
-    --brand-color :           #{$brand-color};
-    --brand-color-light :     #{$brand-color-light};
-    --brand-color-dark :      #{$brand-color-dark};
-  
-    --site-title-color :      #{$site-title-color};
-  
-    --text-color :            #{$text-color};
-    --background-color :      #{$background-color};
-    --code-background-color : #{$code-background-color};
-  
-    --link-base-color:        #{$link-base-color};
-    --link-visited-color:     #{$link-visited-color};
-    --link-hover-color:       #{$link-hover-color};
-  
-    --border-color-01:        #{$border-color-01};
-    --border-color-02:        #{$border-color-02};
-    --border-color-03:        #{$border-color-03};
-  
-    --table-text-color:       #{$table-text-color};
-    --table-zebra-color:      #{$table-zebra-color};
-    --table-header-bg-color:  #{$table-header-bg-color};
-    --table-header-border:    #{$table-header-border};
-    --table-border-color:     #{$table-border-color};
+    --brand-color: #1abc9c;
+    --brand-color-light: #48c9b0;
+    --brand-color-dark: #16a085;
+
+    --site-title-color: #ecf0f1;
+
+    --text-color: #ecf0f1;
+    --background-color: #2c3e50;
+    --code-background-color: #34495e;
+
+    --link-base-color: #1abc9c;
+    --link-visited-color: #8e44ad;
+    --link-hover-color: #e74c3c;
+
+    --border-color-01: #34495e;
+    --border-color-02: #2c3e50;
+    --border-color-03: #1c2833;
+
+    --table-text-color: #ecf0f1;
+    --table-zebra-color: #34495e;
+    --table-header-bg-color: #2c3e50;
+    --table-header-border: #1c2833;
+    --table-border-color: #1c2833;
   }
 }

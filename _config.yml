@@ -1,0 +1,9 @@
+# Site settings
+title: 
+description: Just the site map
+
+
+# Build settings
+theme: minima
+plugins:
+  - jekyll-feed

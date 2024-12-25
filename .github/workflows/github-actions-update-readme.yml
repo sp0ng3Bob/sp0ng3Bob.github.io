@@ -35,9 +35,10 @@ jobs:
           
                       # Define potential directories to search for icons
                       ICON_DIRS=(
-                          "${APP_FOLDER}src/assets/images"
+                          "${APP_FOLDER}assets/images"
                           "${APP_FOLDER}src/assets/icons"
                           "${APP_FOLDER}src/images/icons"
+                          "${APP_FOLDER}assets/icons"
                       )
           
                       # Initialize variables to store the icon paths

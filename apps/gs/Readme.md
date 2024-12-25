@@ -9,4 +9,3 @@
 
 
 Aplikacija ni končana, a se jo lahko že uporablja, le ne distibuira!
-

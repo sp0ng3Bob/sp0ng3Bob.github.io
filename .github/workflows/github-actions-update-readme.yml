@@ -30,9 +30,9 @@ jobs:
                   
                   # Skip if it's not a directory
                   if [ -d "$APP_FOLDER" ]; then
-                      README_FILE="${APP_FOLDER}README.md"
+                      README_FILE=$(find "$APP_FOLDER" -maxdepth 1 -type f \( -iname "README.md" \))
                       echo "Found directory: $APP_FOLDER"
-          
+                      
                       # Define potential directories to search for icons
                       ICON_DIRS=(
                           "${APP_FOLDER}assets/images"
@@ -110,7 +110,7 @@ jobs:
               # Add category title and its entries to the site map only if entries exist
               if [ -n "$CATEGORY_ENTRIES" ]; then
                   CATEGORY_TITLE=$(echo "$CATEGORY" | tr '[:lower:]' '[:upper:]') # Convert category to uppercase
-                  SITE_MAP+="$CATEGORY_TITLE:\n$CATEGORY_ENTRIES\n\n"
+                  SITE_MAP+="### $CATEGORY_TITLE:\n$CATEGORY_ENTRIES\n\n"
                   echo "Added category: $CATEGORY"
               else
                   echo "No entries found for category: $CATEGORY"

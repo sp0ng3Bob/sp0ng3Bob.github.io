@@ -97,7 +97,7 @@ jobs:
           
                           # Generate the link entry
                           APP_LINK="https://sp0ng3Bob.github.io/$CATEGORY/$(basename "$APP_FOLDER")"
-                          CATEGORY_ENTRIES+="* $ICON_HTML [$APP_TITLE]($APP_LINK)\n"
+                          CATEGORY_ENTRIES+="* [$APP_TITLE]($APP_LINK) $ICON_HTML\n"
                           echo "Added entry for: $APP_TITLE"
                       else
                           echo "README file not found in: $APP_FOLDER"

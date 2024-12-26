@@ -5,5 +5,5 @@ description: 🌱
 
 # Build settings
 theme: minima
-header_pages:
-  - README.md
+#header_pages:
+#  - README.md

@@ -1,9 +1,7 @@
 # Site settings
-title: 
-description: Just the site map
+title: "🏠"
+description: 🌱
 
 
 # Build settings
 theme: minima
-plugins:
-  - jekyll-feed

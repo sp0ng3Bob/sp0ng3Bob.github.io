@@ -3,7 +3,7 @@
 ---
 
 // We import the light theme first.
-@import "minima/skins/classic";
+@import "minima";
 
 // We define css variables based on theme color
 :root {
@@ -68,7 +68,7 @@ $table-border-color:    var(--table-border-color,$table-border-color);
 // We will have to alter it as well.
 // It gives our variables new meaning yet again.
 // But you have to remove  "!default" a the end of variable declarations in dark skin.
-  @import "minima/skins/dark";
+  //@import "minima/skins/dark";
 
   :root {
     --brand-color :           #{$brand-color};

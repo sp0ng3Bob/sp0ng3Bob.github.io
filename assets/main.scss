@@ -2,7 +2,13 @@
 ---
 @import "{{ site.theme }}";
 
+h1 {
+  font-size: 42px;
+  margin-bottom: 25px;
+}
+
 .page-heading,
+.post-header,
 .footer-heading {
   display: none;
 }
@@ -109,5 +115,11 @@
     .nt { color: #7ee787 !important; } // Name.Tag
     .nv { color: #79c0ff !important; } // Name.Variable
     .w { color: #6e7681 !important; } // Text.Whitespace
+  }
+  
+  @media screen and (max-width: 600px) {
+    .site-nav {
+      background-color: #0d1117fb;
+    }
   }
 }

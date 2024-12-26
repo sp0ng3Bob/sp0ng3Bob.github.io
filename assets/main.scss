@@ -20,6 +20,10 @@
   padding-left: 0px;
 }
 
+.footer-col:not(.footer-col-3) {
+  display: none;
+}
+
 @media (prefers-color-scheme: dark) {
   body {
     background-color: #0d1117;

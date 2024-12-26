@@ -57,10 +57,6 @@ $table-header-bg-color: var(--table-header-bg-color,$table-header-bg-color);
 $table-header-border:   var(--table-header-border,$table-header-border);
 $table-border-color:    var(--table-border-color,$table-border-color);
 
-// Now we proceed with minima.
-@import "minima/initialize";
-
-
 // Define media query for dark theme users.
 @media (prefers-color-scheme: dark) {
 

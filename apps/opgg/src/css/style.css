@@ -274,10 +274,12 @@ input[type="search"] {
   
   .mobile-controls {
     display: block;
-    width: 50px;
+    width: 60px;
     height: 35px;
     background-color: #f1f8e9;
     border: none;
     float: inline-end;
+    border-radius: 8px;
+    padding: 8px 12px;
   }
 }

@@ -23,11 +23,12 @@
     
     <!-- Search Tab Content -->
     <div class="content active" id="search-content">
-      <div class="search-panel">
+      <div class="search-panel" id="search-list">
         <h2>Plant Search</h2>
         <input type="search" id="search-input" placeholder="Search plants...">
         <ul class="plant-list" id="plant-list"></ul>
         <p>No. of entries: <span id="species-list-size"></span>.</p>
+        <button type="button" class="mobile-controls" onclick="document.querySelector('#plant-details').scrollIntoView({ behavior: 'smooth' })">⬆ ℹ ⬆</button>
       </div>
       
       <div class="details-panel" id="details-panel">
@@ -37,6 +38,7 @@
         </div>
         
         <div id="plant-details" style="display: none;">
+          <button type="button" class="mobile-controls" onclick="document.querySelector('#search-list').scrollIntoView({ behavior: 'smooth' })">⬇🔍⬇</button>
           <h2 id="plant-name">Plant Name</h2>
           
           <div class="details-section">

@@ -63,7 +63,7 @@ function selectPlant(plantName) {
     const q = plantName.replaceAll(' ', '+') + "+seed"
     images.setAttribute('src', `https://www.google.com/search?igu=1&ei=&udm=2&q=${q}`)
     const imagesSectionTitle = [ ...plantDetails.querySelectorAll('.details-section') ].slice(-1)[0].children[0]
-    imagesSectionTitle.innerHTML = imagesSectionTitle.textContent + ` <a href="https://www.google.com/search?udm=2&q=${q}" target="_blank">↝</a>`
+    imagesSectionTitle.innerHTML = `Images search results <a href="https://www.google.com/search?udm=2&q=${q}" target="_blank">↝</a>`
     
     // Hide no selection message, show details
     noSelection.style.display = 'none';

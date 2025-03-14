@@ -28,6 +28,10 @@ h1 {
   margin-bottom: 10px;
 }
 
+a {
+  text-decoration: none;
+}
+
 .subtitle {
   color: #5a8f5c;
   font-style: italic;
@@ -283,6 +287,48 @@ code {
 .mobile-controls {
   display: none;
 }
+
+/* Google Images */
+#images-results {
+  width: 100%;
+  height: 350px;
+}
+
+/* .card-section {
+  position: relative;
+  margin: 20px 0;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+
+.card-section a:first-of-type {
+  position: absolute;
+  top: 0px;
+  right: 30px;
+  padding: 6px 15px;
+  background-color: #3498db;
+  color: white;
+  text-decoration: none;
+  font-size: smaller;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  max-width: 85%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-section a:first-of-type:before {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -10px;
+  border-top: 10px solid #2980b9;
+  border-left: 10px solid transparent;
+} */
 
 @media screen and (max-width: 768px) {
   h2 {

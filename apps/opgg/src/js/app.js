@@ -1,12 +1,17 @@
 import { data } from "../data/data.js"
 
 // DOM elements
-const searchInput = document.querySelector('#search-input');
-const plantList = document.querySelector('#plant-list');
-const plantDetails = document.querySelector('#plant-details');
-const noSelection = document.querySelector('#no-selection');
-const tabButtons = document.querySelectorAll('.tab');
-const contentSections = document.querySelectorAll('.content');
+const searchInput = document.querySelector('#search-input')
+const plantList = document.querySelector('#plant-list')
+const plantDetails = document.querySelector('#plant-details')
+const images = document.querySelector('#images-results iframe')
+const noSelection = document.querySelector('#no-selection')
+const tabButtons = document.querySelectorAll('.tab')
+const contentSections = document.querySelectorAll('.content')
+
+images.addEventListener("load", function () {
+  scrollIframe(images)
+})
 
 // Tab switching
 tabButtons.forEach(button => {
@@ -55,6 +60,11 @@ function selectPlant(plantName) {
   const plant = data.plants[plantName];
   
   if (plant) {
+    const q = plantName.replaceAll(' ', '+') + "+seed"
+    images.setAttribute('src', `https://www.google.com/search?igu=1&ei=&udm=2&q=${q}`)
+    const imagesSectionTitle = [ ...plantDetails.querySelectorAll('.details-section') ].slice(-1)[0].children[0]
+    imagesSectionTitle.innerHTML = imagesSectionTitle.textContent + ` <a href="https://www.google.com/search?udm=2&q=${q}" target="_blank">↝</a>`
+    
     // Hide no selection message, show details
     noSelection.style.display = 'none';
     plantDetails.style.display = 'block';
@@ -131,6 +141,18 @@ function selectPlant(plantName) {
       span.classList.add(quick[0])
       document.querySelector("#quick-info").appendChild(span)
     }
+  }
+}
+
+// Scroll to google search results
+function scrollIframe(iframe) {
+  try {
+    iframe.scrollTop = 100
+    //const iframeDoc = iframe.contentWindow //.document || iframe.contentDocument.document
+    //iframeDoc.scroll({ top: 100, behavior: "smooth" })
+    //iframeDoc.scrollTo({ top: 100, behavior: "smooth" })
+  } catch (error) {
+    console.warn("Cannot access iframe content due to cross-origin restrictions.")
   }
 }
 
@@ -235,224 +257,3 @@ function init() {
 
 // Start the app
 init();
-
-/* 
-//import sax from 'https://cdn.jsdelivr.net/npm/sax@1.4.1/+esm'
-//import saferBuffer from 'https://cdn.jsdelivr.net/npm/safer-buffer@2.1.2/+esm'
-//import iconvLite from 'https://cdn.jsdelivr.net/npm/iconv-lite@0.6.3/+esm'
-//import htmlEntities from 'https://cdn.jsdelivr.net/npm/html-entities@2.5.2/+esm'
-//import needle from 'https://cdn.jsdelivr.net/npm/needle@3.3.1/+esm'
-//import duckDuckScrape from 'https://cdn.jsdelivr.net/npm/duck-duck-scrape@2.2.7/+esm'
-
-// DOM elements
-const searchInput = document.querySelector('#search-input');
-const plantList = document.querySelector('#plant-list');
-const plantListSize = document.querySelector('#species-list-size');
-const plantDetails = document.querySelector('#plant-details');
-const noSelection = document.querySelector('#no-selection');
-const tabs = document.querySelectorAll('.tab');
-const tabContents = document.querySelectorAll('.tab-content');
-// ontarioSection = 
-const googleSection = document.querySelector('#google-images iframe');
-
-// Populate reference tables
-function populateReferenceTables() {
-  // Symbols table
-  const symbolsTable = document.querySelector('#symbols-table').querySelector('tbody');
-  symbolsTable.innerHTML = '';
-  Object.entries(data.symbols).forEach(([symbol, meaning]) => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${symbol}</td><td>${meaning}</td>`;
-    symbolsTable.appendChild(tr);
-  });
-  
-  // Letters table
-  const lettersTable = document.querySelector('#letters-table').querySelector('tbody');
-  lettersTable.innerHTML = '';
-  Object.entries(data.letters).forEach(([letter, meaning]) => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${letter}</td><td>${meaning}</td>`;
-    lettersTable.appendChild(tr);
-  });
-  
-  // Numbers table
-  const numbersTable = document.querySelector('#numbers-table').querySelector('tbody');
-  numbersTable.innerHTML = '';
-  Object.entries(data.numbers).forEach(([number, meaning]) => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${number}</td><td>${meaning}</td>`;
-    numbersTable.appendChild(tr);
-  });
-  
-  // Temperatures table
-  const temperaturesTable = document.querySelector('#temperatures-table').querySelector('tbody');
-  temperaturesTable.innerHTML = '';
-  Object.entries(data.temperatures).forEach(([temp, meaning]) => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${temp}°C</td><td>${meaning}</td>`;
-    temperaturesTable.appendChild(tr);
-  });
-}
-
-// Populate plant list
-function renderPlantList(plants) {
-  plantList.innerHTML = '';
-  const plantNames = Object.keys(plants)
-  plantNames.sort().forEach(plantName => {
-    const li = document.createElement('li');
-    li.textContent = plantName;
-    li.dataset.name = plantName;
-    li.addEventListener('click', () => selectPlant(plantName));
-    plantList.appendChild(li);
-  });
-  plantListSize.textContent = plantNames.length
-}
-
-// Display plant details
-function selectPlant(plantName) {
-  // Remove active class from all list items
-  document.querySelectorAll('.plant-list li').forEach(item => {
-    item.classList.remove('active');
-  });
-  
-  // Add active class to selected item
-  document.querySelector(`.plant-list li[data-name="${plantName}"]`).classList.add('active');
-  
-  const plant = data.plants[plantName];
-  
-  if (plant) {
-    // Hide no selection message, show details
-    noSelection.style.display = 'none';
-    plantDetails.style.display = 'block';
-    
-    //set duckduckgo image search results
-    duckDuckScrape(plantName+" seed").then(results => {
-      console.log(results);
-    });
-    
-    // Populate basic details
-    document.querySelector('#plant-name').textContent = plantName;
-    
-    // Seed viability
-    const viabilityElement = document.querySelector('#seed-viability');
-    const viabilityTooltip = document.querySelector('#viability-tooltip');
-    if (plant.viable && plant.viable !== "") {
-      viabilityElement.textContent = plant.viable;
-      if (data.symbols[plant.viable]) {
-        viabilityTooltip.style.display = 'inline-block';
-        document.querySelector('#viability-info').textContent = data.symbols[plant.viable];
-      } else {
-        viabilityTooltip.style.display = 'none';
-      }
-    } else {
-      viabilityElement.textContent = "Standard";
-      viabilityTooltip.style.display = 'none';
-    }
-    
-    // Germination code
-    const germCodeElement = document.querySelector('#germ-code');
-    const germCodeTooltip = document.querySelector('#germ-code-tooltip');
-    if (plant.germ_code && plant.germ_code !== "") {
-      germCodeElement.textContent = plant.germ_code;
-      if (data.letters[plant.germ_code]) {
-        germCodeTooltip.style.display = 'inline-block';
-        document.querySelector('#germ-code-info').innerHTML = data.letters[plant.germ_code];
-      } else {
-        germCodeTooltip.style.display = 'none';
-      }
-    } else {
-      germCodeElement.textContent = "Not specified";
-      germCodeTooltip.style.display = 'none';
-    }
-    
-    // Full info
-    document.querySelector('#full-info').innerHTML = plant.full_info || "Not available";
-    
-    // Additional information (more array)
-    for (let i = 0; i < 4; i++) {
-      const infoValue = plant.more[i];
-      const rowElement = document.querySelector(`#more-info-${i+1}-row`);
-      const infoElement = document.querySelector(`#more-info-${i+1}`);
-      const tooltipElement = document.querySelector(`#more-info-${i+1}-tooltip`);
-      
-      if (infoValue && infoValue !== "") {
-        rowElement.style.display = 'block';
-        infoElement.textContent = infoValue;
-        
-        if (data.numbers[infoValue]) {
-          tooltipElement.style.display = 'inline-block';
-          document.querySelector(`#more-info-${i+1}-text`).innerHTML = data.numbers[infoValue];
-        } else {
-          tooltipElement.style.display = 'none';
-        }
-      } else {
-        rowElement.style.display = 'none';
-      }
-    }
-    
-    // Special information
-    const specialInfoSection = document.querySelector('#special-info-section');
-    const specialInfoElement = document.querySelector('#special-info');
-    
-    if (plant.special && plant.special !== "") {
-      specialInfoSection.style.display = 'block';
-      if (data.symbols[plant.special]) {
-        specialInfoElement.innerHTML = data.symbols[plant.special];
-      } else {
-        specialInfoElement.textContent = plant.special;
-      }
-    } else {
-      specialInfoSection.style.display = 'none';
-    }
-  }
-}
-
-// Filter plants based on search
-function filterPlants(query) {
-  if (!query) {
-    return data.plants;
-  }
-  
-  query = query.toLowerCase();
-  const filtered = {};
-  
-  Object.entries(data.plants).forEach(([name, info]) => {
-    if (name.toLowerCase().includes(query)) {
-      filtered[name] = info;
-    }
-  });
-  
-  return filtered;
-}
-
-// Tab switching
-function setupTabs() {
-  tabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      // Remove active class from all tabs and contents
-      tabs.forEach(t => t.classList.remove('active'));
-      tabContents.forEach(c => c.classList.remove('active'));
-      
-      // Add active class to clicked tab and corresponding content
-      tab.classList.add('active');
-      const contentId = tab.dataset.tab;
-      document.getElementById(contentId).classList.add('active');
-    });
-  });
-}
-
-// Initialize the app
-function init() {
-  renderPlantList(data.plants);
-  populateReferenceTables();
-  setupTabs();
-  
-  // Search functionality
-  searchInput.addEventListener('input', () => {
-    const filtered = filterPlants(searchInput.value);
-    renderPlantList(filtered);
-  });
-}
-
-// Start the app
-init(); */

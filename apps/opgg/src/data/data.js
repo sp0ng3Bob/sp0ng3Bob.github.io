@@ -28,7 +28,7 @@ export const data = {
     "9": "❓🌾"
   },
   "symbols": {
-    "*": "This species needs special care which is described in the <a href=\"https://onrockgarden.com/index.php/germination-guide/germination-guide\">Germination Guide Plant List</a> which you can read by clicking the + sign next to the plant that shows an * under the \"Special Info\" column",
+    "*": "This species needs special care which is described in the <a href=\"https://onrockgarden.com/index.php/germination-guide/germination-guide\" target=\"_blank\">Germination Guide Plant List</a> which you can read by clicking the + sign next to the plant that shows an * under the \"Special Info\" column",
     "?": "We have no information on this species. We sometimes provide an informed guess about which approach you should try. Let us know what is successful.",
     "!": "Sow immediately. Either the viability of these seeds is short or the species propagates best with fresh seed. Stored seed might be coaxed into germination with temperature cycling and patience.",
     "[X]": "This seed is restricted and cannot be imported to the United States.",
@@ -53,8 +53,8 @@ export const data = {
     1: "Resents transplanting.",
     2: "Requires darkness.",
     3: "Requires light or the seed is very fine. Surface sow and expose to light.",
-    4: "Germination is improved by using GA3. See <a href=\"https://www.gardenfundamentals.com/ga3-gibberellic-acid-speeds-up-seed-germination/\">GA3 - Gibberellic Acid Speeds Up Germination</a>",
-    5: "Germination is successful only when <a href=\"https://www.gardenfundamentals.com/ga3-gibberellic-acid-speeds-up-seed-germination/\">GA3</a> is used.",
+    4: "Germination is improved by using GA3. See <a href=\"https://www.gardenfundamentals.com/ga3-gibberellic-acid-speeds-up-seed-germination/\" target=\"_blank\">GA3 - Gibberellic Acid Speeds Up Germination</a>",
+    5: "Germination is successful only when <a href=\"https://www.gardenfundamentals.com/ga3-gibberellic-acid-speeds-up-seed-germination/\" target=\"_blank\">GA3</a> is used.",
     6: "Requires scarification. Nick or rub between sheets of sandpaper.",
     7: "Requires soaking. Place in warm water until seeds swell, usually 24-48 hours. Discard water and any seeds that remain floating.",
     8: "Pulpy coat inhibits germination. Remove by soaking and rinsing in clean water for approximately 7 days. Discard water.",

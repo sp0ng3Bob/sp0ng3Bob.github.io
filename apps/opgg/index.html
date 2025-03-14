@@ -28,7 +28,7 @@
         <input type="search" id="search-input" placeholder="Search plants...">
         <ul class="plant-list" id="plant-list"></ul>
         <p>No. of entries: <span id="species-list-size"></span>.</p>
-        <button type="button" class="mobile-controls" onclick="document.querySelector('#plant-details').scrollIntoView({ behavior: 'smooth' })">⬆ ℹ ⬆</button>
+        <button type="button" class="mobile-controls" onclick="document.querySelector('#plant-details').scrollIntoView({ behavior: 'smooth' })">⬆ℹ⬆</button>
       </div>
       
       <div class="details-panel" id="details-panel">
@@ -64,16 +64,12 @@
           
           <div class="details-section">
             <h3>Additional Information</h3>
-            <div id="additional-info">
-              <!-- Additional info populated here -->
-            </div>
+            <div id="additional-info"></div>
           </div>
           
           <div class="details-section" id="special-info-section" style="display: none;">
             <h3>Special Information</h3>
-            <div id="special-info" class="special-note">
-              <!-- Special info populated here -->
-            </div>
+            <div id="special-info" class="special-note"></div>
           </div>
         </div>
       </div>
@@ -86,30 +82,22 @@
         
         <div class="about-section">
           <h3>Symbols</h3>
-          <div class="code-legend" id="symbols-legend">
-            <!-- Symbols will be populated here -->
-          </div>
+          <div class="code-legend" id="symbols-legend"></div>
         </div>
         
         <div class="about-section">
           <h3>Letter Codes</h3>
-          <div class="code-legend" id="letters-legend">
-            <!-- Letter codes will be populated here -->
-          </div>
+          <div class="code-legend" id="letters-legend"></div>
         </div>
         
         <div class="about-section">
           <h3>Number Codes</h3>
-          <div class="code-legend" id="numbers-legend">
-            <!-- Number codes will be populated here -->
-          </div>
+          <div class="code-legend" id="numbers-legend"></div>
         </div>
         
         <div class="about-section">
           <h3>Temperature References</h3>
-          <div class="code-legend" id="temps-legend">
-            <!-- Temperature info will be populated here -->
-          </div>
+          <div class="code-legend" id="temps-legend"></div>
         </div>
       </div>
     </div>
@@ -132,9 +120,16 @@
           <ul style="margin-left: 20px; margin-bottom: 15px;">
             <li>Use the <strong>Search Plants</strong> tab to find specific plants and view their germination requirements</li>
             <li>Refer to the <strong>Germination Codes</strong> tab to understand the letter and number codes used throughout the guide</li>
-            <li>Some plants may have special requirements indicated by symbols like * or !</li>
+            <li>Use <i>special search queries</i> to filter plants by their germination requirements:</li>
+            <ul style="margin-left: 40px; margin-bottom: 15px;">
+              <li>Type <code>CODE:A</code> in the search box to find plants that should be sown at 20°C</li>
+              <li>Type <code>CODE:B</code> in the search box to find plants that require cold stratification after warm conditions</li>
+              <li>Combine codes using <code>&</code>, e.g., <code>CODE:A&B</code> to show plants matching either germination method</li>
+              <li>Symbols can also be used, e.g., <code>CODE:!</code> for plants that must be sown immediately</li>
+              <li><strong>Search codes are case-insensitive</strong>, meaning <code>CODE:A</code> and <code>code:a</code> will return the same results!<li>
+            </ul>
           </ul>
-          <p>Understanding the codes will help you provide the right conditions for successful seed germination.</p>
+          <p>Understanding these codes will help you provide the right conditions for successful seed germination.</p>
         </div>
         
         <div class="about-section">
@@ -156,210 +151,3 @@
   </div>
 </body>
 </html>
-
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Plant Germination Database</title>
-  <script type="module" src="./src/js/app.js"></script>
-  <link rel="stylesheet" href="./src/css/style.css">
-</head>
-<body>
-  <div class="container">
-    <div class="search-panel">
-      <h1>Plant Database</h1>
-      <input type="search" id="search-input" placeholder="Search plants...">
-      <ul class="plant-list" id="plant-list">LOADING</ul>
-      <p>No. of species: <span id="species-list-size"></span>.</p>
-    </div>
-    
-    <div class="details-panel" id="details-panel">
-      <div class="section-tabs">
-        <div class="tab active" data-tab="plant-info">Plant Info</div>
-        <div class="tab" data-tab="code-reference">Code References</div>
-        <div class="tab" data-tab="about-tab">About</div>
-      </div>
-      
-      <div id="plant-info" class="tab-content active">
-        <div id="no-selection" class="no-selection">
-          <h2>Plant Germination Information</h2>
-          <p>Select a plant from the list to view detailed germination information.</p>
-        </div>
-        
-        <div id="plant-details" style="display: none;">
-          <h2 id="plant-name">Plant Name</h2>
-          
-          <div class="card-section">
-            <a href="https://onrockgarden.com/">Ontario Rock Garden & Hardy Plant Society</a>
-            
-            <div class="details-section">
-              <h3>Germination Information</h3>
-              <div class="detail-row">
-                <span class="detail-label">Seed Viability:</span>
-                <span id="seed-viability">-</span>
-                <div class="tooltip" id="viability-tooltip" style="display: none;">
-                  <span class="info-icon">?</span>
-                  <span class="tooltip-text" id="viability-info">Information about viability code</span>
-                </div>
-              </div>
-              <div class="detail-row">
-                <span class="detail-label">Germination Code:</span>
-                <span id="germ-code">-</span>
-                <div class="tooltip" id="germ-code-tooltip" style="display: none;">
-                  <span class="info-icon">?</span>
-                  <span class="tooltip-text" id="germ-code-info">Information about germination code</span>
-                </div>
-              </div>
-              <div class="detail-row" id="full-info-row">
-                <span class="detail-label">Full Information:</span>
-                <span id="full-info">-</span>
-              </div>
-            </div>
-            
-            <div class="details-section">
-              <h3>Additional Information</h3>
-              <div class="detail-row" id="more-info-1-row" style="display: none;">
-                <span class="detail-label">Additional Info 1:</span>
-                <span id="more-info-1">-</span>
-                <div class="tooltip" id="more-info-1-tooltip" style="display: none;">
-                  <span class="info-icon">?</span>
-                  <span class="tooltip-text" id="more-info-1-text">Information about this code</span>
-                </div>
-              </div>
-              <div class="detail-row" id="more-info-2-row" style="display: none;">
-                <span class="detail-label">Additional Info 2:</span>
-                <span id="more-info-2">-</span>
-                <div class="tooltip" id="more-info-2-tooltip" style="display: none;">
-                  <span class="info-icon">?</span>
-                  <span class="tooltip-text" id="more-info-2-text">Information about this code</span>
-                </div>
-              </div>
-              <div class="detail-row" id="more-info-3-row" style="display: none;">
-                <span class="detail-label">Additional Info 3:</span>
-                <span id="more-info-3">-</span>
-                <div class="tooltip" id="more-info-3-tooltip" style="display: none;">
-                  <span class="info-icon">?</span>
-                  <span class="tooltip-text" id="more-info-3-text">Information about this code</span>
-                </div>
-              </div>
-              <div class="detail-row" id="more-info-4-row" style="display: none;">
-                <span class="detail-label">Additional Info 4:</span>
-                <span id="more-info-4">-</span>
-                <div class="tooltip" id="more-info-4-tooltip" style="display: none;">
-                  <span class="info-icon">?</span>
-                  <span class="tooltip-text" id="more-info-4-text">Information about this code</span>
-                </div>
-              </div>
-            </div>
-            
-            <div class="details-section" id="special-info-section" style="display: none;">
-              <h3>Special Information</h3>
-              <div class="special-note" id="special-info">
-                This plant requires special care.
-              </div>
-            </div>
-          </div>
-        
-          <div class="card-section" id="google-images">
-            <a href="https://duckduckgo.com/">DuckDuckGo Images Search</a>
-            
-            <div class="details-section">
-              <h3>Images search results</h3>
-              <div id="images-results"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <div id="code-reference" class="tab-content">
-        <h2>Germination Code Reference</h2>
-        
-        <h3>Viability Symbols</h3>
-        <table class="code-reference" id="symbols-table">
-          <thead>
-            <tr>
-              <th>Symbol</th>
-              <th>Meaning</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-        
-        <h3>Germination Codes</h3>
-        <table class="code-reference" id="letters-table">
-          <thead>
-            <tr>
-              <th>Code</th>
-              <th>Instructions</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-        
-        <h3>Additional Information Codes</h3>
-        <table class="code-reference" id="numbers-table">
-          <thead>
-            <tr>
-              <th>Code</th>
-              <th>Information</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-        
-        <h3>Temperature Reference</h3>
-        <table class="code-reference" id="temperatures-table">
-          <thead>
-            <tr>
-              <th>Temperature&nbsp;(°C)</th>
-              <th>Instructions</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-      
-      <div id="about-tab" class="tab-content">
-        <div class="about-container">
-          <h2>About This Web App</h2>
-          
-          <div class="about-section">
-            <h3>Data Source</h3>
-            <p>This web application is based on data from the Ontario Rock Garden & Hardy Plant Society's Germination Guide. The society has compiled extensive data on germination requirements for various plant species, particularly those relevant to rock gardens and hardy plants suitable for Ontario's climate.</p>
-            <p>The data includes specific germination codes, viability information, and special handling instructions that help gardeners achieve successful germination.</p>
-            <p>Visit the original source: <a href="https://onrockgarden.com/index.php/germination-guide" class="source-link" target="_blank">Ontario Rock Garden & Hardy Plant Society Germination Guide</a></p>
-          </div>
-          
-          <div class="about-section">
-            <h3>How to Use This Guide</h3>
-            <p>This web app provides a user-friendly interface to access the society's germination data:</p>
-            <ul style="margin-left: 20px; margin-bottom: 15px;">
-              <li>Use the <strong>Search Plants</strong> tab to find specific plants and view their germination requirements</li>
-              <li>Refer to the <strong>Germination Codes</strong> tab to understand the letter and number codes used throughout the guide</li>
-              <li>Some plants may have special requirements indicated by symbols like * or !</li>
-            </ul>
-            <p>Understanding the codes will help you provide the right conditions for successful seed germination.</p>
-          </div>
-          
-          <div class="about-section">
-            <h3>Additional Resources</h3>
-            <p>For more detailed information, visit these resources:</p>
-            <ul style="margin-left: 20px;">
-              <li><a href="https://onrockgarden.com/index.php/germination-guide/germination-guide" class="source-link" target="_blank">Complete Germination Guide Plant List</a></li>
-              <li><a href="https://onrockgarden.com/index.php/germination-guide/germination-codes" class="source-link" target="_blank">Detailed Explanation of Germination Codes</a></li>
-              <li><a href="https://onrockgarden.com/index.php/germination-guide/use-of-ga3" class="source-link" target="_blank">Information on GA3 Usage</a></li>
-            </ul>
-          </div>
-          
-          <div class="about-section">
-            <h3>Acknowledgements</h3>
-            <p>All credit for the germination data goes to the Ontario Rock Garden & Hardy Plant Society. This web application is created solely as an educational tool to make this valuable information more accessible.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</body>
-</html> -->

@@ -71,7 +71,9 @@ function selectPlant(plantName) {
     if (plant.viable) {
       const symbolMeaning = data.symbols[plant.viable] || '';
       viabilityElement.innerHTML = `<span class="symbol">${plant.viable}</span> - ${symbolMeaning}`;
-      quickInfo.push(data.emojis[plant.viable])
+      if (plant.viable != '') {      
+        quickInfo.push([ "symbol", data.emojis[plant.viable] ])
+      }
     } else {
       viabilityElement.textContent = "Standard";
     }
@@ -80,7 +82,9 @@ function selectPlant(plantName) {
     const germCodeElement = document.querySelector('#germ-code');
     const letterMeaning = data.letters[plant.germ_code] || '';
     germCodeElement.innerHTML = `<span class="letter-code">${plant.germ_code}</span> - ${letterMeaning}`;
-    quickInfo.push(data.emojis[plant.germ_code])
+    if (plant.germ_code != '') {      
+      quickInfo.push([ "letter", data.emojis[plant.germ_code] ])
+    }
     
     // Full info
     document.querySelector('#full-info').innerHTML = plant.full_info;
@@ -97,7 +101,7 @@ function selectPlant(plantName) {
           div.className = 'detail-row';
           div.innerHTML = `<span class="number-code">${code}</span> - ${codeInfo}`;
           additionalInfoElement.appendChild(div);
-          quickInfo.push(data.emojis[code])
+          quickInfo.push([ "number", data.emojis[code] ])
         });
       } else {
         additionalInfoElement.textContent = "No additional requirements.";
@@ -113,15 +117,18 @@ function selectPlant(plantName) {
       specialInfoSection.style.display = 'block';
       const specialSymbolMeaning = data.symbols[plant.special] || '';
       specialInfoElement.innerHTML = `<span class="symbol">${plant.special}</span> - ${specialSymbolMeaning}`;
-      quickInfo.push(data.emojis[plant.special])
+      if (plant.viable != '') {      
+        quickInfo.push([ "symbol", data.emojis[plant.viable] ])
+      }
     } else {
       specialInfoSection.style.display = 'none';
     }
     
     for (let quick of quickInfo) {
       const span = document.createElement("span")
-      span.textContent = quick
+      span.textContent = quick[1]
       span.classList.add("emoji-card")
+      span.classList.add(quick[0])
       document.querySelector("#quick-info").appendChild(span)
     }
   }
@@ -133,14 +140,44 @@ function filterPlants(query) {
     return data.plants;
   }
   
-  query = query.toLowerCase();
-  const filteredPlants = {};
+  let filteredPlants = {};
   
-  Object.keys(data.plants).forEach(plantName => {
-    if (plantName.toLowerCase().includes(query)) {
-      filteredPlants[plantName] = data.plants[plantName];
+  if (query.toUpperCase().startsWith("CODE:")) {
+    query = query.split(':')[1].trim()
+    const tmpFilteredPlants = new Set()
+
+    for (const code of query.split("&")) {
+      const upperCode = code.trim().toUpperCase()
+      
+      if (upperCode.length === 1 && Object.keys(data.emojis).includes(upperCode)) {
+        for (const plantName in data.plants) {
+          const plant = data.plants[plantName]
+          
+          if (
+            plant["viable"]?.includes(upperCode) ||
+            plant["germ_code"]?.includes(upperCode) ||
+            plant["special"]?.includes(upperCode) ||
+            (Array.isArray(plant["more"]) && plant["more"].some(m => m.includes(upperCode)))
+          ) {
+            tmpFilteredPlants.add(plantName)
+          }
+        }
+      }
     }
-  });
+    
+    tmpFilteredPlants.forEach(plantName => {
+      filteredPlants[plantName] = data.plants[plantName]
+    })
+
+  } else {
+    query = query.toLowerCase()
+    
+    Object.keys(data.plants).forEach(plantName => {
+      if (plantName.toLowerCase().includes(query)) {
+        filteredPlants[plantName] = data.plants[plantName]
+      }
+    })    
+  }
   
   return filteredPlants;
 }

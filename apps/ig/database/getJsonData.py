@@ -80,7 +80,7 @@ class MushroomScraper:
             except Exception as e:
                 print(cols[2])
                 print(f"Error parsing pogostost row: {e}")
-        self.gobe["pogostosti"]["zadnjaSprememba"] = soup.find('div', class_="lastmod").get_text().split("strani:")[1].strip()
+        self.gobe["pogostosti"]["zadnjaSprememba"] = soup.find('div', class_="lastmod").get_text().split(":", 1)[1].strip()
 
     def get_domaca_imena(self):
         """
@@ -123,7 +123,7 @@ class MushroomScraper:
 
             except Exception as e:
                 print(f"Error parsing domača imena row: {e}")
-        self.gobe["domačaImena"]["zadnjaSprememba"] = soup.find('div', class_="lastmod").get_text().split("strani:")[1].strip()
+        self.gobe["domačaImena"]["zadnjaSprememba"] = soup.find('div', class_="lastmod").get_text().split(":", 1)[1].strip()
 
     def get_rdeci_seznam(self):
         """
@@ -147,7 +147,7 @@ class MushroomScraper:
                     self.gobe["rdečiSeznam"]["seznam"][url] = category
             except Exception as e:
                 print(f"Error parsing rdeči seznam row: {e} - {a.get_text(strip=True)}")
-        self.gobe["rdečiSeznam"]["zadnjaSprememba"] = soup.find('div', class_="lastmod").get_text().split("strani:")[1].strip()
+        self.gobe["rdečiSeznam"]["zadnjaSprememba"] = soup.find('div', class_="lastmod").get_text().split(":", 1)[1].strip()
 
     def get_list_from(self, element: str, url: str, key: str):
         """
@@ -162,7 +162,60 @@ class MushroomScraper:
             return
 
         self.gobe[key]["seznam"] = [li.find('a')['href'] for li in ul.find_all('li') if li.find('a')]
-        self.gobe[key]["zadnjaSprememba"] = soup.find('div', class_="lastmod").get_text().split("strani:")[1].strip()
+        self.gobe[key]["zadnjaSprememba"] = soup.find('div', class_="lastmod").get_text().split(":", 1)[1].strip()
+
+    def scrape_mushroom_images(self, mushroomUrl: str):
+        try:
+            base_url = "https://www.gobe.si/Slike/"
+            url = f"{base_url}{mushroomUrl}"
+            soup = self.fetch_page(url)
+            if not soup:
+                return
+            
+            content = soup.find('div', id='wikitext')
+            if not content:
+                return None
+            
+            gallery = {}
+            gallery["slike"] = []
+            img = {}
+            
+            # get first image
+            try:
+                p_first_image = content.find_all('p')[0]
+                if p_first_image and p_first_image.find('img'):
+                    img_name = p_first_image.find('img').get('src', '').split("/")[-1]
+                    img_author = p_first_image.find('small').get_text()
+                    
+                    img['url'] = f"{base_url.lower()}{img_name}"
+                    img['avtor'] = img_author.split(":", 1)[1].strip()
+                    
+                    gallery["slike"].append(img)
+            except Exception as e:
+                print(f"Error processing first image: {e}, {mushroomUrl}")
+                
+            # get images in the table
+            try:
+                table = content.find('table')
+                if table and table.find('td'):
+                    for td in table.find_all('td'):
+                        img_name = td.find('img').get('src', '').split("/")[-1].replace("thumb_", "")
+                        img_author = td.find('small').get_text()
+                        
+                        img = {}
+                        img['url'] = f"{base_url.lower()}{img_name}"
+                        img['avtor'] = img_author.split(":", 1)[1].strip()
+                        
+                        gallery["slike"].append(img)
+            except Exception as e:
+                print(f"Error processing other images: {e}, {mushroomUrl}")
+                
+            gallery["zadnjaSprememba"] = soup.find('div', class_="lastmod").get_text().split(":", 1)[1].strip()
+            return gallery
+        
+        except Exception as e:
+            print(f"Error scraping mushroom gallery page {url}: {e}")
+            return None
 
     def scrape_mushroom_page(self, url: str):
         try:
@@ -176,18 +229,6 @@ class MushroomScraper:
             
             data = {}
             
-            try:
-                img_div = content.find('div', class_='img imgcaption')
-                if img_div and img_div.find('img'):
-                    img_url = img_div.find('img').get('src', '')
-                    if img_url:
-                        # Remove thumbnail prefix
-                        img_url = img_url.replace('thumb_', '')
-                        data['slikaUrl'] = img_url
-                        data['slikaIme'] = img_url.split("/")[-1]
-            except Exception as e:
-                print(f"Error processing image: {e}")
-
             # Rod (Genus) processing
             try:
                 h1 = content.find('h1')
@@ -225,6 +266,9 @@ class MushroomScraper:
                         title = strong.get_text(strip=True).lower()
                         # Remove the strong text and first character after it, then strip
                         desc = p.get_text(strip=True)[len(strong.get_text()):].lstrip()
+                        desc = desc[1:].strip() if desc[0:1] == ":" else desc.strip()
+                        if desc:
+                            desc = desc[0:1].upper() + desc[1:]
 
                         # Special processing for specific titles
                         if title == 'rastišče':
@@ -244,7 +288,7 @@ class MushroomScraper:
                                 # Use the part before time of growth as rastišče
                                 desc = time_split[0].strip()
                             
-                            data['rastišče'] = desc.replace(": ", "")
+                            data['rastišče'] = desc
 
                         elif title == 'sinonimi':
                             # Process synonyms
@@ -253,16 +297,20 @@ class MushroomScraper:
                             data['sinonimi'] = synonyms
 
                         elif title == 'podobne vrste':
-                            data['podobneVrste'] = desc.replace(": ", "")
+                            data['podobneVrste'] = desc
                             
                         # Generic mapping for other titles
-                        elif title in ['značilnosti', 'klobuk', 'bet', 'trosovnica', 'meso', 'trosi', 'uporabnost']:
-                            data[title] = desc.replace(": ", "")
+                        elif title in ['značilnost', 'klobuk', 'bet', 'trosovnica', 'meso', 'trosi', 'uporabnost']:
+                            data[title] = desc
 
                 except Exception as e:
                     print(f"Error processing details for {title}: {e}")
 
-            data["zadnjaSprememba"] = soup.find('div', class_="lastmod").get_text().split("strani:")[1].strip()
+            data["zadnjaSprememba"] = soup.find('div', class_="lastmod").get_text().split(":", 1)[1].strip()
+            
+            time.sleep(2)
+            data["galerija"] = self.scrape_mushroom_images(url.split("/")[-1])
+            
             return data
 
         except Exception as e:
@@ -283,7 +331,7 @@ class MushroomScraper:
             print("No mushroom list found!")
             return
 
-        for idx, li in enumerate(ol.find_all('li'), 1):
+        for idx, li in enumerate(ol.find_all('li')):
             try:
                 mushroom = {
                     "id": idx
@@ -294,19 +342,18 @@ class MushroomScraper:
                     continue
 
                 mushroom["url"] = a.get('href', '')
-                #names = a.get_text(strip=True).split(',')
-                #mushroom["latIme"] = names[0].strip() if len(names) > 0 else "/"
-                #mushroom["sloIme"] = names[1].strip() if len(names) > 1 else "/"
-                #mushroom["pogostost"] = self.gobe["pogostosti"]["seznam"].get(mushroom["url"], "/")
-                #mushroom["domačeIme"] = self.gobe["domačaImena"]["seznam"].get(mushroom["url"], {}).get("imena", "/")
-                #mushroom["zavarovana"] = "DA" if mushroom["url"] in self.gobe["zavarovane"]["seznam"] else "NE"
-                #mushroom["naRdečemSeznamu"] = "DA" if mushroom["url"] in self.gobe["rdečiSeznam"]["seznam"].keys() else "NE"
+                names = a.get_text(strip=True).split(',')
+                mushroom["latIme"] = names[0].strip() if len(names) > 0 else "/"
+                mushroom["sloIme"] = names[1].strip() if len(names) > 1 else "/"
+                mushroom["pogostost"] = self.gobe["pogostosti"]["seznam"].get(mushroom["url"], "/")
+                mushroom["domačeIme"] = self.gobe["domačaImena"]["seznam"].get(mushroom["url"], {}).get("imena", "/")
+                mushroom["zavarovana"] = "DA" if mushroom["url"] in self.gobe["zavarovane"]["seznam"] else "NE"
+                mushroom["naRdečemSeznamu"] = "DA" if mushroom["url"] in self.gobe["rdečiSeznam"]["seznam"].keys() else "NE"
 
                 mushroom["data"] = self.scrape_mushroom_page(mushroom["url"])
-                #time.sleep(5)
+                time.sleep(3)
 
                 self.gobe["seznam"].append(mushroom)
-                return
             except Exception as e:
                 print(f"Error processing mushroom {idx}: {e}")
 
@@ -315,22 +362,29 @@ class MushroomScraper:
         Orchestrates the entire scraping process and outputs data to JSON.
         """
         print("Scraping mushroom data...")
-        #self.get_pogostost()
-        #self.get_domaca_imena()
-        #self.get_list_from("ol", f"{self.base_url}/Gobe/ZasciteneGobe", "zavarovane")
-        #self.get_rdeci_seznam()
-        #self.get_list_from("ul", f"{self.base_url}/Gobe/UzitneGobe", "užitne")
-        #self.get_list_from("ul", f"{self.base_url}/Gobe/PogojnoUzitneGobe", "pogojnoUžitne")
+        self.get_pogostost()
+        time.sleep(2)
+        self.get_domaca_imena()
+        time.sleep(2)
+        self.get_list_from("ol", f"{self.base_url}/Gobe/ZasciteneGobe", "zavarovane")
+        time.sleep(2)
+        self.get_rdeci_seznam()
+        time.sleep(2)
+        self.get_list_from("ul", f"{self.base_url}/Gobe/UzitneGobe", "užitne")
+        time.sleep(2)
+        self.get_list_from("ul", f"{self.base_url}/Gobe/PogojnoUzitneGobe", "pogojnoUžitne")
+        time.sleep(2)
         self.get_mushroom_list()
 
+        timestamp = datetime.now().strftime("%d.%m.%Y %H:%M")
+        self.gobe["podatkiShranjeni"] = timestamp
+        
         # Save to JSON
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        #output_file = f"mushrooms_{timestamp}.json"
-        output_file = "gobe.si.json"
+        output_file = "gobe.si.json" #f"mushrooms_{timestamp}.json"
         with open(output_file, "w", encoding="utf-8") as f:
             json.dump(self.gobe, f, ensure_ascii=False, indent=2)
         print(f"Scraping complete. Data saved to {output_file}")
-
+        
 
 if __name__ == "__main__":
     scraper = MushroomScraper()

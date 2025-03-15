@@ -24,3 +24,5 @@ Slike v obstoječem repozitoriju so vzete s strani [Slovar slovenskega znakovneg
 
 
 Aplikacija ni končana, a se jo lahko že uporablja, le ne distibuira!
+
+> DISABLED

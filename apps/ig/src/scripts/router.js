@@ -1,4 +1,4 @@
-class Router {
+export class Router {
   constructor(gui) {
     //this.routes = {};
     this.gui = gui
@@ -43,4 +43,4 @@ class Router {
   }
 }
 
-export default Router
+//export default Router

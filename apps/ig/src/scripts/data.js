@@ -1,6 +1,6 @@
 //import gobeJson from '../../database/gobe.si-without the značilnosti.json' assert { type: 'json' }
 
-class Data {
+export class Data {
   constructor() {
     this.gobe = null
   }
@@ -11,7 +11,7 @@ class Data {
   
   async fetchData() {
     try {
-      const response = await fetch('./database/gobe.si-without the značilnosti.json');
+      const response = await fetch('./database/gobe.si.json');
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -20,6 +20,7 @@ class Data {
       console.error('Error loading JSON:', error);
     }
   }
+  
   goba(index) {
     return this.gobe["seznam"][index] || undefined
   }
@@ -53,4 +54,4 @@ class Data {
   }
 }
 
-export default Data
+//export default Data

@@ -72,7 +72,7 @@ body {
   width: 50%;
   display: flex;
   flex-direction: column;
-  padding: 20px;
+  padding: 10px;
   background-color: #f9f9f9;
 }
 
@@ -145,15 +145,21 @@ body {
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
-  gap: 35px;
+  row-gap: 10px;
   text-align: center;
+  flex-direction: column;
 }
 
-#name-container img {
-  width: 25px;
-  height: 25px;
+.marker img {
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
-  background-color: #f1c40f;
+  background-color: #aab0ee;
+  background-size: 80%;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: inline-block;
+  padding: 5px;
 }
 
 #name {
@@ -238,7 +244,7 @@ body {
   background-color: white;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  padding: 5px 5px 0px 5px;
+  padding: 15px 15px 0px 15px;
 }
 
 .months-container {
@@ -270,14 +276,47 @@ body {
   font-weight: bold;
 }
 
-.synonym-card {
+.synonym-card,
+.quick-card {
   display: inline-block;
   padding: 6px 12px;
   margin: 5px;
   background-color: #ecf0f1;
-  color: #2c3e50;
   border-radius: 12px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.synonym-card {
+  color: #2c3e50;
+}
+
+.quick-card {
+  color: #124a81;
+}
+
+.edible-red {
+  background-image: url("../assets/icons/edible-red.svg");
+  border: 1px solid red;
+}
+.edible-green {
+  background-image: url("../assets/icons/edible-green.svg");
+  border: 1px solid green;
+}
+.edible-yellow {
+  background-image: url("../assets/icons/edible-yellow.svg");
+  border: 1px solid yellow;
+}
+.protected {
+  background-image: url("../assets/icons/protected.svg");
+  border: 1px solid blue;
+}
+.frequency {
+  background-image: url("../assets/icons/frequency.svg");
+  border: 1px solid grey;
+}
+.red-list {
+  background-image: url("../assets/icons/red-list.svg");
+  border: 1px solid red;
 }
 
 /* .modifiedTag::before {
@@ -298,11 +337,13 @@ body {
 /* Tooltip CSS */
 .marker {
   position: relative;
+  display: inline;
+  padding-inline-end: 15px;
 }
 
 .marker .tooltip {
   position: absolute;
-  visibility: hidden;
+  display: none;
   width: max-content;
   background-color: black;
   color: #fff;
@@ -311,16 +352,47 @@ body {
   border-radius: 5px;
   border: blue 2px dotted;
   opacity: .75;
-  bottom: 100%;
-  left: calc(100% - 70%);
+  top: 35px;
+  right: -230%;
 }
 
 .tooltip:focus,
 .marker:hover .tooltip,
 .marker:focus .tooltip {
-  visibility: visible;
+  display: block;
 }
 /*Tooltip - END*/
+
+/* Placeholder animation */
+.placeholder {
+  margin: 0 auto;
+  height: 10px;
+  width: 100%;
+  background-color: #eee;
+}
+
+@keyframes placeHolderShimmer{
+  0%{
+    background-position: -468px 0
+  }
+  100%{
+    background-position: 468px 0
+  }
+}
+
+.animated-background {
+  position: relative;
+  height: 10px;
+  animation-duration: 1.25s;
+  animation-fill-mode: forwards;
+  animation-iteration-count: infinite;
+  animation-name: placeHolderShimmer;
+  animation-timing-function: linear;
+  background: darkgray;
+  background: linear-gradient(to right, #eeeeee 10%, #dddddd 18%, #eeeeee 33%);
+  background-size: 800px 104px;
+}
+/*Placeholder animation - END*/
 
 @media only screen and (max-width: 1000px) {
   #navigation {
@@ -339,6 +411,7 @@ body {
   
   #left, #right {
     width: 100%;
+    padding: 5px;
   }
   
   .info {

@@ -147,6 +147,18 @@ class MushroomScraper:
                     self.gobe["rdečiSeznam"]["seznam"][url] = category
             except Exception as e:
                 print(f"Error parsing rdeči seznam row: {e} - {a.get_text(strip=True)}")
+        
+        self.gobe["rdečiSeznam"]["iucn"] = {
+            "naslov": "Kategorije ogroženosti IUCN (1978)",
+            "kategorije": {
+                "E": "(Endangered) - prizadeta vrsta. V to skupino sodijo najbolj ogrožene vrste. Njihova številčnost upada in ob nadaljevanju vzrokov ogroženosti lahko izumrejo.",
+                "V": "(Vulnerable) - ranljiva vrsta. Ranljive vrste so sestavni del biotopov, katerih ekološko ravnotežje je občutljivo že na manjše človekove vplive (npr. mrazišča, močvirja, topli izviri, barja). Z neprimernim poseganjem v biotop lahko posredno uničimo glive.",
+                "R": "(Rare) - redka vrsta. Glive, ki niso neposredno ogrožene, njihovo pojavljanje pa je zanesljivo v največ petih kvadrantih srednjeevropskega kartiranja velikost kvadranta je 5,8 x 5,6 km; (v Sloveniji je 613 kvadrantov), obravnavamo kot redke. Kadar ugotovimo, da so ogrožene, jih uvrstimo v eno od prejšnjih kategorij, sicer pa njihovo številčnost le spremljamo, da smo ob dejanski ogroženosti pripravljeni za varstveno ukrepanje.",
+                "K": "(Insufficiently Known) - nezadostno znana vrsta. Pomožna kategorija, ki vključuje vrste, za katere obstaja možnost, da pripada eni izmed kategorij ogroženosti, vendar je na razpolago premalo podatkov za zanesljivo varstveno opredelitev. V to skupino so uvrščene vrste, za katere je na razpolago premalo podatkov za opredelitev ogroženosti.",
+                "I": "(Indeterminate) - neopredeljena"
+            }
+        }
+        
         self.gobe["rdečiSeznam"]["zadnjaSprememba"] = soup.find('div', class_="lastmod").get_text().split(":", 1)[1].strip()
 
     def get_list_from(self, element: str, url: str, key: str):
@@ -166,18 +178,19 @@ class MushroomScraper:
 
     def scrape_mushroom_images(self, mushroomUrl: str):
         try:
+            gallery = {}
+            gallery["slike"] = []
+            
             base_url = "https://www.gobe.si/Slike/"
             url = f"{base_url}{mushroomUrl}"
             soup = self.fetch_page(url)
             if not soup:
-                return
+                return gallery
             
             content = soup.find('div', id='wikitext')
             if not content:
-                return None
+                return gallery
             
-            gallery = {}
-            gallery["slike"] = []
             img = {}
             
             # get first image
@@ -185,10 +198,11 @@ class MushroomScraper:
                 p_first_image = content.find_all('p')[0]
                 if p_first_image and p_first_image.find('img'):
                     img_name = p_first_image.find('img').get('src', '').split("/")[-1]
-                    img_author = p_first_image.find('small').get_text()
+                    small_tag = p_first_image.find('small')
+                    img_author = small_tag.get_text(strip=True) if small_tag else ""
                     
                     img['url'] = f"{base_url.lower()}{img_name}"
-                    img['avtor'] = img_author.split(":", 1)[1].strip()
+                    img['avtor'] = img_author.split(":", 1)[1].strip() if img_author else "/"
                     
                     gallery["slike"].append(img)
             except Exception as e:
@@ -200,11 +214,12 @@ class MushroomScraper:
                 if table and table.find('td'):
                     for td in table.find_all('td'):
                         img_name = td.find('img').get('src', '').split("/")[-1].replace("thumb_", "")
-                        img_author = td.find('small').get_text()
+                        small_tag = p_first_image.find('small')
+                        img_author = small_tag.get_text(strip=True) if small_tag else ""
                         
                         img = {}
                         img['url'] = f"{base_url.lower()}{img_name}"
-                        img['avtor'] = img_author.split(":", 1)[1].strip()
+                        img['avtor'] = img_author.split(":", 1)[1].strip() if img_author else "/"
                         
                         gallery["slike"].append(img)
             except Exception as e:
@@ -215,7 +230,7 @@ class MushroomScraper:
         
         except Exception as e:
             print(f"Error scraping mushroom gallery page {url}: {e}")
-            return None
+            return gallery
 
     def scrape_mushroom_page(self, url: str):
         try:
@@ -228,6 +243,18 @@ class MushroomScraper:
                 return None
             
             data = {}
+            front_image = ""
+            
+            try:
+                img_div = content.find('div', class_='img imgcaption')
+                if img_div and img_div.find('img'):
+                    img_url = img_div.find('img').get('src', '')
+                    if img_url:
+                        # Remove thumbnail prefix
+                        img_url = img_url.replace('thumb_', '')
+                        front_image = img_url
+            except Exception as e:
+                print(f"Error processing image: {e}")
             
             # Rod (Genus) processing
             try:
@@ -264,14 +291,14 @@ class MushroomScraper:
                     if strong:
                         # Get title and description
                         title = strong.get_text(strip=True).lower()
-                        # Remove the strong text and first character after it, then strip
-                        desc = p.get_text(strip=True)[len(strong.get_text()):].lstrip()
-                        desc = desc[1:].strip() if desc[0:1] == ":" else desc.strip()
-                        if desc:
-                            desc = desc[0:1].upper() + desc[1:]
 
                         # Special processing for specific titles
                         if title == 'rastišče':
+                            desc = p.get_text(strip=True)[len(strong.get_text()):].lstrip()
+                            desc = desc[1:].strip() if desc[0:1] == ":" else desc.strip()
+                            if desc:
+                                desc = desc[0:1].upper() + desc[1:]
+                        
                             # Check for time of growth
                             time_split = desc.split("Čas rasti:")
                             if len(time_split) > 1:
@@ -291,16 +318,38 @@ class MushroomScraper:
                             data['rastišče'] = desc
 
                         elif title == 'sinonimi':
+                            desc = p.get_text(strip=True)[len(strong.get_text()):].lstrip()
+                            desc = desc[1:].strip() if desc[0:1] == ":" else desc.strip()
+                            if desc:
+                                desc = desc[0:1].upper() + desc[1:]
+                                
                             # Process synonyms
                             synonyms = [syn.strip() for syn in desc.split(',')]
                             synonyms[0].replace(":", "")
                             data['sinonimi'] = synonyms
 
                         elif title == 'podobne vrste':
+                            desc = p.decode_contents().strip()[len(strong.decode_contents().strip()):].lstrip()
+                            desc = desc[1:].strip() if desc[0:1] == ":" else desc.strip()
+                            if desc:
+                                desc = desc[0:1].upper() + desc[1:]
+                                
                             data['podobneVrste'] = desc
+                        
+                        elif title == 'uporabnost':
+                            desc = p.decode_contents().strip()[len(strong.decode_contents().strip()):].lstrip()
+                            desc = desc[1:].strip() if desc[0:1] == ":" else desc.strip()
+                            if desc:
+                                desc = desc[0:1].upper() + desc[1:]
+                                
+                            data[title] = desc
                             
                         # Generic mapping for other titles
-                        elif title in ['značilnost', 'klobuk', 'bet', 'trosovnica', 'meso', 'trosi', 'uporabnost']:
+                        elif title in ['značilnost', 'klobuk', 'bet', 'trosovnica', 'meso', 'trosi']:
+                            desc = p.get_text(strip=True)[len(strong.get_text()):].lstrip()
+                            desc = desc[1:].strip() if desc[0:1] == ":" else desc.strip()
+                            if desc:
+                                desc = desc[0:1].upper() + desc[1:]
                             data[title] = desc
 
                 except Exception as e:
@@ -310,6 +359,8 @@ class MushroomScraper:
             
             time.sleep(2)
             data["galerija"] = self.scrape_mushroom_images(url.split("/")[-1])
+            if (len(data["galerija"]["slike"]) == 0) and front_image != "":
+                data["galerija"]["slike"].append({ "url": front_image, "avtor": "/" })
             
             return data
 
@@ -349,6 +400,11 @@ class MushroomScraper:
                 mushroom["domačeIme"] = self.gobe["domačaImena"]["seznam"].get(mushroom["url"], {}).get("imena", "/")
                 mushroom["zavarovana"] = "DA" if mushroom["url"] in self.gobe["zavarovane"]["seznam"] else "NE"
                 mushroom["naRdečemSeznamu"] = "DA" if mushroom["url"] in self.gobe["rdečiSeznam"]["seznam"].keys() else "NE"
+                mushroom["užitna"] = (
+                    "užitna" if mushroom["url"] in self.gobe["užitne"]["seznam"]
+                    else "pogojno užitna" if mushroom["url"] in self.gobe["pogojnoUžitne"]["seznam"]
+                    else "neužitna ali neznano"
+                )
 
                 mushroom["data"] = self.scrape_mushroom_page(mushroom["url"])
                 time.sleep(3)

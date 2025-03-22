@@ -1,4 +1,6 @@
 * {
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
   -webkit-box-sizing: border-box;
 }
@@ -9,47 +11,209 @@ a {
 
 body {
   font-family: monospace, sans-serif;
-  margin: 0;
-  padding: 0;
   background-color: #f4f4f4;
   line-height: 1.6;
   color: #333;
+  overflow-x: hidden;
+  position: relative;
 }
 
 .hidden {
   display: none !important;
 }
 
+/* Navigation styles */
 #navigation {
   position: fixed;
   top: 0;
-  left: 0;
-  width: 100%;
-  height: 15vh;
+  left: -100%;
+  width: 50%;
+  height: 100%;
   background-color: #2c3e50;
-  z-index: 1;
+  transition: left 0.3s ease-in-out;
   box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
 }
 
-#navigation:hover,
-#navigation:focus,
-#navigation:active {
-  height: 90vh;
-  transition: height 0.3s ease-out;
-  box-shadow: 0 0px 10vh #03055596;
+#navigation.active {
+  left: 0;
 }
 
-#navigation div {
+#navigation > div:first-child {
+  padding: 20px;
+  padding-top: 40px;
+  gap: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+input[type="search"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+#filters {
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 4px;
+  color: white;
+}
+
+#filters div p { /* not(.filter) */
+  float: inline-start;
+  padding-right: 5px;
+}
+
+.collapsible-content div {
+  padding: 10px;
+  gap: 10px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.collapsible-content {
+  height: 0;
+  display: none;
+  overflow: hidden;
+  transition: height 0.2s ease-out;
+}
+
+.collapsible {
+  cursor: pointer;
+  outline: none;
+}
+
+.collapsible::after {
+  content: " +";
+  color: grey;
+}
+
+.collapsible.active::after {
+  content: " -";
+  color: grey;
+}
+
+.filter {
+  display: inline-flex;
+  border: 1px solid black;
+  flex-direction: row;
+  flex-wrap: wrap;
+  padding: 4px 8px;
   position: relative;
+  border-radius: 4px;
+  background-color: #f0f0f0;
+  color: #2c3e50;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.filter input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.filter.checked {
+  opacity: 1;
+  background-color: #e0e0f0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.filter.checked:not(focus) {
+  outline: 2px solid #4CAF50;
+}
+
+/* .filter:hover {
+  opacity: 0.8;
+  background-color: #e8e8e8;
+} */
+
+#list {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  color: white;
+}
+
+#list ul {
+  padding-inline: 10px;
+  list-style-type: none;
+}
+
+.mushroom-list-item:first-child {
+  justify-self: center;
+  align-content: center;
+}
+
+.mushroom-list-item {
+  height: 35px;
+  cursor: pointer;
+}
+
+.mushroom-list-item button {
+  all: unset;
 }
 
 #hideNavigation {
-  display: none;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #555;
 }
+
+dialog {
+  border: none;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  height: 90%;
+  bottom: 10px;
+  justify-self: center;
+}
+
+#closeAboutDialog {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #555;
+}
+
+#showNavigation {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 999;
+  padding: 10px 15px;
+  background-color: #2c3e50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+/* Navigation styles - END */
 
 #content {
   position: absolute;
-  top: 15vh;
   left: 0;
   width: 100%;
   display: flex;
@@ -90,17 +254,16 @@ body {
   padding-top: 30px; /* Make room for the author name */
 }
 
-/* This creates space for the author name */
 .gallery-wrapper {
   position: relative;
   display: none;
+  transition: all 0.3s ease-out;
 }
 
 .gallery-wrapper.active {
   display: block;
 }
 
-/* The key part: using a pseudo-element to display the author above the image */
 .gallery-wrapper::before {
   content: attr(data-author);
   position: absolute;
@@ -124,6 +287,7 @@ body {
   height: 25px;
   position: absolute;
   top: calc(50% - 25px/2);
+  cursor: pointer;
 }
 
 #gallery-plus {
@@ -396,7 +560,7 @@ body {
 
 @media only screen and (max-width: 1000px) {
   #navigation {
-    height: 10vh;
+    width: 100%;
   }
   
   #content {

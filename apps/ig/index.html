@@ -9,13 +9,61 @@
     <script type="module" src="./src/scripts/app.js"></script>
   </head>
   <body>
+    <button type="button" id="showNavigation">≡</button> <!-- &equiv; -->
     <div id="navigation">
       <div>
+        <input type="search" placeholder="Poišči gobo">
+        <div id="filters">
+          <h4 class="collapsible">Filtriraj po:</h4>
+          <div class="collapsible-content">
+            <div>
+              <p>Užitnosti:</p>
+              <label class="filter"><input type="checkbox" name="edibility" value="edible"> Užitne</label>
+              <label class="filter"><input type="checkbox" name="edibility" value="conditional"> Pogojno užitne</label>
+              <label class="filter"><input type="checkbox" name="edibility" value="poisonous"> Strupene</label>
+              <label class="filter"><input type="checkbox" name="edibility" value="unknown"> Neznano</label>
+            </div>
+            <div>
+              <p>Pogostosti:</p>
+              <label class="filter"><input type="checkbox" name="exhibition"> Pogostost na razstavah</label>
+            </div>
+            <div>
+              <p>IUCN seznamu:</p>
+              <label class="filter"><input type="checkbox" name="redlist"> Na rdečem seznamu</label>
+            </div>
+            <div>
+              <p>Zavarovanosti:</p>
+              <label class="filter"><input type="checkbox" name="protected"> Zavarovane gobe</label>
+            </div>
+            <div>
+              <p>Mesecih rasti:</p>
+              <label class="filter"><input type="checkbox" name="month" value="jan"> Januar</label>
+              <label class="filter"><input type="checkbox" name="month" value="feb"> Februar</label>
+              <label class="filter"><input type="checkbox" name="month" value="mar"> Marec</label>
+              <label class="filter"><input type="checkbox" name="month" value="apr"> April</label>
+              <label class="filter"><input type="checkbox" name="month" value="may"> Maj</label>
+              <label class="filter"><input type="checkbox" name="month" value="jun"> Junij</label>
+              <label class="filter"><input type="checkbox" name="month" value="jul"> Julij</label>
+              <label class="filter"><input type="checkbox" name="month" value="aug"> Avgust</label>
+              <label class="filter"><input type="checkbox" name="month" value="sep"> September</label>
+              <label class="filter"><input type="checkbox" name="month" value="oct"> Oktober</label>
+              <label class="filter"><input type="checkbox" name="month" value="nov"> November</label>
+              <label class="filter"><input type="checkbox" name="month" value="dec"> December</label>
+            </div>
+          </div>
+        </div>
         <div id="list">
+          <ul></ul>
         </div>
       </div>
-      <button type="button" id="hideNavigation">x</button>
+      <button type="button" id="hideNavigation">×</button>
+      <dialog id="aboutDialog">
+        <h2>O aplikaciji</h2>
+        <p>Ta aplikacija omogoča iskanje in filtriranje različnih vrst gob.</p>
+        <button type="button" id="closeAboutDialog">×</button>
+      </dialog>
     </div>
+    
     <div id="content">
       <div id="info">
         <div id="left">

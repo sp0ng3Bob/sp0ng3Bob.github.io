@@ -1,8 +1,21 @@
 export class GUI {
   constructor(dataInstance) {
     this.data = dataInstance // Reference to the Data class instance
-    this.nameDiv = document.querySelector("#name") // DOM element for names
-    this.rodDiv = document.querySelector("#rod") // DOM element for names
+    
+    // Navigacija
+    this.navigation = document.querySelector("#navigation")
+    this.showNavButton = document.querySelector("#showNavigation")
+    this.hideNavButton = document.querySelector("#hideNavigation")
+    this.aboutDialog = document.querySelector("#aboutDialog")
+    this.closeDialogButton = document.querySelector("#closeAboutDialog")
+    this.filterInputs = document.querySelectorAll(".filter input[type='checkbox']");
+    this.collapsibleFilters = document.querySelector("#filters .collapsible")
+    this.list = document.querySelector("#list ul")
+    this.search = document.querySelector("input[type='search']")
+
+    // Goba
+    this.nameDiv = document.querySelector("#name")
+    this.rodDiv = document.querySelector("#rod")
     this.gallery = document.querySelector("#gallery")
     this.quickInfo = document.querySelector("#quick-info")
     this.markers = this.quickInfo.querySelectorAll(".marker")
@@ -10,13 +23,129 @@ export class GUI {
     this.additionalInfo = document.querySelector("#additional")
     this.slideIndex = 1
     
+    this.setListeners()
+  }
+  
+  updateLabelState(input) {
+    const label = input.parentElement
+    if (input.checked) {
+      label.classList.add("checked")
+    } else {
+      label.classList.remove("checked")
+    }
+  }
+  
+  setListeners() {
+    // Galerija
     document.querySelector("#gallery-plus").addEventListener("click", () => this.plusDivs(1))
     document.querySelector("#gallery-minus").addEventListener("click", () => this.plusDivs(-1))
+    
+    // Navigacija
+    this.showNavButton.addEventListener("click", () => this.navigation.classList.add("active"))
+    
+    this.hideNavButton.addEventListener("click", () => this.navigation.classList.remove("active"))
+    
+    this.closeDialogButton.addEventListener("click", () => this.aboutDialog.close())
+    
+    document.addEventListener("click", (event) =>  {
+      if (!this.navigation.contains(event.target) && event.target !== this.showNavButton) {
+        this.navigation.classList.remove("active")
+      }
+    })
+    
+    this.filterInputs.forEach(input => {
+      //this.updateLabelState(input)
+      input.addEventListener("change", () => this.updateLabelState(input))
+    })
+    
+    this.collapsibleFilters.addEventListener("click", function() { // (event) => { const element = event.currentTarget; ... }
+      this.classList.toggle("active")
+      const content = this.parentElement.querySelector(".collapsible-content")
+      if (content.style.height == "0px" || content.style.height == "") {
+        content.style.display = "block"
+        content.style.height = content.scrollHeight + "px"
+      } else {
+        content.style.display = "none"
+        content.style.height = "0px"
+      }
+    })
+    
+    // Searching & filters
+    this.search.addEventListener("input", () => this.updateMushroomList())
+    this.filterInputs.forEach((filter) => {
+      filter.addEventListener("change", () => this.updateMushroomList())
+    })
   }
 
   async init() {
     // Wait for the data to load
     await this.data.init()
+    this.populateMushroomList()
+  }
+  
+  populateMushroomList() {
+    const tmpList = []
+    
+    for (const goba of this.data.seznam()) {
+      const li = document.createElement("li")
+      li.classList.add("mushroom-list-item")
+      li.innerHTML = `<button onclick="router.navigate(${goba.id})">${goba.sloIme}, ${goba.latIme}, ${goba.pogostost}, ${goba.zavarovana}, ${goba.naRdečemSeznamu}</button>`
+      tmpList.push(li)
+    }
+    
+    const li = document.createElement("li")
+    li.classList.add("mushroom-list-item")
+    li.innerText = `${tmpList.length} ${this.getSlovenianSuffix(tmpList.length)}`
+    this.list.appendChild(li)
+    
+    this.list.append(...tmpList)
+  }
+  
+  updateMushroomList() {
+    const searchQuery = this.search.value
+    const edibility = this.filterInputs[0-4]
+    const exhibition = this.filterInputs[5].checked
+    const redlist = this.filterInputs[6].checked
+    const prot = this.filterInputs[7].checked
+    const months = this.filterInputs[8-19]
+    
+    const tmpList = []
+    this.list.innerHTML = ""
+    
+    for (const goba of this.data.seznam()) {
+      if ([goba?.sloIme, goba?.latIme, goba?.data?.rod?.slo, goba?.data?.rod?.lat, goba?.data?.značilnost, goba?.data?.klobuk, goba?.data?.trosovnica, goba?.data?.bet, goba?.data?.meso, goba?.data?.trosi]
+          .some(term => term && term.includes(searchQuery)) ||
+          //( (this.data.uzitne().includes(goba.id) || this.data.pogojnoUzitne().includes(goba.id)) && //užitnost
+          (Object.keys(this.data.rdeciSeznam().seznam).includes(goba.id) && //iucn
+          Object.keys(this.data.zavarovane().seznam).includes(goba.id) ) // && //zavarovane
+          // (this.data.().includes(goba?.data?.časRasti)) ) //meseci rasti
+          //pogostost - sort by the number of exhibitions if true
+          ) {
+        const li = document.createElement("li")
+        li.classList.add("mushroom-list-item")
+        li.innerHTML = `<button onclick="router.navigate(${goba.id})">${goba.sloIme}, ${goba.latIme}, ${goba.pogostost}, ${goba.zavarovana}, ${goba.naRdečemSeznamu}</button>`
+        tmpList.push(li)        
+      }
+    }
+    
+    const li = document.createElement("li")
+    li.classList.add("mushroom-list-item")
+    li.innerText = `${tmpList.length} ${this.getSlovenianSuffix(tmpList.length)}`
+    this.list.appendChild(li)
+    
+    this.list.append(...tmpList)
+  }
+  
+  getSlovenianSuffix(count) {
+    if (count == 1) {
+      return "takšna goba.";
+    } else if (count == 2) {
+      return "takšni gobi.";
+    } else if (count > 2 && count < 5) {
+      return "takšne gobe.";
+    } else {
+      return "takšnih gob.";
+    }
   }
   
   // https://www.w3schools.com/w3css/w3css_slideshow.asp

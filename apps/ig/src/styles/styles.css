@@ -149,6 +149,7 @@ input[type="search"] {
 #list ul {
   padding-inline: 10px;
   list-style-type: none;
+  display: grid;
 }
 
 .mushroom-list-item:first-child {
@@ -165,15 +166,32 @@ input[type="search"] {
   all: unset;
 }
 
+#hideNavigation.hidden {
+  opacity: 0;
+  visibility: hidden;
+  display: block !important;
+}
+
 #hideNavigation {
-  position: absolute;
-  top: 10px;
-  right: 10px;
+  all: unset;
+  position: fixed;
+  top: 8px;
+  right: calc(50% + 24px / 2 + 8px);
   background: none;
   border: none;
   font-size: 24px;
   cursor: pointer;
-  color: #555;
+  color: white;
+  width: 24px;
+  height: 24px;
+  padding: 5px;
+  border-radius: 10px;
+  background-color: #2c3e50;
+  text-align: center;
+  line-height: 29px;
+  opacity: 1;
+  visibility: visible;
+  transition: all 0.4s ease-out;
 }
 
 dialog {
@@ -200,8 +218,8 @@ dialog {
 
 #showNavigation {
   position: fixed;
-  top: 20px;
-  left: 20px;
+  top: 8px;
+  left: 8px;
   z-index: 999;
   padding: 10px 15px;
   background-color: #2c3e50;
@@ -559,12 +577,16 @@ dialog {
 /*Placeholder animation - END*/
 
 @media only screen and (max-width: 1000px) {
+  * {
+    font-size: clamp(0.8rem, 3vw, 1.33rem);
+  }
+  
   #navigation {
     width: 100%;
   }
   
   #content {
-    top: 10vh;
+    /* top: 10vh; */
   }
   
   #info {
@@ -583,5 +605,9 @@ dialog {
     align-items: flex-start;
     margin: 5px 10px;
     padding-bottom: 15px;
+  }
+  
+  #hideNavigation {
+    right: 8px;
   }
 }

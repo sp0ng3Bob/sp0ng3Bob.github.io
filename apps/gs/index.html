@@ -10,58 +10,91 @@
       <!--<script type="module" src="../../widgets/Floating Settings/FloatingSettings.js"></script>-->
       
 			<style>
-				body {
-					width: 100vw;
-					height: 100vh;
+				html, body {
+          width: 100%;
+          height: 100%;
+          margin: 0;
+          padding: 0;
+          overflow-x: overlay;
+          position: relative;
+        }
+
+        body {
           font-family: monospace;
-				}
-				nav {
-					position: fixed;
-					top: 0px;
-					margin-top: 8px;
-					left: calc(50vw - 150px);
-					z-index: 420;
-				}
-				select {
-					width: 300px;
-					font-size: 1.1em;
-					font-family: monospace;
-				}
-				#maps {
-					border: none;
+        }
+
+        nav {
+          position: fixed;
+          top: 8px;
+          left: calc(50vw - 150px);
+          z-index: 420;
+          transform: translateZ(0);
+          -webkit-transform: translateZ(0);
+          -webkit-backface-visibility: hidden;
+          backface-visibility: hidden;
+        }
+
+        select {
+          width: 300px;
+          font-size: 1.1em;
+          font-family: monospace;
+        }
+
+        #maps {
+          border: none;
           width: min-content;
-				}
-        /*select > option:nth-last-of-type(-n+2) {
-          background: #aceace;
-        }*/
-        /*:not(#main) {
-          transform: scale(1) !important;
-          zoom: 1 !important;
-        }*/
-				#main {
-					position: absolute;
-					background-image: url("assets/images/maps/Zemljevid_Slovenije_Layer-0.png");
-					background-repeat: no-repeat;
-				}
-				#overlay,
+        }
+
+        #main {
+          position: absolute;
+          background-image: url("assets/images/maps/Zemljevid_Slovenije_Layer-0.png");
+          background-repeat: no-repeat;
+        }
+
+        #overlay,
         #debugOverlay {
-					mix-blend-mode: multiply;
-				}
-				#minMax {
-					position: fixed;
-					bottom: 8px;
-					right: 8px;
-				}
+          mix-blend-mode: multiply;
+        }
+
+        #buttons {
+          position: fixed;
+          width: 100%;
+          height: 100%;
+          pointer-events: none;
+          z-index: 410;
+        }
+
+        #buttons > div {
+          pointer-events: auto;
+        }
+
+        #minMax {
+          position: fixed;
+          bottom: 8px;
+          right: 8px;
+          z-index: 400;
+          transform: translateZ(0);
+          -webkit-transform: translateZ(0);
+        }
+
         #info {
           position: fixed;
-					top: 8px;
-					right: 8px;
+          top: 8px;
+          right: 8px;
+          z-index: 400;
+          transform: translateZ(0);
+          -webkit-transform: translateZ(0);
         }
+
         #location {
           position: fixed;
           top: 8px;
           left: 8px;
+          z-index: 400;
+          transform: translateZ(0);
+          -webkit-transform: translateZ(0);
         }
+
         #info,
         #minMax,
         #location,
@@ -70,42 +103,53 @@
           justify-items: center;
           align-items: center;
         }
-				button {
+
+        button {
           width: 40px;
           height: 35px;
           font-size: 1.2em;
           line-height: 1;
           box-sizing: content-box;
-				}
-				img.fullMap {
-					position: fixed;
-					margin: auto;
-				}
-				#sciName {
-					position: fixed;
-					bottom: 8px;
-					left: 8px;
-					background-color: white;
-					padding: 5.5px 10px;
-					font-size: 1.3em;
-					font-family: monospace;
-					border: solid black 1px;
-					font-weight: bold;
-					border-radius: 3px;
-				}
-        
+        }
+
+        img.fullMap {
+          position: fixed;
+          margin: auto;
+        }
+
+        #sciName {
+          position: fixed;
+          bottom: 8px;
+          left: 8px;
+          background-color: white;
+          padding: 5.5px 10px;
+          font-size: 1.3em;
+          font-family: monospace;
+          border: solid black 1px;
+          font-weight: bold;
+          border-radius: 3px;
+          z-index: 400;
+          transform: translateZ(0);
+          -webkit-transform: translateZ(0);
+        }
+
         .Hidden {
           display: none !important;
         }
-        
+
         #locationSearch {
           position: fixed;
           top: calc(8px + 25px + 8px);
           left: calc(50% - 150px + 20px);
+          z-index: 400;
+          transform: translateZ(0);
+          -webkit-transform: translateZ(0);
         }
+
         #locationSearch input {
           width: 300px;
         }
+
         .Marker {
           position: absolute;
           width: 10px;
@@ -118,14 +162,15 @@
           flex-wrap: wrap;
           justify-content: center;
         }
-        
+
         dialog {
           font-size: 1.1em;
         }
+
         dialog button {
           float: right;
         }
-        
+
         ::backdrop {
           background-image: -webkit-linear-gradient(0deg,
             #8AA74B,
@@ -146,7 +191,7 @@
           );
           opacity: 0.75;
         }
-        
+
         .Marker .Tooltip {
           position: absolute;
           visibility: hidden;
@@ -166,69 +211,84 @@
         .Marker:focus .Tooltip {
           visibility: visible;
         }
-        /*Tooltip - END*/
-          
-				@media (orientation: landscape) {
+
+        @media (orientation: landscape) {
           body.fullMap {
             overflow: hidden;
+            position: fixed;
+            width: 100%;
+            height: 100%;
           }
-					div.fullMap {
-						background-size: contain;
-					}
-					img.fullMap {
-						height: 100%;
-						left: 0;
-						right: 0;
-					}
-				}
-				@media (orientation: portrait) {
+          div.fullMap {
+            background-size: contain;
+          }
+          img.fullMap {
+            height: 100%;
+            left: 0;
+            right: 0;
+          }
+        }
+
+        @media (orientation: portrait) {
           body.fullMap {
             overflow: hidden;
+            position: fixed;
+            width: 100%;
+            height: 100%;
           }
-					div.fullMap {
-						background-size: contain;
-					}
-					img.fullMap {
-						width: 100%;
-						top: 0;
-						bottom: 0;
-					}
-				}
-				
-				@media (pointer: none), (pointer: coarse) { /* PHONEs - touch device */
-					body {
-						margin: 0px;
-						padding: 0px;
-					}
+          div.fullMap {
+            background-size: contain;
+          }
+          img.fullMap {
+            width: 100%;
+            top: 0;
+            bottom: 0;
+          }
+        }
+
+        @media (pointer: none), (pointer: coarse) { /* PHONEs - touch device */
+          body {
+            margin: 0px;
+            padding: 0px;
+          }
           #main {
             margin-top: 8px;
           }
-					nav {
-						left: calc(50vw - 200px);
-					}
-					select {
-						width: 400px;
-						font-size: 1.3em;
-					}
+          nav {
+            left: calc(50vw - 200px);
+            touch-action: manipulation;
+          }
+          select {
+            width: 400px;
+            font-size: 1.3em;
+          }
           #locationSearch {
             left: calc(50vw - 200px + 12px);
+            touch-action: manipulation;
           }
           #locationSearch input {
             width: 400px;
             font-size: 1em;
           }
-				}
-				@media screen and (max-width: 549px) { /* small screen sizes */
-					#main {
+          /* Add these to improve touch response */
+          #buttons, #minMax, #info, #location, #sciName {
+            touch-action: manipulation;
+            -webkit-overflow-scrolling: touch;
+            position: fixed !important;
+          }
+        }
+
+        @media screen and (max-width: 549px) { /* small screen sizes */
+          #main {
             margin-top: 24px;
           }
           nav {
-						left: 8px;
-					}
-					select {
-						min-width: 150px;
+            left: 8px;
+          }
+          select {
+            min-width: 150px;
             width: 70vw;
-					}
+          }
           #locationSearch {
             left: calc(8px + 12px);
           }
@@ -240,7 +300,24 @@
           #location {
             display: none;
           }
-				}
+        }
+
+        /* iOS-specific fixes */
+        @supports (-webkit-overflow-scrolling: touch) {
+          body {
+            -webkit-overflow-scrolling: touch;
+          }
+          
+          nav, #minMax, #info, #location, #sciName, #locationSearch {
+            position: fixed !important;
+            -webkit-transform: translateZ(0);
+          }
+        }
+
+        /* Fix for mobile scrolling and zooming issues */
+        .fullMap * {
+          touch-action: manipulation;
+        }
 			</style>
 	</head>
 	<body>
@@ -251,20 +328,22 @@
 			<img id="overlay" src="assets/images/maps/Zemljevid_Slovenije_23_Beli_gaber.png" />
       <!-- <img id="debugOverlay" src="assets/Slovenia_location_map-with_extremities.png" /> -->
 		</div>
-		<div id="minMax">
-			<button type="button">🗺️</button>
-		</div>
-		<div id="sciName">
-			<span>Carpinus betulus</span>
-		</div>
-    <div id="info">
-			<button type="button">ℹ️</button>
-		</div>    
-    <div id="location">
-			<button type="button">🧭</button>
-		</div>
-    <div id="locationSearch">
-      <input type="search" name="search" placeholder="Prikaži kraj, naslov ali koordinate na zemljevidu" />
+		<div id="buttons">
+      <div id="minMax">
+        <button type="button">🗺️</button>
+      </div>
+      <div id="sciName">
+        <span>Carpinus betulus</span>
+      </div>
+      <div id="info">
+        <button type="button">ℹ️</button>
+      </div>    
+      <div id="location">
+        <button type="button">🧭</button>
+      </div>
+      <div id="locationSearch">
+        <input type="search" name="search" placeholder="Prikaži kraj, naslov ali koordinate na zemljevidu" />
+      </div>
     </div>
     <dialog>
       <button type="button">❌</button>

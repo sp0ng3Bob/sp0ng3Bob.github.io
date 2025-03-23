@@ -41,9 +41,15 @@ export class GUI {
     document.querySelector("#gallery-minus").addEventListener("click", () => this.plusDivs(-1))
     
     // Navigacija
-    this.showNavButton.addEventListener("click", () => this.navigation.classList.add("active"))
+    this.showNavButton.addEventListener("click", () => {
+      this.navigation.classList.add("active")
+      this.hideNavButton.classList.toggle("hidden")
+    })
     
-    this.hideNavButton.addEventListener("click", () => this.navigation.classList.remove("active"))
+    this.hideNavButton.addEventListener("click", () => {
+      this.navigation.classList.remove("active")
+      this.hideNavButton.classList.toggle("hidden")
+    })
     
     this.closeDialogButton.addEventListener("click", () => this.aboutDialog.close())
     
@@ -63,7 +69,8 @@ export class GUI {
       const content = this.parentElement.querySelector(".collapsible-content")
       if (content.style.height == "0px" || content.style.height == "") {
         content.style.display = "block"
-        content.style.height = content.scrollHeight + "px"
+        content.style.height = content.scrollHeight + "px" // to trigger the animation
+        content.style.height = "auto"
       } else {
         content.style.display = "none"
         content.style.height = "0px"

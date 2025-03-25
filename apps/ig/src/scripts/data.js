@@ -52,6 +52,10 @@ export class Data {
   pogojnoUzitne() {
     return this.gobe["pogojnoUžitne"]
   }
+  
+  strupene() {
+    return this.gobe["strupene"]
+  }
 }
 
 //export default Data

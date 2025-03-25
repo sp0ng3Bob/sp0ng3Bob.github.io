@@ -56,6 +56,7 @@ export class GUI {
     document.addEventListener("click", (event) =>  {
       if (!this.navigation.contains(event.target) && event.target !== this.showNavButton) {
         this.navigation.classList.remove("active")
+        this.hideNavButton.classList.toggle("hidden")
       }
     })
     
@@ -109,30 +110,30 @@ export class GUI {
   }
   
   updateMushroomList() {
-    const searchQuery = this.search.value
-    const edibility = this.filterInputs[0-4]
-    const exhibition = this.filterInputs[5].checked
-    const redlist = this.filterInputs[6].checked
-    const prot = this.filterInputs[7].checked
-    const months = this.filterInputs[8-19]
-    
     const tmpList = []
     this.list.innerHTML = ""
     
     for (const goba of this.data.seznam()) {
-      if ([goba?.sloIme, goba?.latIme, goba?.data?.rod?.slo, goba?.data?.rod?.lat, goba?.data?.značilnost, goba?.data?.klobuk, goba?.data?.trosovnica, goba?.data?.bet, goba?.data?.meso, goba?.data?.trosi]
-          .some(term => term && term.includes(searchQuery)) ||
-          //( (this.data.uzitne().includes(goba.id) || this.data.pogojnoUzitne().includes(goba.id)) && //užitnost
-          (Object.keys(this.data.rdeciSeznam().seznam).includes(goba.id) && //iucn
-          Object.keys(this.data.zavarovane().seznam).includes(goba.id) ) // && //zavarovane
-          // (this.data.().includes(goba?.data?.časRasti)) ) //meseci rasti
-          //pogostost - sort by the number of exhibitions if true
-          ) {
+      if (this.listQueryAndFilterCheck(goba)) {
         const li = document.createElement("li")
         li.classList.add("mushroom-list-item")
         li.innerHTML = `<button onclick="router.navigate(${goba.id})">${goba.sloIme}, ${goba.latIme}, ${goba.pogostost}, ${goba.zavarovana}, ${goba.naRdečemSeznamu}</button>`
-        tmpList.push(li)        
+        tmpList.push({ li, goba })        
       }
+      //break
+    }
+    
+    if (this.filterInputs[4].checked) {
+      tmpList.sort((a, b) => {
+        const pogostostA = a.goba.pogostost === "/" ? -Infinity : Number(a.goba.pogostost)
+        const pogostostB = b.goba.pogostost === "/" ? -Infinity : Number(b.goba.pogostost)
+        
+        if (pogostostA !== pogostostB) {
+          return pogostostB - pogostostA
+        }
+
+        return a.goba.id - b.goba.id
+      })
     }
     
     const li = document.createElement("li")
@@ -140,7 +141,59 @@ export class GUI {
     li.innerText = `${tmpList.length} ${this.getSlovenianSuffix(tmpList.length)}`
     this.list.appendChild(li)
     
-    this.list.append(...tmpList)
+    this.list.append(...tmpList.map(entry => entry.li))
+  }
+  
+  listQueryAndFilterCheck(goba) {
+    const searchQuery = this.search.value
+    const edibility = Array.from({ length: 4 }, (_, i) => this.filterInputs[i].checked)
+    const redlist = this.filterInputs[5].checked
+    const prot = this.filterInputs[6].checked
+    const months = Array.from({ length: 12 }, (_, i) => this.filterInputs[i + 7])
+    
+    const searchFields = [
+      goba?.sloIme, 
+      goba?.latIme, 
+      goba?.data?.rod?.slo, 
+      goba?.data?.rod?.lat, 
+      goba?.data?.značilnost, 
+      goba?.data?.klobuk, 
+      goba?.data?.trosovnica, 
+      goba?.data?.bet, 
+      goba?.data?.meso, 
+      goba?.data?.trosi
+    ]
+
+    const matchesSearch = searchFields.some(term => 
+      term && term.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+
+    const matchesEdibility = edibility.some(input => input === true) ?
+      (edibility[0] && this.data.uzitne().seznam.includes(goba.url)) || 
+      (edibility[1] && this.data.pogojnoUzitne().seznam.includes(goba.url)) || 
+      (edibility[2] && this.data.strupene().seznam.some(obj => obj.seznam.includes(goba.url))) || 
+      (edibility[3] && 
+        !this.data.uzitne().seznam.includes(goba.url) && 
+        !this.data.pogojnoUzitne().seznam.includes(goba.url) && 
+        !this.data.strupene().seznam.some(obj => obj.seznam.includes(goba.url))
+      ) : true
+      
+
+    const matchesRedList = redlist ? Object.keys(this.data.rdeciSeznam().seznam).includes(goba.url) : true
+    const matchesProtected = prot ? Object.keys(this.data.zavarovane().seznam).includes(goba.url) : true
+    
+    const matchesGrowthMonths = true /* months.some(i => i.checked) && goba?.data?.časRasti?.length > 0 ? 
+      months.some(input => goba.data.časRasti.some(month => input.checked && month.toLowerCase().includes(input.value))
+    ) : true */
+
+    if (matchesSearch && 
+        matchesEdibility && 
+        matchesRedList && 
+        matchesProtected && 
+        matchesGrowthMonths) {
+      return true
+    }
+    return false
   }
   
   getSlovenianSuffix(count) {
@@ -290,8 +343,8 @@ export class GUI {
     freq.children[1].innerText = goba["pogostost"]
     
     const protect = this.markers[1]
-    //protect.children[0].setAttribute("src", "https://www.gobe.si/pub/ikone/protozoa.png")
-    protect.children[1].innerText = "protect"
+    //protect.children[1].classList
+    protect.children[1].innerText = `Zavarovana goba: ${goba.zavarovana}`
     
     const redList = this.markers[2]
     //redList.children[0].setAttribute("src", "https://www.gobe.si/pub/ikone/lisaj.png")
@@ -300,19 +353,24 @@ export class GUI {
       const category = redListData["seznam"][goba.url]
       redList.children[1].innerHTML = `${redListData['iucn']['naslov']}<br>${redListData['iucn']['kategorije'][category]}`
     } else {
-      // not on red listing
+      redList.children[1].innerText = "Na rdečem seznamu: NE"
     }
     
     const edible = this.markers[0]
     edible.children[0].classList.remove(...edible.children[0].classList)
-    if (goba["užitna"] == "užitna") {
+    if (this.data.uzitne().seznam.includes(goba.url)) {
       edible.children[0].classList.add("edible-green")
-    } else if (goba["užitna"] == "pogojno užitna") {
+      edible.children[1].innerText = "Užitna"
+    } else if (this.data.pogojnoUzitne().seznam.includes(goba.url)) {
       edible.children[0].classList.add("edible-yellow")
+      edible.children[1].innerText = "Pogojno užitna"
+    } else if (this.data.strupene().seznam.some(obj => obj.seznam.includes(goba.url))) {
+      edible.children[0].classList.add("edible-red")
+      edible.children[1].innerText = "Strupena"
     } else {
       edible.children[0].classList.add("edible-red")
+      edible.children[1].innerText = "Neznano"
     }
-    edible.children[1].innerText = goba["užitna"]
   }
   
   populateInfoCard(goba) {

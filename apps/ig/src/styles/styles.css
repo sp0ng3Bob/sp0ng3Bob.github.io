@@ -113,7 +113,7 @@ input[type="search"] {
   color: #2c3e50;
   cursor: pointer;
   opacity: 0.6;
-  transition: all 0.2s ease;
+  /* transition: all 0.2s ease; */
   user-select: none;
 }
 
@@ -275,7 +275,7 @@ dialog {
 .gallery-wrapper {
   position: relative;
   display: none;
-  transition: all 0.3s ease-out;
+  /* transition: all 0.3s ease-out; */
 }
 
 .gallery-wrapper.active {

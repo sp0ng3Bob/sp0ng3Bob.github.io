@@ -17,7 +17,8 @@ class MushroomScraper:
             "zavarovane": { "seznam": [] },
             "rdečiSeznam": { "seznam": {} },
             "užitne": { "seznam": [] },
-            "pogojnoUžitne": { "seznam": [] }
+            "pogojnoUžitne": { "seznam": [] },
+            "strupene": { "seznam": [] }
         }
         self.session = requests.Session()
         self.cache = {}
@@ -161,6 +162,44 @@ class MushroomScraper:
         
         self.gobe["rdečiSeznam"]["zadnjaSprememba"] = soup.find('div', class_="lastmod").get_text().split(":", 1)[1].strip()
 
+    def get_strupene_gobe(self):
+        url = f"{self.base_url}/Gobe/StrupeneGobe"
+        soup = self.fetch_page(url)
+        if not soup:
+            return
+        
+        try:
+            # smrtno strupene
+            h1 = soup.find("h1", string="Smrtno strupene gobe, najdene v Sloveniji") #string=lambda text: text and "Smrtno strupene gobe, najdene v Sloveniji" in text)
+            if h1:
+                smrtne_ol = h1.find_next("ol")
+                smrtno_strupene = [ li.find("a")["href"] for li in smrtne_ol.find_all("li") if li.find("a") ]
+                self.gobe["strupene"]["seznam"].append({
+                    "naslov": h1.text.strip(),
+                    "seznam": smrtno_strupene
+                })
+
+            h1 = soup.find("h1", string="Strupene gobe v Sloveniji") #string=lambda text: text and "Strupene gobe v Sloveniji" in text)
+            if h1:
+                parent_div = h1.find_parent("div")
+                elements = []
+                for elem in h1.find_all_next(["h2", "p", "div"]):
+                    if elem in parent_div.find_all(["h2", "p", "div"]):
+                        if elem.get("class") == ["vspace"] or elem.name in ["h2", "p"]:
+                            elements.append(elem)
+                
+                for (h2, p, div) in zip(elements[0::3], elements[1::3], elements[2::3]):
+                    print(f"{h2.text.strip()}, {[ a['href'] for a in p.find_all('a') ]}")
+                    smrtno_strupene = [ li.find("a")["href"] for li in smrtne_ol.find_all("li") if li.find("a") ]
+                    self.gobe["strupene"]["seznam"].append({
+                        "naslov": h2.text.strip(),
+                        "seznam": [ a["href"] for a in p.find_all("a") ]
+                    })
+            
+            self.gobe["strupene"]["zadnjaSprememba"] = soup.find('div', class_="lastmod").get_text().split(":", 1)[1].strip()
+        except Exception as e:
+            print(f"Error processing strupene gobe: {e}")
+
     def get_list_from(self, element: str, url: str, key: str):
         """
         Scrapes lists from unordered lists (ul).
@@ -300,10 +339,11 @@ class MushroomScraper:
                                 desc = desc[0:1].upper() + desc[1:]
                         
                             # Check for time of growth
-                            time_split = desc.split("Čas rasti:")
+                            time_split = desc.split("Čas rasti")
                             if len(time_split) > 1:
                                 # Process months
                                 months_list = []
+                                time_split = time_split[1].split(":")
                                 month_parts = time_split[1].strip().split("-")
                                 for part in month_parts:
                                     part = part.strip()
@@ -418,28 +458,30 @@ class MushroomScraper:
         Orchestrates the entire scraping process and outputs data to JSON.
         """
         print("Scraping mushroom data...")
-        self.get_pogostost()
-        time.sleep(2)
-        self.get_domaca_imena()
-        time.sleep(2)
-        self.get_list_from("ol", f"{self.base_url}/Gobe/ZasciteneGobe", "zavarovane")
-        time.sleep(2)
-        self.get_rdeci_seznam()
-        time.sleep(2)
-        self.get_list_from("ul", f"{self.base_url}/Gobe/UzitneGobe", "užitne")
-        time.sleep(2)
-        self.get_list_from("ul", f"{self.base_url}/Gobe/PogojnoUzitneGobe", "pogojnoUžitne")
-        time.sleep(2)
-        self.get_mushroom_list()
+        # self.get_pogostost()
+        # time.sleep(2)
+        # self.get_domaca_imena()
+        # time.sleep(2)
+        # self.get_list_from("ol", f"{self.base_url}/Gobe/ZasciteneGobe", "zavarovane")
+        # time.sleep(2)
+        # self.get_rdeci_seznam()
+        # time.sleep(2)
+        # self.get_list_from("ul", f"{self.base_url}/Gobe/UzitneGobe", "užitne")
+        # time.sleep(2)
+        # self.get_list_from("ul", f"{self.base_url}/Gobe/PogojnoUzitneGobe", "pogojnoUžitne")        
+        # time.sleep(2)
+        self.get_strupene_gobe()
+        # time.sleep(2)
+        # self.get_mushroom_list()
 
-        timestamp = datetime.now().strftime("%d.%m.%Y %H:%M")
-        self.gobe["podatkiShranjeni"] = timestamp
+        # timestamp = datetime.now().strftime("%d.%m.%Y %H:%M")
+        # self.gobe["podatkiShranjeni"] = timestamp
         
-        # Save to JSON
-        output_file = "gobe.si.json" #f"mushrooms_{timestamp}.json"
-        with open(output_file, "w", encoding="utf-8") as f:
-            json.dump(self.gobe, f, ensure_ascii=False, indent=2)
-        print(f"Scraping complete. Data saved to {output_file}")
+        # # Save to JSON
+        # output_file = "gobe.si.json" #f"mushrooms_{timestamp}.json"
+        # with open(output_file, "w", encoding="utf-8") as f:
+            # json.dump(self.gobe, f, ensure_ascii=False, indent=2)
+        # print(f"Scraping complete. Data saved to {output_file}")
         
 
 if __name__ == "__main__":

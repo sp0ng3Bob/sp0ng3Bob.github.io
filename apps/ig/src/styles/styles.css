@@ -155,15 +155,37 @@ input[type="search"] {
 .mushroom-list-item:first-child {
   justify-self: center;
   align-content: center;
+  cursor: text;
 }
 
 .mushroom-list-item {
   height: 35px;
-  cursor: pointer;
+  display: flex;
+  align-items: baseline;
+  margin-bottom: 30px;
 }
 
 .mushroom-list-item button {
   all: unset;
+  width: 100%;
+  height: 35px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-inline: 10px;
+  cursor: pointer;
+}
+
+.mushroom-list-item button span:first-child {
+  order: 1;
+}
+
+.mushroom-list-item button span:first-child::first-letter {
+  text-transform: capitalize;
+}
+
+.mushroom-list-item button span:last-child {
+  order: 2;
 }
 
 #hideNavigation.hidden {
@@ -290,6 +312,7 @@ dialog {
   color: white;
   font-size: 14px;
   font-weight: bold;
+  cursor: text;
 }
 
 .gallery {
@@ -432,10 +455,11 @@ dialog {
 .months-container {
   display: flex;
   justify-content: space-around;
-  align-items: center;
   width: 100%;
   height: 50px;
   column-gap: 4px;
+  align-content: center;
+  flex-wrap: wrap;
 }
 
 .month {
@@ -577,8 +601,22 @@ dialog {
 /*Placeholder animation - END*/
 
 @media only screen and (max-width: 1000px) {
-  * {
+  *,
+  .gallery-wrapper::before  {
     font-size: clamp(0.8rem, 3vw, 1.33rem);
+  }
+  
+  #gallery {
+    padding-top: 20px;
+  }
+  
+  .gallery-wrapper::before {
+    font-weight: normal;
+    top: -17px;
+  }
+  
+  .months-container {
+    justify-content: center;
   }
   
   #navigation {
@@ -609,5 +647,9 @@ dialog {
   
   #hideNavigation {
     right: 8px;
+  }
+  
+  .mushroom-list-item {
+    margin-bottom: 10px;
   }
 }

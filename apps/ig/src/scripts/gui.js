@@ -43,12 +43,12 @@ export class GUI {
     // Navigacija
     this.showNavButton.addEventListener("click", () => {
       this.navigation.classList.add("active")
-      this.hideNavButton.classList.toggle("hidden")
+      this.hideNavButton.classList.remove("hidden")
     })
     
     this.hideNavButton.addEventListener("click", () => {
       this.navigation.classList.remove("active")
-      this.hideNavButton.classList.toggle("hidden")
+      this.hideNavButton.classList.add("hidden")
     })
     
     this.closeDialogButton.addEventListener("click", () => this.aboutDialog.close())
@@ -56,7 +56,7 @@ export class GUI {
     document.addEventListener("click", (event) =>  {
       if (!this.navigation.contains(event.target) && event.target !== this.showNavButton) {
         this.navigation.classList.remove("active")
-        this.hideNavButton.classList.toggle("hidden")
+        this.hideNavButton.classList.add("hidden")
       }
     })
     
@@ -97,7 +97,7 @@ export class GUI {
     for (const goba of this.data.seznam()) {
       const li = document.createElement("li")
       li.classList.add("mushroom-list-item")
-      li.innerHTML = `<button onclick="router.navigate(${goba.id})">${goba.sloIme}, ${goba.latIme}, ${goba.pogostost}, ${goba.zavarovana}, ${goba.naRdečemSeznamu}</button>`
+      li.innerHTML = `<button onclick="router.navigate(${goba.id})"><span>${goba.sloIme}<br>${goba.latIme}</span><span>${goba.pogostost}, ${goba.zavarovana}, ${goba.naRdečemSeznamu}</span></button>`
       tmpList.push(li)
     }
     
@@ -117,7 +117,7 @@ export class GUI {
       if (this.listQueryAndFilterCheck(goba)) {
         const li = document.createElement("li")
         li.classList.add("mushroom-list-item")
-        li.innerHTML = `<button onclick="router.navigate(${goba.id})">${goba.sloIme}, ${goba.latIme}, ${goba.pogostost}, ${goba.zavarovana}, ${goba.naRdečemSeznamu}</button>`
+        li.innerHTML = `<button onclick="router.navigate(${goba.id})"><span>${goba.sloIme}<br>${goba.latIme}</span><span>${goba.pogostost}, ${goba.zavarovana}, ${goba.naRdečemSeznamu}</span></button>`
         tmpList.push({ li, goba })        
       }
       //break
@@ -180,11 +180,11 @@ export class GUI {
       
 
     const matchesRedList = redlist ? Object.keys(this.data.rdeciSeznam().seznam).includes(goba.url) : true
-    const matchesProtected = prot ? Object.keys(this.data.zavarovane().seznam).includes(goba.url) : true
+    const matchesProtected = prot ? this.data.zavarovane().seznam.includes(goba.url) : true
     
-    const matchesGrowthMonths = true /* months.some(i => i.checked) && goba?.data?.časRasti?.length > 0 ? 
+    const matchesGrowthMonths = months.some(i => i.checked === true) && goba?.data?.časRasti?.length > 0 ? 
       months.some(input => goba.data.časRasti.some(month => input.checked && month.toLowerCase().includes(input.value))
-    ) : true */
+    ) : true
 
     if (matchesSearch && 
         matchesEdibility && 

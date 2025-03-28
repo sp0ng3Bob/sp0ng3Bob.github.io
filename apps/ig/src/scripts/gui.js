@@ -17,6 +17,7 @@ export class GUI {
     this.nameDiv = document.querySelector("#name")
     this.rodDiv = document.querySelector("#rod")
     this.gallery = document.querySelector("#gallery")
+    this.dotsContainer = document.querySelector(".gallery-dots")
     this.quickInfo = document.querySelector("#quick-info")
     this.markers = this.quickInfo.querySelectorAll(".marker")
     this.infoCard = document.querySelector("#right")
@@ -212,6 +213,7 @@ export class GUI {
   plusDivs(n) {
     this.slideIndex += n
     this.showDivs()
+    this.changeDot()
   }
 
   showDivs() {
@@ -222,6 +224,13 @@ export class GUI {
       x[i].classList.remove("active")
     }
     x[this.slideIndex-1].classList.add("active")
+  }
+  
+  changeDot() {
+    const dots = this.dotsContainer.querySelectorAll('.gallery-dot');
+    dots.forEach((dot, index) => {
+      dot.classList.toggle('active', index === (this.slideIndex - 1));
+    })
   }
   
   populateForIndex(id) {
@@ -319,57 +328,66 @@ export class GUI {
   
   populateGallery(goba) {
     this.gallery.innerHTML = ""
-    for (const image of goba.data.galerija.slike) {
+    this.dotsContainer.innerHTML = ""
+    
+    for (const imageID in goba.data.galerija.slike) {
       // <div class="gallery-wrapper" data-author="Jože Z'doline">
       //   <img class="gallery" src="https://www.gobe.si/slike/Abortiporus_biennis.jpg">
       // </div>
+      const images = goba.data.galerija.slike
       const div = document.createElement("div")
       div.classList.add("gallery-wrapper")
-      div.setAttribute("data-author", "Avtor: " + image.avtor || "")
+      div.setAttribute("data-author", "Avtor: " + images[imageID].avtor || "")
       
       const img = document.createElement("img")
       img.classList.add("gallery")
-      img.setAttribute("src", image.url)
+      img.setAttribute("src", images[imageID].url)
       
       div.appendChild(img)
       this.gallery.appendChild(div)
+      
+      // Create dots under the image
+      const dot = document.createElement("div")
+      dot.classList.add("gallery-dot")
+      this.dotsContainer.appendChild(dot)
     }
-    //this.gallery.src = goba.data.slikaUrl
+
+    this.dotsContainer.firstChild.classList.add("active")
     this.showDivs()
   }
   
   populateTooltips(goba) {
     const freq = this.markers[3]
-    freq.children[1].innerText = goba["pogostost"]
+    freq.children[1].innerHTML = `<span class="grey-text">Pogostost na razstavah:</span> ${goba["pogostost"]}`
     
     const protect = this.markers[1]
     //protect.children[1].classList
-    protect.children[1].innerText = `Zavarovana goba: ${goba.zavarovana}`
+    protect.children[1].innerHTML = `<span class='grey-text'>Zavarovana goba:</span> ${goba.zavarovana}`
     
     const redList = this.markers[2]
     //redList.children[0].setAttribute("src", "https://www.gobe.si/pub/ikone/lisaj.png")
     if (goba["naRdečemSeznamu"] == "DA") {
       const redListData = this.data.rdeciSeznam()
       const category = redListData["seznam"][goba.url]
-      redList.children[1].innerHTML = `${redListData['iucn']['naslov']}<br>${redListData['iucn']['kategorije'][category]}`
+      redList.children[1].innerHTML = `<span class='grey-text'>Na rdečem seznamu.</span> ${redListData['iucn']['naslov']}<br>${redListData['iucn']['kategorije'][category]}`
     } else {
-      redList.children[1].innerText = "Na rdečem seznamu: NE"
+      redList.children[1].innerHTML = "<span class='grey-text'>Na rdečem seznamu:</span> NE"
     }
     
     const edible = this.markers[0]
     edible.children[0].classList.remove(...edible.children[0].classList)
     if (this.data.uzitne().seznam.includes(goba.url)) {
       edible.children[0].classList.add("edible-green")
-      edible.children[1].innerText = "Užitna"
+      edible.children[1].innerHTML = "<span class='grey-text'>Uporabnost:</span> Užitna"
     } else if (this.data.pogojnoUzitne().seznam.includes(goba.url)) {
       edible.children[0].classList.add("edible-yellow")
-      edible.children[1].innerText = "Pogojno užitna"
+      edible.children[1].innerHTML = "<span class='grey-text'>Uporabnost:</span> Pogojno užitna"
     } else if (this.data.strupene().seznam.some(obj => obj.seznam.includes(goba.url))) {
       edible.children[0].classList.add("edible-red")
-      edible.children[1].innerText = "Strupena"
+      edible.children[1].innerHTML = "<span class='grey-text'>Uporabnost:</span> Strupena"
     } else {
       edible.children[0].classList.add("edible-red")
-      edible.children[1].innerText = "Neznano"
+      edible.children[1].innerHTML = "<span class='grey-text'>Uporabnost:</span> Neznano"
     }
   }
   

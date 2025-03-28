@@ -22,6 +22,10 @@ body {
   display: none !important;
 }
 
+.grey-text {
+  color: grey;
+}
+
 /* Navigation styles */
 #navigation {
   position: fixed;
@@ -72,7 +76,8 @@ input[type="search"] {
 
 .collapsible-content div {
   padding: 10px;
-  gap: 10px;
+  row-gap: 3px;
+  column-gap: 5px;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -152,40 +157,49 @@ input[type="search"] {
   display: grid;
 }
 
+.mushroom-list-item {
+  display: flex;
+  align-items: baseline;
+  margin-bottom: 15px;
+  background-color: #f0f8ff0a;
+  padding-block: 5px;
+  border-radius: 4px;
+}
+
 .mushroom-list-item:first-child {
   justify-self: center;
   align-content: center;
-  cursor: text;
-}
-
-.mushroom-list-item {
-  height: 35px;
-  display: flex;
-  align-items: baseline;
-  margin-bottom: 30px;
+  cursor: default;
+  background-color: transparent;
+  font-style: italic;
 }
 
 .mushroom-list-item button {
   all: unset;
   width: 100%;
-  height: 35px;
+  height: 45px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-inline: 10px;
+  padding: 0 15px;
   cursor: pointer;
+  box-sizing: border-box;
+}
+
+.mushroom-list-item button span {
+  display: flex;
+  align-items: center;
 }
 
 .mushroom-list-item button span:first-child {
-  order: 1;
-}
-
-.mushroom-list-item button span:first-child::first-letter {
+  font-weight: 500;
   text-transform: capitalize;
 }
 
 .mushroom-list-item button span:last-child {
-  order: 2;
+  color: #6c757d;
+  font-size: 0.9em;
+  margin-left: 15px;
 }
 
 #hideNavigation.hidden {
@@ -197,20 +211,18 @@ input[type="search"] {
 #hideNavigation {
   all: unset;
   position: fixed;
-  top: 8px;
+  top: 4px;
   right: calc(50% + 24px / 2 + 8px);
-  background: none;
-  border: none;
-  font-size: 24px;
+  font-size: x-large;
   cursor: pointer;
-  color: white;
+  color: #2c3e50;
   width: 24px;
   height: 24px;
   padding: 5px;
   border-radius: 10px;
-  background-color: #2c3e50;
+  background-color: #b9b9b980;
   text-align: center;
-  line-height: 29px;
+  line-height: 24px;
   opacity: 1;
   visibility: visible;
   transition: all 0.4s ease-out;
@@ -240,15 +252,16 @@ dialog {
 
 #showNavigation {
   position: fixed;
-  top: 8px;
-  left: 8px;
+  top: 0;
+  left: 0;
   z-index: 999;
-  padding: 10px 15px;
-  background-color: #2c3e50;
-  color: white;
+  padding: 5px 10px;
+  margin: 5px;
+  background-color: transparent;
+  color: #2c3e50;
   border: none;
-  border-radius: 4px;
   cursor: pointer;
+  font-size: large;
 }
 /* Navigation styles - END */
 
@@ -270,6 +283,10 @@ dialog {
   box-shadow: 0 4px 6px rgba(0,0,0,0.1);
   overflow: hidden;
   margin-bottom: 20px;
+}
+
+#rod p {
+  text-decoration: underline;
 }
 
 #left {
@@ -337,6 +354,28 @@ dialog {
 
 #gallery-minus {
   left: 0;
+}
+
+.gallery-dots {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.gallery-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #ccc;
+  margin: 0 5px;
+  transition: background-color 0.3s ease;
+}
+
+.gallery-dot.active {
+  background-color: #34495e;
+  width: 12px;
+  height: 12px;
 }
 
 #header {
@@ -457,7 +496,7 @@ dialog {
   justify-content: space-around;
   width: 100%;
   height: 50px;
-  column-gap: 4px;
+  gap: 4px;
   align-content: center;
   flex-wrap: wrap;
 }
@@ -487,7 +526,9 @@ dialog {
   display: inline-block;
   padding: 6px 12px;
   margin: 5px;
-  background-color: #ecf0f1;
+  /* background-color: #ecf0f1; */
+  background-color: #f4f7f9;
+  color: #1a5f7a;
   border-radius: 12px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -502,27 +543,33 @@ dialog {
 
 .edible-red {
   background-image: url("../assets/icons/edible-red.svg");
-  border: 1px solid red;
+  border: 1px solid #d32f2f;
+  background-color: #ffebee !important;
 }
 .edible-green {
   background-image: url("../assets/icons/edible-green.svg");
-  border: 1px solid green;
+  border: 1px solid #2e7d32;
+  background-color: #e8f5e9 !important;
 }
 .edible-yellow {
   background-image: url("../assets/icons/edible-yellow.svg");
-  border: 1px solid yellow;
+  border: 1px solid #f9a825;
+  background-color: #fff3e0 !important;
 }
 .protected {
   background-image: url("../assets/icons/protected.svg");
-  border: 1px solid blue;
+  border: 1px solid #1976d2;
+  background-color: #e3f2fd !important;
 }
 .frequency {
   background-image: url("../assets/icons/frequency.svg");
-  border: 1px solid grey;
+  border: 1px solid #616161;
+  background-color: #f5f5f5 !important;
 }
 .red-list {
   background-image: url("../assets/icons/red-list.svg");
-  border: 1px solid red;
+  border: 1px solid #c62828;
+  background-color: #ffcdd2 !important;
 }
 
 /* .modifiedTag::before {
@@ -550,16 +597,18 @@ dialog {
 .marker .tooltip {
   position: absolute;
   display: none;
-  width: max-content;
+  max-width: max-content;
+  width: 60vw;
+  left: calc(0px - 20vw);
+  text-wrap-mode: wrap;
+  text-align: left;
   background-color: black;
   color: #fff;
-  text-align: center;
   padding: 5px 10px;
   border-radius: 5px;
   border: blue 2px dotted;
-  opacity: .75;
-  top: 35px;
-  right: -230%;
+  opacity: .95;
+  z-index: 999;
 }
 
 .tooltip:focus,
@@ -619,6 +668,10 @@ dialog {
     justify-content: center;
   }
   
+  .month {
+    letter-spacing: 0.3vw;
+  }
+  
   #navigation {
     width: 100%;
   }
@@ -646,10 +699,14 @@ dialog {
   }
   
   #hideNavigation {
-    right: 8px;
+    right: 4px;
   }
   
   .mushroom-list-item {
     margin-bottom: 10px;
+  }
+  
+  .marker .tooltip {
+    left: calc(0px - 20vw);
   }
 }

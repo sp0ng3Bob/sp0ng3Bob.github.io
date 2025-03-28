@@ -599,7 +599,7 @@ dialog {
   display: none;
   max-width: max-content;
   width: 60vw;
-  left: calc(0px - 20vw);
+  left: calc(0px - 5vw);
   text-wrap-mode: wrap;
   text-align: left;
   background-color: black;

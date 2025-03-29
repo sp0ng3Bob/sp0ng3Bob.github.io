@@ -143,18 +143,21 @@
   }
 
   .protected {
-    background-color: #0e1a2a !important;
-    border-color: #1a5f9a;
+    background-color: #f1e5d5 !important;
+    border-color: #e5a065;
+    filter: invert(1);
   }
 
   .frequency {
-    background-color: #2a2a2a !important;
-    border-color: #777;
+    background-color: #d5d5d5 !important;
+    border-color: #888888;
+    filter: invert(1);
   }
 
   .red-list {
-    background-color: #3a0e0e !important;
-    border-color: #a52a2a;
+    background-color: #c5f1f1 !important;
+    border-color: #5ad5d5;
+    filter: invert(1);
   }
 
   /* Tooltip */

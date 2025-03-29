@@ -369,6 +369,16 @@
     </dialog>
 		<script type="module">
       import { AreaSearcher } from "./AreaSearcher.js"
+      
+      function doOnOrientationChange() { // https://stackoverflow.com/questions/5284878/how-do-i-correctly-detect-orientation-change-using-phonegap-on-ios
+        switch(window.orientation) {  
+          case 0: 
+          case 180:
+            if (locationSearch.classList.contains("Hidden")) {
+              locationSearch.classList.toggle("Hidden")
+            }
+        }
+      }
     
       function toggleSideButtons() {
         info.classList.toggle("Hidden")
@@ -439,7 +449,7 @@
         const data = await response.json()
         if (data.length > 0) {
           const { lat, lon } = data[0]
-          console.log(`\"${place}\": { lat: ${Number(lat)}, lon: ${Number(lon)} }`)
+          console.log(`"${place}": { lat: ${Number(lat)}, lon: ${Number(lon)} }`)
           return { lat: Number(lat), lon: Number(lon) }
         } else {
           throw new Error('Place not found')
@@ -521,7 +531,7 @@
 			const overlay = document.querySelector("#overlay")
 			const mapsButtons = document.querySelector("#maps")
 			const minMax = document.querySelector("#minMax")
-			const minMaxButton = document.querySelector("button")
+			const minMaxButton = minMax.querySelector("button")
 			const latName = document.querySelector("#sciName")
       const dialog = document.querySelector("dialog")
       const info = document.querySelector("#info")
@@ -606,6 +616,10 @@
         toggleSideButtons
       })*/
       const isMobile = window.matchMedia("(any-hover: none)").matches
+      if (isMobile) {
+        window.addEventListener("orientationchange", doOnOrientationChange)
+      }
+      
       let timeout, clickCount = 0 
       mainFrame.addEventListener("click", () => { //"dbclick", but dbclick is not supported on mobile, use touchstart or click
         if (timeout) {

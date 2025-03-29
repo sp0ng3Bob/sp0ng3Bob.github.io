@@ -250,6 +250,7 @@ dialog {
   height: 90%;
   bottom: 10px;
   justify-self: center;
+  overflow: auto;
 }
 
 dialog h2 {
@@ -422,7 +423,7 @@ dialog h2 {
   background-position: center;
   background-repeat: no-repeat;
   display: inline-block;
-  padding: 5px;
+  padding: 14px;
 }
 
 #name {
@@ -729,12 +730,6 @@ dialog h2 {
   #info {
     flex-direction: column;
     align-items: center;
-    width: 100%;
-  }
-  
-  #left, #right {
-    width: 100%;
-    padding: 5px;
   }
   
   .info {
@@ -759,5 +754,11 @@ dialog h2 {
   .marker .tooltip {
     left: calc(0px - 20vw);
   }
-  
+}
+
+@media (pointer: none), (pointer: coarse), (orientation: portrait) {
+  #left, #right {
+    width: 100%;
+    padding: 5px;
+  }
 }

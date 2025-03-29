@@ -58,18 +58,24 @@ export class GUI {
     
     this.hideNavButton.addEventListener("click", this.handleHideNavButton)
     
-    this.openDialogButton.addEventListener("click", () => this.aboutDialog.show())
-    this.closeDialogButton.addEventListener("click", () => this.aboutDialog.close())
+    this.openDialogButton.addEventListener("click", () => {
+      this.aboutDialog.show()
+      this.navigation.querySelector("div").style.overflow = "hidden"
+    })
+    this.closeDialogButton.addEventListener("click", () => {
+      this.aboutDialog.close()
+      this.navigation.querySelector("div").style.overflow = "auto"
+    })
     
     document.addEventListener("click", (event) =>  {
       if (!this.navigation.contains(event.target) && event.target !== this.showNavButton) {
         this.navigation.classList.remove("active")
+        this.openDialogButton.classList.add("hidden")
         this.hideNavButton.classList.add("hidden")
       }
     })
     
     this.filterInputs.forEach(input => {
-      //this.updateLabelState(input)
       input.addEventListener("change", () => this.updateLabelState(input))
     })
     
@@ -412,7 +418,7 @@ export class GUI {
       edible.children[1].innerHTML = "<span class='grey-text'>Uporabnost:</span> Strupena"
     } else {
       edible.children[0].classList.add("edible-red")
-      edible.children[1].innerHTML = "<span class='grey-text'>Uporabnost:</span> Neznano"
+      edible.children[1].innerHTML = "<span class='grey-text'>Uporabnost:</span> Neužitno ali neznano"
     }
   }
   

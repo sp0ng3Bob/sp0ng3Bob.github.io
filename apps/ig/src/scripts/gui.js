@@ -190,6 +190,10 @@ export class GUI {
     const matchesSearch = searchFields.some(term => 
       term && term.toLowerCase().includes(searchQuery.toLowerCase())
     )
+    
+    if (matchesSearch === false) {
+      return false
+    }
 
     const matchesEdibility = edibility.some(input => input === true) ?
       (edibility[0] && this.data.uzitne().seznam.includes(goba.url)) || 
@@ -209,8 +213,7 @@ export class GUI {
       months.some(input => goba.data.časRasti.some(month => input.checked && month.toLowerCase().includes(input.value))
     ) : true
 
-    if (matchesSearch && 
-        matchesEdibility && 
+    if (matchesEdibility && 
         matchesRedList && 
         matchesProtected && 
         matchesGrowthMonths) {

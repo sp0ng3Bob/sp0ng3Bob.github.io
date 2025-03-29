@@ -16,7 +16,9 @@ export class Router {
   // Update the URL with the new route
   updateURL(route) {
     const url = new URL(window.location)
+    
     url.searchParams.set('goba', route)
+    
     window.history.pushState({ route }, '', url)
   }
 

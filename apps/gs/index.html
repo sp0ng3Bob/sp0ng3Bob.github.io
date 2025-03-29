@@ -49,6 +49,9 @@
           position: absolute;
           background-image: url("assets/images/maps/Zemljevid_Slovenije_Layer-0.png");
           background-repeat: no-repeat;
+          /* height: 100vh;
+          background-size: contain;
+          margin-top: 55px; */
         }
 
         #overlay,
@@ -140,7 +143,7 @@
         #locationSearch {
           position: fixed;
           top: calc(8px + 25px + 8px);
-          left: calc(50% - 150px + 20px);
+          left: calc(50% - 150px + 12px);
           z-index: 400;
           transform: translateZ(0);
           -webkit-transform: translateZ(0);
@@ -260,7 +263,19 @@
           }
           select {
             width: 400px;
-            font-size: 1.3em;
+            font-size: small;
+            line-height: 1rem;
+            font-family: inherit;
+          }
+          button {
+            width: auto;
+            height: auto;
+            font-size: 1rem;
+            line-height: 1rem;
+            padding-block: 5px;
+          }
+          #sciName {
+            font-size: small;
           }
           #locationSearch {
             left: calc(50vw - 200px + 12px);
@@ -268,7 +283,9 @@
           }
           #locationSearch input {
             width: 400px;
-            font-size: 1em;
+            font-size: small;
+            line-height: 1rem;
+            font-family: inherit;
           }
           /* Add these to improve touch response */
           #buttons, #minMax, #info, #location, #sciName {
@@ -295,7 +312,6 @@
           #locationSearch input {
             width: 70vw;
             min-width: 150px;
-            font-size: 1em;
           }
           #location {
             display: none;
@@ -342,7 +358,7 @@
         <button type="button">🧭</button>
       </div>
       <div id="locationSearch">
-        <input type="search" name="search" placeholder="Prikaži kraj, naslov ali koordinate na zemljevidu" />
+        <input type="search" name="search" placeholder="Označi kraj, naslov ali koordinate ..." />
       </div>
     </div>
     <dialog>

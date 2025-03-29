@@ -8,10 +8,12 @@ export class GUI {
     this.hideNavButton = document.querySelector("#hideNavigation")
     this.aboutDialog = document.querySelector("#aboutDialog")
     this.closeDialogButton = document.querySelector("#closeAboutDialog")
+    this.openDialogButton = document.querySelector("#openAboutDialog")
     this.filterInputs = document.querySelectorAll(".filter input[type='checkbox']");
     this.collapsibleFilters = document.querySelector("#filters .collapsible")
     this.list = document.querySelector("#list ul")
     this.search = document.querySelector("input[type='search']")
+    this.noContentDiv = document.querySelector("#noContent")
 
     // Goba
     this.nameDiv = document.querySelector("#name")
@@ -45,13 +47,18 @@ export class GUI {
     this.showNavButton.addEventListener("click", () => {
       this.navigation.classList.add("active")
       this.hideNavButton.classList.remove("hidden")
+      this.openDialogButton.classList.remove("hidden")
     })
     
-    this.hideNavButton.addEventListener("click", () => {
+    this.handleHideNavButton = () => {
       this.navigation.classList.remove("active")
       this.hideNavButton.classList.add("hidden")
-    })
+      this.openDialogButton.classList.add("hidden")
+    }
     
+    this.hideNavButton.addEventListener("click", this.handleHideNavButton)
+    
+    this.openDialogButton.addEventListener("click", () => this.aboutDialog.show())
     this.closeDialogButton.addEventListener("click", () => this.aboutDialog.close())
     
     document.addEventListener("click", (event) =>  {
@@ -99,6 +106,9 @@ export class GUI {
       const li = document.createElement("li")
       li.classList.add("mushroom-list-item")
       li.innerHTML = `<button onclick="router.navigate(${goba.id})"><span>${goba.sloIme}<br>${goba.latIme}</span><span>${goba.pogostost}, ${goba.zavarovana}, ${goba.naRdečemSeznamu}</span></button>`
+      
+      li.addEventListener("click", this.handleHideNavButton)
+      
       tmpList.push(li)
     }
     
@@ -112,6 +122,11 @@ export class GUI {
   
   updateMushroomList() {
     const tmpList = []
+    
+    for (const li of this.list.children) {
+      li.removeEventListener("click", this.handleHideNavButton)
+    }
+    
     this.list.innerHTML = ""
     
     for (const goba of this.data.seznam()) {
@@ -119,6 +134,9 @@ export class GUI {
         const li = document.createElement("li")
         li.classList.add("mushroom-list-item")
         li.innerHTML = `<button onclick="router.navigate(${goba.id})"><span>${goba.sloIme}<br>${goba.latIme}</span><span>${goba.pogostost}, ${goba.zavarovana}, ${goba.naRdečemSeznamu}</span></button>`
+        
+        li.addEventListener("click", this.handleHideNavButton)
+        
         tmpList.push({ li, goba })        
       }
       //break

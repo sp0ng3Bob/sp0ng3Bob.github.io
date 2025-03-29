@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="./src/styles/styles.css">
+    <link rel="stylesheet" href="./src/styles/dark-styles.css">
     <link rel="icon" type="image/svg+xml" href="./src/assets/icons/icon-light.svg">
     <script type="module" src="./src/scripts/app.js"></script>
   </head>
@@ -57,14 +58,17 @@
         </div>
       </div>
       <button class="hidden" type="button" id="hideNavigation">×</button>
+      <button class="hidden" type="button" id="openAboutDialog">🛈</button>
       <dialog id="aboutDialog">
         <h2>O aplikaciji</h2>
-        <p>Ta aplikacija omogoča iskanje in filtriranje različnih vrst gob.</p>
+        <p>Ta aplikacija omogoča iskanje in filtriranje različnih vrst gob. Vsi podatki so bili pridobljeni iz spletne strani <a href="https://www.gobe.si/">gobe.si</a>, Gobarsko društvo Lisička Maribor.</p>
         <button type="button" id="closeAboutDialog">×</button>
       </dialog>
     </div>
     
-    <div id="content">
+    <div id="noContent"></div>
+    
+    <div id="content" > <!-- class="hidden" -->
       <div id="info">
         <div id="left">
           <div id="header">
@@ -93,7 +97,7 @@
               </div>
             </div>
             <div id="rod" class="info small">
-              <label>Rod</label>
+              <label>Rod &bull;</label>
               <p></p>
             </div>
           </div>

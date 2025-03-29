@@ -69,7 +69,7 @@
     #toggle {
       background: transparent;
       color: white;
-      border: 2px solid white;
+      border: 1px solid white;
     }
 
     .OFF#toggle::before { content: "vVv  SHOW FILTERS  vVv"; }
@@ -86,6 +86,26 @@
       border-radius: 8px;
       margin: 15px 0;
       box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      width: 90%;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+    }
+    
+    #filterFamily {
+      width: 100%;
+    }
+    
+    #filterType {
+      display: flex;
+      column-gap: 20px;
+      row-gap: 10px;
+    }
+    
+    label[for='ff'], 
+    label[for='tf'] {
+      display: inline-table;
+      margin-bottom: 4px;
     }
 
     .Hide#filters,
@@ -95,7 +115,7 @@
 
     .Checkbox {
       position: relative;
-      padding-left: 40px;
+      padding-left: 30px;
       margin-bottom: 15px;
       cursor: pointer;
       user-select: none;
@@ -305,6 +325,42 @@
         max-width: 100%;
       }
       
+      #searchBar {
+        padding: 5px;
+      }
+      
+      #toggle {
+        margin-top: 5px;
+      }
+      
+      #filters {
+        padding: 5px;
+        margin: 5px 0;
+        width: 96%;
+        flex-direction: column;
+        font-size: x-small;
+        gap: 12px;
+      }
+      
+      #filterFamily {
+        font-size: small;
+      }
+      
+      #filterType {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .Checkbox {
+        margin-bottom: 0px;
+        padding-left: 20px;
+      }
+      
+      .Checkmark {
+        height: 15px;
+        width: 15px;
+      }
+      
       #listOfPlants {
         overflow-x: hidden;
         padding: 0px 5px;
@@ -481,6 +537,8 @@
 		//const pdfPart2 				 = "./assets/book parts/Introduction-fwv.pdf"
 		//const pdfPart3 				 = "./assets/book parts/Planning checklists for quick reference-fwv.pdf"
 		const book 						 = "./assets/book parts/Rest of the book.pdf"
+    
+    const onMobile = window.matchMedia("(max-width: 1024px)").matches
 		
     let iframeDoc    = null
 		let matchingPlants = {}
@@ -621,12 +679,16 @@
 			//return matches = Object.values(matchingPlants.length > 0 ? matchingPlants : plantsDataBase).filter(item =>
 			return matches = Object.values(matchingPlants).filter(item =>
 				item.plantFamily.includes(activeFilters["Family"] ? activeFilters["Family"] : "") && 
-				(activeFilters["Type"] ? activeFilters["Type"] : [""]).every(type => item.plantType.includes(type))
+				(activeFilters["Type"] ? activeFilters["Type"] : [""]).some(type => item.plantType.includes(type)) //.every is too strict...
 			)
 		}
 		
 		function checkDetails(plantFileName) {
 			loadToView(baseFolderPlants + plantFileName)
+      
+      if (onMobile === true) {
+        toggleViews()
+      }
 		}
 		
     /* Resizing separator */

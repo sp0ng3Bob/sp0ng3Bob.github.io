@@ -182,6 +182,10 @@ export class GUI {
       goba?.data?.meso, 
       goba?.data?.trosi
     ]
+    
+    if (goba?.domačeIme != "/") {
+      searchFields.push(...goba.domačeIme)
+    }
 
     const matchesSearch = searchFields.some(term => 
       term && term.toLowerCase().includes(searchQuery.toLowerCase())

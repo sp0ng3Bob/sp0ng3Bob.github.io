@@ -218,7 +218,6 @@ input[type="search"] {
   all: unset;
   position: fixed;
   top: 4px;
-  right: calc(50% + 24px / 2 + 8px);
   font-size: x-large;
   cursor: pointer;
   color: #2c3e50;
@@ -234,9 +233,12 @@ input[type="search"] {
   transition: all 0.4s ease-out;
 }
 
-#openAboutDialog {
-  right: unset;
+#hideNavigation {
   left: 4px;
+}
+
+#openAboutDialog {
+  right: calc(50% + 24px / 2 + 8px);
 }
 
 dialog {
@@ -359,6 +361,7 @@ dialog h2 {
 #gallery-minus {
   width: 25px;
   height: 25px;
+  line-height: 25px;
   position: absolute;
   top: calc(50% - 25px/2);
   cursor: pointer;
@@ -452,7 +455,7 @@ dialog h2 {
   font-size: 1rem !important;
   color: #7f8c8d !important;
   display: block;
-  width: 45px !important;
+  max-width: fit-content;
 }
 
 .small p {
@@ -541,7 +544,8 @@ dialog h2 {
 .quick-card {
   display: inline-block;
   padding: 6px 12px;
-  margin: 5px;
+  margin-right: 5px;
+  margin-bottom: 5px;
   /* background-color: #ecf0f1; */
   background-color: #f4f7f9;
   color: #1a5f7a;
@@ -665,11 +669,26 @@ dialog h2 {
 }
 /*Placeholder animation - END*/
 
-@media only screen and (max-width: 1000px) {
-  *,
-  .gallery-wrapper::before  {
+@media only screen and (min-width: 768px and max-width: 1000px) {
+  .months-container {
+    justify-content: justify-content;
+  }
+}
+
+@media only screen and (max-width: 767px) {
+  .months-container {
+    justify-content: center;
+  }
+}
+  
+@media (pointer: none), (pointer: coarse) {
+  * {
     font-size: clamp(0.8rem, 3vw, 1.33rem);
-    /* line-height: clamp(0.8rem, 3vw, 1.33rem); */
+  }
+  
+  .gallery-wrapper::before {
+    font-size: small;
+    line-height: small; /* clamp(0.8rem, 3vw, 1.33rem); */
   }
   
   #gallery {
@@ -693,10 +712,6 @@ dialog h2 {
   .gallery-dot.active {
     width: 7px;
     height: 7px;
-  }
-  
-  .months-container {
-    justify-content: center;
   }
   
   .month {
@@ -729,7 +744,11 @@ dialog h2 {
     padding-bottom: 15px;
   }
   
-  #hideNavigation {
+  .info label {
+    width: auto;
+  }
+  
+  #openAboutDialog {
     right: 4px;
   }
   
@@ -741,7 +760,4 @@ dialog h2 {
     left: calc(0px - 20vw);
   }
   
-  .small label {
-    width: 36px !important;
-  }
 }

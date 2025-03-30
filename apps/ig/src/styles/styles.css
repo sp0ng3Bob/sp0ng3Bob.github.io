@@ -26,6 +26,25 @@ body {
   color: grey;
 }
 
+.banner {
+  position: absolute;
+  top: 10%;
+  text-align: center;
+  padding: 40px;
+  background-color: #f8f8f8;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin-inline: 20px;
+}
+.banner h1 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+.banner p {
+  font-size: 16px;
+  margin-bottom: 15px;
+}
+
 /* Navigation styles */
 #navigation {
   position: fixed;

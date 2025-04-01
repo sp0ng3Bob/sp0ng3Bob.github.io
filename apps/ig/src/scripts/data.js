@@ -1,5 +1,3 @@
-//import gobeJson from '../../database/gobe.si-without the značilnosti.json' assert { type: 'json' }
-
 export class Data {
   constructor() {
     this.gobe = null

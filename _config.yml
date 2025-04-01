@@ -6,4 +6,4 @@ description: 🌱
 # Build settings
 theme: minima
 header_pages:
-    - ./scripts/README.txt
+    - /scripts/README.md

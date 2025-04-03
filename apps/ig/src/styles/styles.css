@@ -229,7 +229,9 @@ input[type="search"] {
 
 .mushroom-list-item button span {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  flex-direction: column;
+  flex-wrap: wrap;
 }
 
 .mushroom-list-item button span:first-child {

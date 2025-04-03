@@ -111,7 +111,7 @@ export class GUI {
     for (const goba of this.data.seznam()) {
       const li = document.createElement("li")
       li.classList.add("mushroom-list-item")
-      li.innerHTML = `<button onclick="router.navigate(${goba.id})"><span>${goba.sloIme}<br>${goba.latIme}</span><span>${goba.pogostost}, ${goba.zavarovana}, ${goba.naRdečemSeznamu}</span></button>`
+      li.innerHTML = `<button onclick="router.navigate(${goba.id})"><span>${goba.sloIme}<br><i>${goba.latIme}</i></span><span>${goba.pogostost}, ${goba.zavarovana}, ${goba.naRdečemSeznamu}</span></button>`
       
       li.addEventListener("click", this.handleHideNavButton)
       
@@ -139,7 +139,7 @@ export class GUI {
       if (this.listQueryAndFilterCheck(goba)) {
         const li = document.createElement("li")
         li.classList.add("mushroom-list-item")
-        li.innerHTML = `<button onclick="router.navigate(${goba.id})"><span>${goba.sloIme}<br>${goba.latIme}</span><span>${goba.pogostost}, ${goba.zavarovana}, ${goba.naRdečemSeznamu}</span></button>`
+        li.innerHTML = `<button onclick="router.navigate(${goba.id})"><span>${goba.sloIme}<br><i>${goba.latIme}</i></span><span>${goba.pogostost}, ${goba.zavarovana}, ${goba.naRdečemSeznamu}</span></button>`
         
         li.addEventListener("click", this.handleHideNavButton)
         

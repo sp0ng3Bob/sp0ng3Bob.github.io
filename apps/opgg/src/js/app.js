@@ -6,6 +6,8 @@ const plantList = document.querySelector('#plant-list')
 const plantDetails = document.querySelector('#plant-details')
 const listSize = document.querySelector('#species-list-size')
 const images = document.querySelector('#images-results iframe')
+const plantNet = document.querySelector('#plant-net-images-results iframe')
+const iframeCollapsableTitles = document.querySelectorAll(".collapsible h3")
 const noSelection = document.querySelector('#no-selection')
 const tabButtons = document.querySelectorAll('.tab')
 const contentSections = document.querySelectorAll('.content')
@@ -14,6 +16,12 @@ const handleSelectPlantFromList = (plantName) => {
   selectPlant(plantName)
   plantDetails.scrollIntoView({ behavior: 'smooth' })
 }
+
+iframeCollapsableTitles.forEach(header => {
+  header.addEventListener("click", () => {
+    header.parentElement.classList.toggle("active")
+  })
+})
 
 /* images.addEventListener("load", function () {
   scrollIframe(images)
@@ -70,10 +78,15 @@ function selectPlant(plantName) {
   const plant = data.plants[plantName]
   
   if (plant) {
-    const q = plantName.replaceAll(' ', '+') + "+seed"
-    images.setAttribute('src', `https://www.google.com/search?igu=1&ei=&udm=2&q=${q}`)
-    const imagesSectionTitle = [ ...plantDetails.querySelectorAll('.details-section') ].slice(-1)[0].children[0]
-    imagesSectionTitle.innerHTML = `Images search results <a href="https://www.google.com/search?udm=2&q=${q}" target="_blank">↝</a>`
+    const q = plantName.replaceAll(' ', '+') //+ "+seed"
+    images.setAttribute('src', `https://www.google.com/search?igu=1&ei=&udm=2&q=${q}+seed`)
+    const imagesSectionTitle = plantDetails.querySelector('#images-results').previousElementSibling
+    imagesSectionTitle.innerHTML = `Image search results <a href="https://www.google.com/search?udm=2&q=${q}+seed" target="_blank">↝</a>`
+    
+    const pnq = q.replace(/'\w+'/g, "").replace(/\s+/g, "+").trim()
+    plantNet.setAttribute('src', `https://identify.plantnet.org/en/k-world-flora/species?search=${pnq}&sortBy=name&sortOrder=asc`)
+    const plantNetSectionTitle = plantDetails.querySelector('#plant-net-images-results').previousElementSibling
+    plantNetSectionTitle.innerHTML = `PlantNet search results <a href="https://identify.plantnet.org/en/k-world-flora/species?search=${pnq}&sortBy=name&sortOrder=asc" target="_blank">↝</a>`
     
     // Hide no selection message, show details
     noSelection.style.display = 'none'

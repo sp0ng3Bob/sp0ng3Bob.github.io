@@ -1,3 +1,7 @@
+:root {
+  --percent: 0;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -17,6 +21,15 @@ body {
   overflow-x: hidden;
   position: relative;
 }
+
+/* Hide the default scrollbar */
+/* *::-webkit-scrollbar {
+  scrollbar-width: thin;
+} */
+
+/* *::-webkit-scrollbar-track {
+  background: transparent;
+} */
 
 .hidden {
   display: none !important;
@@ -71,6 +84,10 @@ body {
   gap: 20px;
   display: flex;
   flex-direction: column;
+}
+
+#aboutDialog:has([open]) + #navigation:first-child {
+  overflow: hidden;
 }
 
 input[type="search"] {
@@ -443,6 +460,7 @@ dialog h2 {
   background-repeat: no-repeat;
   display: inline-block;
   padding: 14px;
+  position: relative;
 }
 
 #name {
@@ -610,6 +628,45 @@ dialog h2 {
   background-image: url("../assets/icons/red-list.svg");
   border: 1px solid #c62828;
   background-color: #ffcdd2 !important;
+}
+
+#protected,
+#red-list,
+#frequency[data-frequency]:not([data-frequency="/"]) {
+  display: inline-block;
+  position: relative;
+}
+
+#frequency[data-frequency]:not([data-frequency="/"])::before {
+  content: "";
+  position: absolute;
+  top: -2.5px;
+  left: -2.5px;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background: conic-gradient(
+      darkolivegreen calc(var(--percent) * 1%),
+      transparent calc(var(--percent) * 1%)
+  );
+}
+
+#protected[data-value="NE"]::before,
+#red-list[data-value="NE"]::before {
+  content: "/";
+  position: absolute;
+  top: -18px;
+  max-width: 30px;
+  width: 100%;
+  font-size: 40px;
+  z-index: 1;
+}
+
+#protected[data-value="NE"]::before {
+  color: cornflowerblue;
+}
+#red-list[data-value="NE"]::before {
+  color: indianred;
 }
 
 /* .modifiedTag::before {

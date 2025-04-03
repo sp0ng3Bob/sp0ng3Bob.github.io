@@ -390,10 +390,14 @@ export class GUI {
   populateTooltips(goba) {
     const freq = this.markers[3]
     freq.children[1].innerHTML = `<span class="grey-text">Pogostost na razstavah:</span> ${goba["pogostost"]}`
+    freq.setAttribute("data-frequency", goba["pogostost"])
+    const percent = ((goba["pogostost"] != "/" ? Number(goba["pogostost"]) : 0) / 23) * 100
+    document.documentElement.style.setProperty('--percent', percent)
     
     const protect = this.markers[1]
     //protect.children[1].classList
     protect.children[1].innerHTML = `<span class='grey-text'>Zavarovana goba:</span> ${goba.zavarovana}`
+    protect.setAttribute("data-value", goba.zavarovana)
     
     const redList = this.markers[2]
     //redList.children[0].setAttribute("src", "https://www.gobe.si/pub/ikone/lisaj.png")
@@ -403,6 +407,7 @@ export class GUI {
       redList.children[1].innerHTML = `<span class='grey-text'>Na rdečem seznamu.</span> ${redListData['iucn']['naslov']}<br>${redListData['iucn']['kategorije'][category]}`
     } else {
       redList.children[1].innerHTML = "<span class='grey-text'>Na rdečem seznamu:</span> NE"
+      redList.setAttribute("data-value", "NE") //goba["naRdečemSeznamu"]
     }
     
     const edible = this.markers[0]

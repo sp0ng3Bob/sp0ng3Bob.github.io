@@ -66,6 +66,9 @@ function selectPlant(plantName) {
     item.classList.remove('active')
   })
   
+  images.setAttribute("src", "")
+  plantNet.setAttribute("src", "")
+  
   // Find the selected list item and add active class
   const listItems = document.querySelectorAll('.plant-list li')
   for (let item of listItems) {
@@ -78,12 +81,12 @@ function selectPlant(plantName) {
   const plant = data.plants[plantName]
   
   if (plant) {
-    const q = plantName.replaceAll(' ', '+') //+ "+seed"
-    images.setAttribute('src', `https://www.google.com/search?igu=1&ei=&udm=2&q=${q}+seed`)
+    const q = plantName
+    images.setAttribute('src', `https://www.google.com/search?igu=1&ei=&udm=2&q=${q.replaceAll(' ', '+')}+seed`)
     const imagesSectionTitle = plantDetails.querySelector('#images-results').previousElementSibling
     imagesSectionTitle.innerHTML = `Image search results <a href="https://www.google.com/search?udm=2&q=${q}+seed" target="_blank">↝</a>`
     
-    const pnq = q.replace(/'\w+'/g, "").replace(/\s+/g, "+").trim()
+    const pnq = q.replace(/\([\w\s]+\)/g, "").replace(/'[\w\s]+'/g, "").replace(/\?[\w\s]+\?/g, "").replace("'", "").trim().replaceAll(" ", "+")
     plantNet.setAttribute('src', `https://identify.plantnet.org/en/k-world-flora/species?search=${pnq}&sortBy=name&sortOrder=asc`)
     const plantNetSectionTitle = plantDetails.querySelector('#plant-net-images-results').previousElementSibling
     plantNetSectionTitle.innerHTML = `PlantNet search results <a href="https://identify.plantnet.org/en/k-world-flora/species?search=${pnq}&sortBy=name&sortOrder=asc" target="_blank">↝</a>`

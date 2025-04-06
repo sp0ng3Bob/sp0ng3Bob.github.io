@@ -13,8 +13,8 @@ export class Router {
     if (route === null || route === undefined || route === "" || +route > 1753 || +route < 0) {
       this.showNoContent()
     } else {
-      this.gui.populateForIndex(route)
       this.showContent()
+      this.gui.populateForIndex(route)
     }
     
     this.updateURL(route)

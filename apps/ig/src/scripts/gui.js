@@ -43,6 +43,17 @@ export class GUI {
     document.querySelector("#gallery-plus").addEventListener("click", () => this.plusDivs(1))
     document.querySelector("#gallery-minus").addEventListener("click", () => this.plusDivs(-1))
     
+    this.gallery.addEventListener('touchstart', (event) => {
+      this.touchstartX = event.changedTouches[0].screenX
+      //touchstartY = event.changedTouches[0].screenY
+    }, false)
+
+    this.gallery.addEventListener('touchend', (event) => {
+      this.touchendX = event.changedTouches[0].screenX
+      //touchendY = event.changedTouches[0].screenY
+      this.handleSwipeGesture()
+    }, false)
+    
     // Navigacija
     this.showNavButton.addEventListener("click", () => {
       this.navigation.classList.add("active")
@@ -98,6 +109,30 @@ export class GUI {
       filter.addEventListener("change", () => this.updateMushroomList())
     })
   }
+
+  handleSwipeGesture() { //https://stackoverflow.com/questions/62823062/adding-a-simple-left-right-swipe-gesture
+    if (this.touchendX < this.touchstartX) {
+      /* console.log('Swiped Left') */
+      this.plusDivs(1)
+    }
+
+    if (this.touchendX > this.touchstartX) {
+      /* console.log('Swiped Right') */
+      this.plusDivs(-1)
+    }
+
+/*     if (touchendY < touchstartY) {
+      console.log('Swiped Up');
+    }
+
+    if (touchendY > touchstartY) {
+      console.log('Swiped Down');
+    }
+
+    if (touchendY === touchstartY) {
+      console.log('Tap');
+    } */
+}
 
   async init() {
     // Wait for the data to load
@@ -266,9 +301,9 @@ export class GUI {
   
   populateForIndex(id) {
     const goba = this.data.goba(id)
+    this.populateGallery(goba)
     this.populateNames(goba)
     this.populateTooltips(goba)
-    this.populateGallery(goba)
     this.populateInfoCard(goba)
     this.populateSecondaryInfo(goba)
   }

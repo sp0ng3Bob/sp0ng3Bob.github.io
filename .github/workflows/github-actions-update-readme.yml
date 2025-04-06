@@ -18,7 +18,7 @@ jobs:
           echo "Generating site map..."
           # Base folders to scan for apps and games
           BASE_FOLDERS=("apis" "apps" "extensions" "games" "scripts" "widgets" "study")
-          SITE_MAP="# Site map:\n\n"
+          SITE_MAP="# Site map\n\n"
           
           for CATEGORY in "${BASE_FOLDERS[@]}"; do
               echo "Scanning category: $CATEGORY"

@@ -287,6 +287,10 @@ code {
   display: none;
 }
 
+#plant-list:not(:has(li.active)) ~ .mobile-controls {
+  display: none;
+}
+
 /* iFrame doms */
 #images-results,
 #plant-net-images-results {
@@ -357,5 +361,32 @@ code {
     border-radius: 8px;
     padding: 8px 12px;
     text-wrap: nowrap;
+  }
+}
+
+/* Animations */
+#search-list p:has(#species-list-size:empty) {
+  position: relative;
+  /* color: transparent; */
+  user-select: none;
+}
+
+#search-list p:has(#species-list-size:empty)::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-left-color: #5a8f5c;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { 
+    transform: translate(-50%, -50%) rotate(360deg); 
   }
 }

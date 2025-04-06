@@ -360,6 +360,11 @@ dialog h2 {
   align-content: center;
 }
 
+#gallery:empty {
+  position: relative;
+  height: 420px;
+}
+
 #gallery {
   position: relative;
   overflow: hidden;
@@ -422,8 +427,8 @@ dialog h2 {
 }
 
 .gallery-dot {
-  width: 10px;
-  height: 10px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background-color: #ccc;
   margin: 0 5px;
@@ -432,8 +437,8 @@ dialog h2 {
 
 .gallery-dot.active {
   background-color: #34495e;
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
 }
 
 #header {
@@ -648,8 +653,8 @@ dialog h2 {
   height: 35px;
   border-radius: 50%;
   background: conic-gradient(
-      darkolivegreen calc(var(--percent) * 1%),
-      transparent calc(var(--percent) * 1%)
+    darkolivegreen calc(var(--percent) * 1%),
+    transparent calc(var(--percent) * 1%)
   );
 }
 
@@ -832,11 +837,36 @@ dialog h2 {
   .marker .tooltip {
     left: calc(0px - 20vw);
   }
+  
+  #gallery:empty {
+    height: 240px;
+  }
 }
 
 @media (pointer: none), (pointer: coarse), (orientation: portrait) {
   #left, #right {
     width: 100%;
     padding: 5px;
+  }
+}
+
+/* Animations */
+#gallery:empty::after {
+content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-left-color: #cbb6a1;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { 
+    transform: translate(-50%, -50%) rotate(360deg); 
   }
 }

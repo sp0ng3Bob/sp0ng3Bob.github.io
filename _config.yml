@@ -9,5 +9,5 @@ author:
 # Build settings
 theme: minima
 header_pages:
-    - README.md
+    #- README.md
     - scripts/README.md

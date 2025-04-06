@@ -1,4 +1,4 @@
-# Site map:
+# Site map
 
 ### APIS:
 * [Tarife omrežnine elektrike](https://sp0ng3Bob.github.io/apis/elektrika) <picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/sp0ng3Bob/sp0ng3Bob.github.io/refs/heads/master/apis/elektrika/assets/images/icon-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/sp0ng3Bob/sp0ng3Bob.github.io/refs/heads/master/apis/elektrika/assets/images/icon-light.svg"><img alt="App icon for Tarife omrežnine elektrike" src="https://raw.githubusercontent.com/sp0ng3Bob/sp0ng3Bob.github.io/refs/heads/master/apis/elektrika/assets/images/icon-light.svg" width="16" height="16"></picture> [🌐](https://sp0ng3Bob.github.io/apis/elektrika/web.html)

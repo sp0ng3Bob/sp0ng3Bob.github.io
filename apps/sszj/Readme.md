@@ -1,5 +1,7 @@
 # Slovar slovanskega znakovnega jezika
 
+Spletna aplikacija je na voljo tukaj [🌐](./web.html).
+
 Slike v obstoječem repozitoriju so vzete s strani [Slovar slovenskega znakovnega jezika](http://sszj.fri.uni-lj.si/).
 ~~Aplikacija podpira 'OFFLINE' mode, kar pomeni, da v ozadju delujejo 'service workers', ki nadzirajo sranjevanje datotek pletne strani in tako omogočajo uporabo 'aplikacije' tudi, ko telefon oziroma druga naprava nima internetnega dostopa.~~
 

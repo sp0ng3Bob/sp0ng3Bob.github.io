@@ -1,3 +1,3 @@
 # Tarife omrežnine elektrike
 
-Web app available here [🌐](./web.html).
+Spletna aplikacija je na voljo tukaj [🌐](./web.html).

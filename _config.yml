@@ -1,13 +1,16 @@
+#https://github.com/jekyll/minima/blob/2.5-stable/_config.yml because github pages uses minima v2.5.1 (https://pages.github.com/versions/)
+
 # Site settings
 title: 🏠
 description: 🌱
-author: 
-    name: Hello, it's me.
-    email: hello@🌎
-
+author: sp0ng3bob
+email: sp0ng3bob.github@gmail.com
 
 # Build settings
 theme: minima
+
 header_pages:
     #- README.md
     - scripts/README.md
+
+github_username: sp0ng3bob

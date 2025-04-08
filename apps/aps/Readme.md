@@ -1,5 +1,7 @@
 # Arriyadh (or Riyadh) plants searcher
 
+Web app available here [🌐](./web.html).
+
 This app uses the book Arriyadh plants (دليل-نباتات-الرياض‎-‎‏نسخة-إنجليزية‏) by the author Turki bin Abdullah Al Saud.
 
 

@@ -96,8 +96,15 @@ function displayDataBasedOnQuery() {
 function displayJsonData(jsonData) {
   jsonDiv.innerHTML = `<pre>${JSON.stringify(jsonData, undefined, 2)}</pre>`
   
-  if (jsonData.prostDan) {
+  if (jsonData.prostDan) { //WFT is this..
     document.querySelector("body").style.backgroundColor = jsonData.trenutnaTarifa.barva
+    
+    if (jsonData.trenutnaTarifa.barva == "#0000FF") {
+      document.querySelector("pre").style.color = "white"
+    }
+    else {
+      document.querySelector("pre").style.color = "black"
+    }
   } else {
     document.querySelector("body").style.backgroundColor = "white"
   }
